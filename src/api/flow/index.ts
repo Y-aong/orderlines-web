@@ -22,7 +22,7 @@ enum API {
 // 获取节点菜单
 export const getNodeMenuRequest = () => http.get(`${API.PLUGIN_NODE}`);
 // 获取节点参数
-export const getTaskNodeRequest = (pluginNode: any) => http.get(API.TASK_NODE, { params: pluginNode });
+export const getTaskNodeRequest = (pluginNode: any) => http.get(API.TASK_NODE, pluginNode);
 
 // 获取任务变量
 export const getVariableRequest = () => http.get(`${API.VARIABLE}`);
