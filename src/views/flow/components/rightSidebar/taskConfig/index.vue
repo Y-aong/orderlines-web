@@ -1,0 +1,95 @@
+<template>
+  <el-card :class="{ right_running_sidebar: isRunning, right_config_sidebar: !isRunning }">
+    <div class="task_config">
+      <div class="task_running_config">
+        <h3>任务配置</h3>
+        <el-form :inline="true">
+          <el-form-item label="任务序号" style="width: 95%">
+            <el-input v-model="nodeConfig.task_id" disabled />
+          </el-form-item>
+          <el-form-item label="任务名称" style="width: 95%">
+            <el-input v-model="nodeConfig.task_name" disabled />
+          </el-form-item>
+          <el-form-item label="任务描述" style="width: 95%">
+            <el-input
+              placeholder="请输入任务描述"
+              clearable
+              v-model="nodeConfig.desc"
+              @blur="updateTask"
+              :disabled="isRunning ? true : false"
+            />
+          </el-form-item>
+          <el-form-item label="插件版本" style="width: 95%">
+            <el-input
+              placeholder="请输入插件版本"
+              clearable
+              :model-value="nodeConfig.version"
+              @blur="updateTask"
+              :disabled="isRunning ? true : false"
+            />
+          </el-form-item>
+        </el-form>
+
+        <el-collapse v-model="activeNames" accordion>
+          <TaskTaskParam></TaskTaskParam>
+          <TaskResultParam></TaskResultParam>
+          <TaskRunningConfig></TaskRunningConfig>
+        </el-collapse>
+      </div>
+    </div>
+  </el-card>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import TaskTaskParam from "./taskParam/index.vue";
+import TaskResultParam from "./taskResult/index.vue";
+import TaskRunningConfig from "./taskRunning/index.vue";
+import { storeToRefs } from "pinia";
+import useFlowStore from "@/stores/modules/flow";
+import { TaskNodeType } from "@/api/flow/type";
+import { updateTaskRequest } from "@/api/flow";
+import { ElMessage } from "element-plus";
+
+let { nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
+const activeNames = ref(["taskParams"]);
+
+// 修改任务
+const updateTask = async () => {
+  let taskNode: TaskNodeType = {
+    id: parseInt(nodeConfig.value.id),
+    process_id: process_id.value,
+    task_name: nodeConfig.value.task_name,
+    desc: nodeConfig.value.desc
+  };
+  let result: any = await updateTaskRequest(taskNode);
+  if (result.code != 200) {
+    ElMessage({
+      type: "error",
+      message: "任务配置修改失败"
+    });
+  }
+};
+</script>
+
+<script lang="ts">
+export default {
+  name: "TaskConfig"
+};
+</script>
+
+<style scoped>
+.right_running_sidebar {
+  width: 100%;
+  height: 75vh;
+  background: #ffffff;
+}
+.right_config_sidebar {
+  width: 100%;
+  height: 100vh;
+  background: #ffffff;
+}
+.task_config {
+  flex-direction: column;
+}
+</style>
