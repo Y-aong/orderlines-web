@@ -70,8 +70,7 @@ class RedNodeModel extends RectNodeModel {
 
 class RedNode extends RectNode {
   getAnchorShape(anchorData) {
-    const { x, y, type } = anchorData;
-    console.log(type);
+    const { x, y } = anchorData;
     return h("rect", {
       x: x - 5,
       y: y - 5,

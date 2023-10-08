@@ -59,9 +59,8 @@ export const getTaskRequest = (task_id: number) => http.get(`${API.TASK}?task_id
 export const deleteTaskRequest = (task_id: number) => http.delete(`${API.TASK}?task_id=${task_id}`);
 
 // 流程图任务配置
-export const getFlowTaskDataRequest = (process_id: string, task_id: string) => {
+export const getFlowTaskDataRequest = (process_id: string, task_id: string) =>
   http.get(`${API.FLOW_TASK_CONFIG}?process_id=${process_id}&task_id=${task_id}`);
-};
 
 export const createTaskFlowDataRequest = (flow_data: any) => http.post(API.FLOW_TASK_CONFIG, flow_data);
 
@@ -80,6 +79,5 @@ export const getProcessControlRequest = (task_id: string, process_id: string) =>
 export const getPrevNodeResultRequest = (task_id: string, process_id: string) =>
   http.get(`${API.PREV_NODE_RESULT}?task_id=${task_id}&process_id=${process_id}`);
 
-export const getVariableOptionRequest = (process_id: string) => {
+export const getVariableOptionRequest = (process_id: string) =>
   http.get(`${API.VARIABLE_OPTION}?process_id=${process_id}`);
-};

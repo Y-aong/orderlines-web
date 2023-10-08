@@ -39,6 +39,6 @@ export const useDownload = async (
     document.body.removeChild(exportFile);
     window.URL.revokeObjectURL(blobUrl);
   } catch (error) {
-    console.log(error);
+    console.log("下载文件", error);
   }
 };

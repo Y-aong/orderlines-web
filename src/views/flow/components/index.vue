@@ -61,17 +61,14 @@ import { ElMessage } from "element-plus";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
 import { setStorage } from "@/utils/storage";
-import { getFlowDataRequest } from "@/api/flow/index";
 let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
 let dialogFormVisible = ref<boolean>(false);
 
 onMounted(async () => {
   isRunning.value = false;
-  setStorage(false, "IS_RUNNING");
   if (!process_name.value) {
     dialogFormVisible.value = true;
   }
-  await getFlowDataRequest(process_id.value);
 });
 
 let ProcessItem = reactive<any>({
@@ -93,7 +90,8 @@ const confirm = async () => {
     process_params: ProcessItem.process_params,
     process_config: ProcessItem.process_config
   };
-
+  setStorage(requestData.process_id, "PROCESS_ID");
+  setStorage(ProcessItem.process_name, "PROCESS_NAME");
   let res: any = await createProcessRequest(requestData);
   if (res.code == 200) {
     dialogFormVisible.value = false;

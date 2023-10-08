@@ -176,7 +176,11 @@ export function getShowMenuList(menuList: Menu.MenuOptions[]) {
  * @param {Object} result 处理后的结果
  * @returns {Object}
  */
-export const getAllBreadcrumbList = (menuList: Menu.MenuOptions[], parent = [], result: { [key: string]: any } = {}) => {
+export const getAllBreadcrumbList = (
+  menuList: Menu.MenuOptions[],
+  parent = [],
+  result: { [key: string]: any } = {}
+) => {
   for (const item of menuList) {
     result[item.path] = [...parent, item];
     if (item.children) getAllBreadcrumbList(item.children, result[item.path], result);

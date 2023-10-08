@@ -59,6 +59,8 @@ const cancel = () => {
 
 const getVariableOption = async () => {
   const result = await getVariableOptionRequest(process_id.value);
+  console.log("获取变量选项:", result);
+
   variableOption.value = result.data;
 };
 // 修改流程图数据

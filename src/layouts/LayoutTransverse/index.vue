@@ -18,7 +18,12 @@
             </template>
             <SubMenu :menu-list="subItem.children" />
           </el-sub-menu>
-          <el-menu-item v-else :key="subItem.path + 'el-menu-item'" :index="subItem.path" @click="handleClickMenu(subItem)">
+          <el-menu-item
+            v-else
+            :key="subItem.path + 'el-menu-item'"
+            :index="subItem.path"
+            @click="handleClickMenu(subItem)"
+          >
             <el-icon>
               <component :is="subItem.meta.icon"></component>
             </el-icon>

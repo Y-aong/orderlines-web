@@ -99,7 +99,8 @@ const findIndex = () => {
   let suffix: VNode | null = null;
   slots.forEach((slot: any) => {
     // suffix
-    if (typeof slot.type === "object" && slot.type.name === "GridItem" && slot.props?.suffix !== undefined) suffix = slot;
+    if (typeof slot.type === "object" && slot.type.name === "GridItem" && slot.props?.suffix !== undefined)
+      suffix = slot;
     // slot children
     if (typeof slot.type === "symbol" && Array.isArray(slot.children)) fields.push(...slot.children);
   });

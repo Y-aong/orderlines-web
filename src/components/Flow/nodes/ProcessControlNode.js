@@ -32,8 +32,7 @@ class processControlModel extends DiamondNodeModel {
 class processControlNode extends DiamondNode {
   // 重写锚点新增
   getAnchorShape(anchorData) {
-    const { x, y, type } = anchorData;
-    console.log(type);
+    const { x, y } = anchorData;
     return h("rect", {
       x: x - 5,
       y: y - 5,

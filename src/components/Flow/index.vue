@@ -24,13 +24,11 @@ import {
   updateTaskRequest
 } from "@/api/flow/index.ts";
 import { ElMessage } from "element-plus";
-import { setStorage } from "@/utils/storage.ts";
 
 let { getFlowTaskData } = useFlowStore();
 
-let { isRunning, process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig, processControlOptions } = storeToRefs(
-  useFlowStore()
-);
+let { isRunning, process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig, processControlOptions } =
+  storeToRefs(useFlowStore());
 
 export default {
   name: "FLOW",
@@ -114,7 +112,6 @@ export default {
     this.lf.on("text:update", async data => {
       if (data.type.search("node") !== -1) {
         nodeConfig.value.task_name = data.text;
-        setStorage(nodeConfig.value, "NODE_CONFIG");
         let taskNode = {
           id: parseInt(nodeConfig.value.id),
           process_id: process_id.value,
@@ -149,7 +146,6 @@ export default {
           id: task_node.id
         };
         nodeConfig.value = _task_config;
-        setStorage(_task_config, "NODE_CONFIG");
       } else {
         ElMessage({
           type: "error",
@@ -161,7 +157,6 @@ export default {
         let pcResponse = await getProcessControlRequest(data.id, process_id.value);
         if (pcResponse.code === 200) {
           processControlOptions.value = pcResponse.data;
-          setStorage(pcResponse.data, "PROCESS_CONTROL_OPTIONS");
         } else {
           ElMessage({
             type: "error",
@@ -170,20 +165,18 @@ export default {
         }
         // 获取流程图的返回
         const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
+        console.log("taskFlowResponse", taskFlowResponse);
         nodeParam.value = taskFlowResponse.data.nodeParam;
-        setStorage(taskFlowResponse.data.nodeParam, "NODE_PARAM");
       } else {
         // 获取节点的展示数据
         await getFlowTaskData(process_id.value, data.id);
       }
     });
     // 画布上的元素发生变化
-    this.lf.on("history:change", async ({ data }) => {
-      console.log("变化数据::", data);
+    this.lf.on("history:change", async () => {
       let graphData = this.lf.getGraphData();
       console.log("画布上的元素发生变化", graphData);
       isRunning.value = false;
-      setStorage(false, "IS_RUNNING");
       const flow_data = {
         process_id: process_id.value,
         graphData: graphData
@@ -193,10 +186,12 @@ export default {
   },
   methods: {
     async getGraphData() {
-      const result = await getFlowDataRequest(process_id.value);
-      console.log("result", result);
-      if (result && result.code === 200) {
-        this.graphData = result.data.graphData;
+      if (process_id.value) {
+        const result = await getFlowDataRequest(process_id.value);
+        console.log("result", result);
+        if (result && result.code === 200) {
+          this.graphData = result.data.graphData;
+        }
       }
     }
   }

@@ -13,7 +13,11 @@
               @click="updateTask(scope.row.config_name, item.value)"
             />
           </el-select>
-          <el-select v-if="scope.row.config_name === 'task_strategy'" v-model="defaultTaskStrategy" :disabled="isRunning">
+          <el-select
+            v-if="scope.row.config_name === 'task_strategy'"
+            v-model="defaultTaskStrategy"
+            :disabled="isRunning"
+          >
             >
             <el-option
               v-for="item in scope.row.config_value"
@@ -41,10 +45,20 @@
       <el-table-column prop="config_value" label="任务运行配置" min-width="150">
         <template #default="scope">
           <el-select v-if="scope.row.config_name === 'notice_type'" v-model="defaultNoticeType">
-            <el-option v-for="item in scope.row.config_value" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="item in scope.row.config_value"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
           <el-select v-if="scope.row.config_name === 'task_strategy'" v-model="defaultTaskStrategy">
-            <el-option v-for="item in scope.row.config_value" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="item in scope.row.config_value"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </template>
       </el-table-column>

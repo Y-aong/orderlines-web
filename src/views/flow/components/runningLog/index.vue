@@ -30,7 +30,10 @@
       </el-descriptions>
     </el-card>
     <!--任务结果-->
-    <el-dialog v-model="taskResultVisible" :title="taskStatus.valueOf() === '运行成功' ? '任务结果信息' : '任务异常信息'">
+    <el-dialog
+      v-model="taskResultVisible"
+      :title="taskStatus.valueOf() === '运行成功' ? '任务结果信息' : '任务异常信息'"
+    >
       <template v-if="taskStatus.valueOf() === '运行成功'">
         <json-viewer :value="taskResultORError" copyable boxed sort></json-viewer>
       </template>

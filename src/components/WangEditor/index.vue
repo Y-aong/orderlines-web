@@ -1,6 +1,12 @@
 <template>
   <div :class="['editor-box', self_disabled ? 'editor-disabled' : '']">
-    <Toolbar v-if="!hideToolBar" class="editor-toolbar" :editor="editorRef" :default-config="toolbarConfig" :mode="mode" />
+    <Toolbar
+      v-if="!hideToolBar"
+      class="editor-toolbar"
+      :editor="editorRef"
+      :default-config="toolbarConfig"
+      :mode="mode"
+    />
     <Editor
       v-model="valueHtml"
       class="editor-content"
@@ -100,14 +106,14 @@ props.editorConfig.MENU_CONF!["uploadImage"] = {
       const { data } = await uploadImg(formData);
       insertFn(data.fileUrl);
     } catch (error) {
-      console.log(error);
+      console.log("图片自定义上传", error);
     }
   }
 };
 
 // 图片上传前判断
 const uploadImgValidate = (file: File): boolean => {
-  console.log(file);
+  console.log("图片上传前判断", file);
   return true;
 };
 
@@ -126,14 +132,14 @@ props.editorConfig.MENU_CONF!["uploadVideo"] = {
       const { data } = await uploadVideo(formData);
       insertFn(data.fileUrl);
     } catch (error) {
-      console.log(error);
+      console.log("视频自定义上传", error);
     }
   }
 };
 
 // 视频上传前判断
 const uploadVideoValidate = (file: File): boolean => {
-  console.log(file);
+  console.log("视频上传前判断", file);
   return true;
 };
 

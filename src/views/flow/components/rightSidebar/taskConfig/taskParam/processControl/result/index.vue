@@ -6,7 +6,12 @@
         <el-table-column label="任务分支" min-width="90">
           <template #default="scope">
             <el-select v-model="scope.row.task_id" placeholder="请选择任务分支" disabled>
-              <el-option v-for="item in processControlOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option
+                v-for="item in processControlOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </template>
         </el-table-column>
@@ -36,7 +41,11 @@
           <el-table :data="props.row.condition">
             <el-table-column label="返回值">
               <template #default="scope">
-                <el-select v-model="props.row.condition[scope.$index].condition" placeholder="选择返回值" style="width: 100%">
+                <el-select
+                  v-model="props.row.condition[scope.$index].condition"
+                  placeholder="选择返回值"
+                  style="width: 100%"
+                >
                   <el-option
                     v-for="item in prevResultOption"
                     :key="item.value"
@@ -49,7 +58,11 @@
             </el-table-column>
             <el-table-column label="比较方式">
               <template #default="scope">
-                <el-select v-model="props.row.condition[scope.$index].sign" placeholder="请选择比较方式" style="width: 100%">
+                <el-select
+                  v-model="props.row.condition[scope.$index].sign"
+                  placeholder="请选择比较方式"
+                  style="width: 100%"
+                >
                   <el-option
                     v-for="item in signs"
                     :key="item.value"
@@ -87,7 +100,12 @@
       <el-table-column label="任务分支" min-width="90">
         <template #default="scope">
           <el-select v-model="scope.row.task_id" placeholder="请选择任务分支">
-            <el-option v-for="item in processControlOptions" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="item in processControlOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </template>
       </el-table-column>
@@ -133,7 +151,12 @@
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { ref } from "vue";
-import { createTaskFlowDataRequest, getFlowTaskDataRequest, getPrevNodeResultRequest, updateTaskRequest } from "@/api/flow";
+import {
+  createTaskFlowDataRequest,
+  getFlowTaskDataRequest,
+  getPrevNodeResultRequest,
+  updateTaskRequest
+} from "@/api/flow";
 import { TaskNodeType } from "@/api/flow/type";
 import { setStorage } from "@/utils/storage";
 import { branchItem, conditionItem, processControlStatusItem, signs } from "@/utils/variable";
@@ -225,10 +248,12 @@ const deleteCondition = (branchIndex: number, conditionIndex: number) => {
 const createExpression = (branchIndex: number) => {
   nodeParam.value.conditions[branchIndex].expression = "";
   let conditionStr = "";
-  nodeParam.value.conditions[branchIndex].condition.forEach((temp: { condition: string; sign: string; target: any }) => {
-    let item = `${temp.condition}${temp.sign}${temp.target}`;
-    conditionStr += item ? `${item}<br/>` : "";
-  });
+  nodeParam.value.conditions[branchIndex].condition.forEach(
+    (temp: { condition: string; sign: string; target: any }) => {
+      let item = `${temp.condition}${temp.sign}${temp.target}`;
+      conditionStr += item ? `${item}<br/>` : "";
+    }
+  );
   nodeParam.value.conditions[branchIndex].expression = conditionStr;
 };
 </script>

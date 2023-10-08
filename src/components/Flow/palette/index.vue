@@ -35,7 +35,6 @@ import { TaskNodeType } from "@/api/flow/type";
 import { v4 as uuid4 } from "uuid";
 import { createTaskFlowDataRequest, createTaskRequest } from "@/api/flow/index";
 import { Location } from "@element-plus/icons-vue";
-import { setStorage } from "@/utils/storage";
 import { processControlStatusItem } from "@/utils/variable";
 import { notice } from "@/utils/notice";
 
@@ -61,7 +60,6 @@ const props = defineProps({
 onMounted(async () => {
   let nodeMenuData = await getNodeMenu();
   nodeMenu.value = nodeMenuData;
-  setStorage(nodeMenuData, "NODE_MENU");
 });
 
 const startDrag = async (item: any) => {
@@ -71,8 +69,6 @@ const startDrag = async (item: any) => {
   let flag = await checkStartNode(item.type, graphData);
   if (flag) {
     const task_id = uuid4();
-    console.log("nodeConfig", nodeConfig);
-
     lf.dnd.startDrag({
       id: task_id,
       type: item.type,
@@ -113,7 +109,6 @@ const startDrag = async (item: any) => {
     } else {
       flow_data["nodeParam"] = processControlStatusItem;
       nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
-      setStorage(JSON.parse(JSON.stringify(processControlStatusItem)), "NODE_PARAM");
     }
     const res: any = await createTaskFlowDataRequest(flow_data);
     if (res.code !== 200) notice("存放流程数据失败");
@@ -134,7 +129,6 @@ const startDrag = async (item: any) => {
       }
       // 设置node config
       nodeConfig.value = node_config;
-      setStorage(node_config, "NODE_CONFIG");
     }
   }
 };

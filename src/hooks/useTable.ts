@@ -46,7 +46,7 @@ export const useTable = (
       };
     },
     set: (newVal: any) => {
-      console.log("我是分页更新之后的值", newVal);
+      console.log("分页更新之后的值", newVal);
     }
   });
 

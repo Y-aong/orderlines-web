@@ -10,9 +10,11 @@
           <template #default="scope">
             <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row.id)" circle icon="View">
             </el-button>
-            <el-button type="warning" size="small" @click.prevent="updateVariable(scope.row)" circle icon="Edit"> </el-button>
+            <el-button type="warning" size="small" @click.prevent="updateVariable(scope.row)" circle icon="Edit">
+            </el-button>
 
-            <el-button type="danger" size="small" @click.prevent="deleteVariable(scope.row.id)" circle icon="Delete"> </el-button>
+            <el-button type="danger" size="small" @click.prevent="deleteVariable(scope.row.id)" circle icon="Delete">
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

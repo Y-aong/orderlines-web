@@ -16,12 +16,22 @@
     <!-- 表格头部 操作按钮 -->
     <div class="table-header">
       <div class="header-button-lf">
-        <slot name="tableHeader" :selected-list="selectedList" :selected-list-ids="selectedListIds" :is-selected="isSelected" />
+        <slot
+          name="tableHeader"
+          :selected-list="selectedList"
+          :selected-list-ids="selectedListIds"
+          :is-selected="isSelected"
+        />
       </div>
       <div v-if="toolButton" class="header-button-ri">
         <slot name="toolButton">
           <el-button v-if="showToolButton('refresh')" :icon="Refresh" circle @click="getTableList" />
-          <el-button v-if="showToolButton('setting') && columns.length" :icon="Operation" circle @click="openColSetting" />
+          <el-button
+            v-if="showToolButton('setting') && columns.length"
+            :icon="Operation"
+            circle
+            @click="openColSetting"
+          />
           <el-button
             v-if="showToolButton('search') && searchColumns?.length"
             :icon="Search"
@@ -165,8 +175,17 @@ const radio = ref("");
 const { selectionChange, selectedList, selectedListIds, isSelected } = useSelection(props.rowKey);
 
 // 表格操作 Hooks
-const { tableData, pageable, searchParam, searchInitParam, getTableList, search, reset, handleSizeChange, handleCurrentChange } =
-  useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback, props.requestError);
+const {
+  tableData,
+  pageable,
+  searchParam,
+  searchInitParam,
+  getTableList,
+  search,
+  reset,
+  handleSizeChange,
+  handleCurrentChange
+} = useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback, props.requestError);
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value!.clearSelection();

@@ -20,7 +20,12 @@
         <el-table-column label="任务分支" min-width="100">
           <template #default="scope">
             <el-select v-model="scope.row.task_id" placeholder="请选择任务分支">
-              <el-option v-for="item in processControlOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option
+                v-for="item in processControlOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </template>
         </el-table-column>
@@ -60,7 +65,12 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { taskStatusOptions } from "@/utils/variable";
 import { ref } from "vue";
-import { createTaskFlowDataRequest, getFlowTaskDataRequest, getPrevNodeResultRequest, updateTaskRequest } from "@/api/flow";
+import {
+  createTaskFlowDataRequest,
+  getFlowTaskDataRequest,
+  getPrevNodeResultRequest,
+  updateTaskRequest
+} from "@/api/flow";
 import { TaskNodeType } from "@/api/flow/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
