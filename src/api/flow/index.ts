@@ -6,6 +6,7 @@ enum API {
   PLUGIN_NODE = "/node_menu",
   TASK_NODE = "/task_node",
   VARIABLE = "/variable",
+  PROCESS_VARIABLE = "/process_variable",
   START_PROCESS = "/orderlines/start",
   STOP_PROCESS = "/orderlines/stop",
   PAUSED_PROCESS = "/orderlines/paused",
@@ -25,7 +26,7 @@ export const getNodeMenuRequest = () => http.get(`${API.PLUGIN_NODE}`);
 export const getTaskNodeRequest = (pluginNode: any) => http.get(API.TASK_NODE, pluginNode);
 
 // 获取任务变量
-export const getVariableRequest = () => http.get(`${API.VARIABLE}`);
+export const getVariableRequest = (process_id: string) => http.get(`${API.PROCESS_VARIABLE}?process_id=${process_id}`);
 export const getVariableDetailRequest = (id: number) => http.get(`${API.VARIABLE}?id=${id}&pre_page=10&page=1`);
 export const createVariableRequest = (data: VariableItemType) => http.post(API.VARIABLE, data);
 export const updateVariableRequest = (data: VariableItemType) => http.put(API.VARIABLE, data);

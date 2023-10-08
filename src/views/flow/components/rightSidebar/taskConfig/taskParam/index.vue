@@ -60,7 +60,6 @@ const cancel = () => {
 const getVariableOption = async () => {
   const result = await getVariableOptionRequest(process_id.value);
   console.log("获取变量选项:", result);
-
   variableOption.value = result.data;
 };
 // 修改流程图数据
@@ -75,6 +74,8 @@ const updateFlowData = async () => {
 const height = ref(isRunning ? "30vh" : "65vh");
 // 修改任务参数
 const updateTask = async (row: any) => {
+  console.log("修改任务参数", row);
+
   if (row.value) {
     let param_name = row.name;
     let param_value = await checkParam(row);
@@ -90,6 +91,8 @@ const updateTask = async (row: any) => {
       if (result.code !== 200) notice("任务配置修改失败");
       await updateFlowData();
     }
+  } else {
+    notice("修改任务参数失败参数值为空");
   }
 };
 

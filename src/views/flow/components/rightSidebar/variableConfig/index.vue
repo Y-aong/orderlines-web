@@ -72,6 +72,7 @@ import { VariableItemType } from "@/api/flow/type";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
+import { notice } from "@/utils/notice";
 
 let { process_id, process_name, isRunning } = storeToRefs(useFlowStore());
 
@@ -114,15 +115,15 @@ const variableTypeOption = [
   }
 ];
 
-onMounted(() => {
-  getVariable();
+onMounted(async () => {
+  await getVariable();
 });
 
 const variableData = ref();
 let variableDetail = ref<any>();
 
 const getVariable = async () => {
-  let res: any = await getVariableRequest();
+  let res: any = await getVariableRequest(process_id.value);
   if (res.code == 200) {
     variableData.value = res.data;
   }
@@ -189,10 +190,7 @@ const confirm = async () => {
     };
     let result: any = await updateVariableRequest(variableCreateData as VariableItemType);
     if (result.code !== 200) {
-      ElMessage({
-        type: "error",
-        message: "修改变量失败"
-      });
+      notice("修改变量失败");
     }
   } else {
     // 创建变量
@@ -206,13 +204,11 @@ const confirm = async () => {
     };
     let result: any = await createVariableRequest(variableCreateData as VariableItemType);
     if (result.code !== 200) {
-      ElMessage({
-        type: "error",
-        message: "创建变量失败"
-      });
+      notice("创建变量失败");
     }
   }
   VariableItem.variable_key = "";
+  VariableItem.variable_value = "";
   VariableItem.variable_type = "str";
   VariableItem.variable_desc = "";
   dialogFormVisible.value = false;
