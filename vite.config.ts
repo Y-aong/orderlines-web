@@ -44,13 +44,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       cors: true,
       // Load proxy configuration from .env.development
       proxy: createProxy(viteEnv.VITE_PROXY)
-      // proxy: {
-      //   "/api": {
-      //     target: "http://192.168.2.100:15900",
-      //     changeOrigin: true,
-      //     rewrite: path => path.replace(/^\/api/, "")
-      //   }
-      // }
     },
     plugins: createVitePlugins(viteEnv),
     esbuild: {

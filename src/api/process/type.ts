@@ -30,6 +30,6 @@ export interface queryProcessType {
   desc?: string;
   creator?: string;
   updater?: string;
-  page: number;
-  pre_page: number;
+  pageNum: number;
+  pageSize: number;
 }

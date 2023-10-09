@@ -21,7 +21,7 @@
       "component": "/flow/index",
       "meta": {
         "icon": "MessageBox",
-        "title": "流程配置",
+        "title": "配置流程",
         "isLink": "",
         "isHide": false,
         "isFull": true,
@@ -42,6 +42,78 @@
         "isAffix": false,
         "isKeepAlive": true
       }
+    },
+    {
+      "path": "/orderlines",
+      "name": "orderlines",
+      "redirect": "/orderlines/process",
+      "meta": {
+        "icon": "MessageBox",
+        "title": "流程管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/orderlines/process",
+          "name": "process",
+          "component": "/orderlines/process/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "流程配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/orderlines/processInstance",
+          "name": "processInstance",
+          "component": "/orderlines/processInstance/index",
+          "meta": {
+            "icon": "Histogram",
+            "title": "流程实例",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/orderlines/task",
+          "name": "task",
+          "component": "/orderlines/task/index",
+          "meta": {
+            "icon": "HelpFilled",
+            "title": "任务配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/orderlines/taskInstance",
+          "name": "task",
+          "component": "/orderlines/taskInstance/index",
+          "meta": {
+            "icon": "StarFilled",
+            "title": "任务实例",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     },
     {
       "path": "/auth",

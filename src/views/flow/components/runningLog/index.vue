@@ -98,7 +98,7 @@ export default {
   position: fixed;
   top: 80vh;
   left: 77%;
-  width: 100%;
+  width: 23%;
   height: 20vh;
   background: #ffffff;
 }
@@ -106,7 +106,7 @@ export default {
   position: fixed;
   top: 100vh;
   left: 77%;
-  width: 100%;
+  width: 23%;
   height: 0;
   background: #ffffff;
 }
