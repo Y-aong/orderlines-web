@@ -1,5 +1,4 @@
 <template>
-  <!-- 年龄比例 -->
   <div class="echarts">
     <ECharts :option="option" :resize="false" />
   </div>
@@ -52,7 +51,7 @@ const option: ECOption = {
   series: [
     {
       zlevel: 1,
-      name: "年龄比例",
+      name: "任务状态",
       type: "pie",
       selectedMode: "single",
       radius: [50, 90],

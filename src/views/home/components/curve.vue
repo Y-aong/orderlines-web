@@ -9,15 +9,12 @@ import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
 
 const curveData = [
-  { value: 30, spotName: "掘金" },
-  { value: 90, spotName: "CSDN" },
-  { value: 10, spotName: "Gitee" },
-  { value: 70, spotName: "GitHub" },
-  { value: 20, spotName: "知乎" },
-  { value: 60, spotName: "MyBlog" },
-  { value: 55, spotName: "简书" },
-  { value: 80, spotName: "StackOverFlow" },
-  { value: 50, spotName: "博客园" }
+  { value: 30, spotName: "运行成功" },
+  { value: 90, spotName: "运行失败" },
+  { value: 10, spotName: "运行超时" },
+  { value: 70, spotName: "运行暂停" },
+  { value: 20, spotName: "运行继续" },
+  { value: 60, spotName: "运行停止" }
 ];
 
 const option: ECOption = {

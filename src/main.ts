@@ -30,17 +30,13 @@ import router from "@/routers";
 import I18n from "@/languages/index";
 // pinia store
 import pinia from "@/stores";
-// 全局代码捕捉异常先不需要
-// import errorHandler from "@/utils/errorHandler";
 import JsonViewer from "vue3-json-viewer";
 
 const app = createApp(App);
-
-// app.config.errorHandler = errorHandler;
 
 // register the element Icons component
 Object.keys(Icons).forEach(key => {
   app.component(key, Icons[key as keyof typeof Icons]);
 });
-app.use(JsonViewer);
-app.use(ElementPlus).use(directives).use(router).use(I18n).use(pinia).mount("#app");
+
+app.use(JsonViewer).use(ElementPlus).use(directives).use(router).use(I18n).use(pinia).mount("#app");

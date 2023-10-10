@@ -27,13 +27,14 @@ export default {
   color: white;
 }
 .logo-img {
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
 }
 p {
-  margin-left: 10px;
   font-size: 18px;
   font-weight: bold;
   color: black;
+  white-space: nowrap;
 }
 </style>

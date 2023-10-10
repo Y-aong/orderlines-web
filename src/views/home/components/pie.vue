@@ -9,14 +9,16 @@ import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
 
 const pieData = [
-  { value: 5000, name: "Gitee 访问量" },
-  { value: 5000, name: "GitHub 访问量" }
+  { value: 205, name: "运行成功" },
+  { value: 123, name: "运行失败" },
+  { value: 27, name: "运行停止" },
+  { value: 31, name: "运行超时" }
 ];
 
 const option: ECOption = {
   title: {
-    text: "Gitee / GitHub",
-    subtext: "访问占比",
+    text: "运行状态",
+    subtext: "",
     left: "56%",
     top: "45%",
     textAlign: "center",
@@ -25,7 +27,7 @@ const option: ECOption = {
       color: "#767676"
     },
     subtextStyle: {
-      fontSize: 15,
+      fontSize: 12,
       color: "#a1a1a1"
     }
   },
@@ -40,9 +42,9 @@ const option: ECOption = {
     align: "left",
     itemGap: 20,
     textStyle: {
-      fontSize: 13,
+      fontSize: 14,
       color: "#a1a1a1",
-      fontWeight: 500
+      fontWeight: 400
     },
     formatter: function (name: string) {
       let dataCopy = "";
@@ -68,7 +70,7 @@ const option: ECOption = {
       startAngle: 150,
       data: pieData,
       labelLine: {
-        length: 80,
+        length: 65,
         length2: 30,
         lineStyle: {
           width: 1
@@ -79,7 +81,7 @@ const option: ECOption = {
         show: true,
         formatter: "{d}%",
         fontWeight: 400,
-        fontSize: 19,
+        fontSize: 16,
         color: "#a1a1a1"
       },
       color: [

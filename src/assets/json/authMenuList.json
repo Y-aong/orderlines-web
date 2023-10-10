@@ -101,7 +101,7 @@
         },
         {
           "path": "/orderlines/taskInstance",
-          "name": "task",
+          "name": "taskInstance",
           "component": "/orderlines/taskInstance/index",
           "meta": {
             "icon": "StarFilled",
@@ -112,8 +112,78 @@
             "isAffix": false,
             "isKeepAlive": true
           }
+        },
+        {
+          "path": "/orderlines/variable",
+          "name": "variable",
+          "component": "/orderlines/variable/index",
+          "meta": {
+            "icon": "Memo",
+            "title": "变量配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/orderlines/variableInstance",
+          "name": "variableInstance",
+          "component": "/orderlines/variableInstance/index",
+          "meta": {
+            "icon": "Tickets",
+            "title": "变量实例",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/orderlines/scheduleTask",
+          "name": "scheduleTask",
+          "component": "/orderlines/scheduleTask/index",
+          "meta": {
+            "icon": "AlarmClock",
+            "title": "定时任务",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
         }
       ]
+    },
+    {
+      "path": "/alarm",
+      "name": "alarm",
+      "component": "/alarm/index",
+      "meta": {
+        "icon": "WarnTriangleFilled",
+        "title": "流程告警",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/plugin",
+      "name": "plugin",
+      "component": "/plugin/index",
+      "meta": {
+        "icon": "Paperclip",
+        "title": "插件管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
     },
     {
       "path": "/auth",
@@ -130,12 +200,12 @@
       },
       "children": [
         {
-          "path": "/auth/menu",
-          "name": "authMenu",
-          "component": "/auth/menu/index",
+          "path": "/auth/user",
+          "name": "authUser",
+          "component": "/auth/user/index",
           "meta": {
-            "icon": "Menu",
-            "title": "菜单权限",
+            "icon": "Avatar",
+            "title": "用户管理",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -144,12 +214,40 @@
           }
         },
         {
-          "path": "/auth/button",
-          "name": "authButton",
-          "component": "/auth/button/index",
+          "path": "/auth/role",
+          "name": "authRole",
+          "component": "/auth/role/index",
           "meta": {
-            "icon": "Menu",
-            "title": "按钮权限",
+            "icon": "UserFilled",
+            "title": "角色管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/auth/permission",
+          "name": "authPermission",
+          "component": "/auth/permission/index",
+          "meta": {
+            "icon": "Lock",
+            "title": "权限管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/auth/group",
+          "name": "authGroup",
+          "component": "/auth/group/index",
+          "meta": {
+            "icon": "User",
+            "title": "群组管理",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -174,82 +272,12 @@
       },
       "children": [
         {
-          "path": "/system/accountManage",
-          "name": "accountManage",
-          "component": "/system/accountManage/index",
+          "path": "/system/systemConfig",
+          "name": "config",
+          "component": "/system/systemConfig/index",
           "meta": {
-            "icon": "Menu",
-            "title": "账号管理",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": true
-          }
-        },
-        {
-          "path": "/system/roleManage",
-          "name": "roleManage",
-          "component": "/system/roleManage/index",
-          "meta": {
-            "icon": "Menu",
-            "title": "角色管理",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": true
-          }
-        },
-        {
-          "path": "/system/menuMange",
-          "name": "menuMange",
-          "component": "/system/menuMange/index",
-          "meta": {
-            "icon": "Menu",
-            "title": "菜单管理",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": true
-          }
-        },
-        {
-          "path": "/system/departmentManage",
-          "name": "departmentManage",
-          "component": "/system/departmentManage/index",
-          "meta": {
-            "icon": "Menu",
-            "title": "部门管理",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": true
-          }
-        },
-        {
-          "path": "/system/dictManage",
-          "name": "dictManage",
-          "component": "/system/dictManage/index",
-          "meta": {
-            "icon": "Menu",
-            "title": "字典管理",
-            "isLink": "",
-            "isHide": false,
-            "isFull": false,
-            "isAffix": false,
-            "isKeepAlive": true
-          }
-        },
-        {
-          "path": "/system/timingTask",
-          "name": "timingTask",
-          "component": "/system/timingTask/index",
-          "meta": {
-            "icon": "Menu",
-            "title": "定时任务",
+            "icon": "Setting",
+            "title": "系统配置",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -264,6 +292,50 @@
           "meta": {
             "icon": "Menu",
             "title": "系统日志",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    },
+    {
+      "path": "/help",
+      "name": "help",
+      "redirect": "/help/web",
+      "meta": {
+        "icon": "InfoFilled",
+        "title": "帮助文档",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/help/orderlinesFront",
+          "name": "orderlinesFront",
+          "component": "/help/orderlinesFront/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "前端文档",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/help/orderlinesBackend",
+          "name": "orderlinesBackend",
+          "component": "/help/orderlinesBackend/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "后端文档",
             "isLink": "",
             "isHide": false,
             "isFull": false,

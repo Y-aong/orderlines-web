@@ -7,8 +7,8 @@
         </div>
         <div class="header-ct">
           <div class="header-ct-title">
-            <span>智慧旅游可视化大数据展示平台</span>
-            <div class="header-ct-warning">平台高峰预警信息（2条）</div>
+            <span>ORDERLINES数据大屏展示</span>
+            <div class="header-ct-warning">流程告警信息</div>
           </div>
         </div>
         <div class="header-ri">
@@ -20,8 +20,7 @@
         <div class="dataScreen-lf">
           <div class="dataScreen-top">
             <div class="dataScreen-main-title">
-              <span>实时游客统计</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>实时运行任务</span>
             </div>
             <div class="dataScreen-main-chart">
               <RealTimeAccessChart />
@@ -29,8 +28,7 @@
           </div>
           <div class="dataScreen-center">
             <div class="dataScreen-main-title">
-              <span>男女比例</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>启动方式比例</span>
             </div>
             <div class="dataScreen-main-chart">
               <MaleFemaleRatioChart />
@@ -38,8 +36,7 @@
           </div>
           <div class="dataScreen-bottom">
             <div class="dataScreen-main-title">
-              <span>年龄比例</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>流程状态统计</span>
             </div>
             <div class="dataScreen-main-chart">
               <AgeRatioChart />
@@ -48,13 +45,11 @@
         </div>
         <div class="dataScreen-ct">
           <div class="dataScreen-map">
-            <div class="dataScreen-map-title">景区实时客流量</div>
-            <ChinaMapChart />
+            <div class="dataScreen-map-title"></div>
           </div>
           <div class="dataScreen-cb">
             <div class="dataScreen-main-title">
-              <span>未来30天游客量趋势图</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>流程运次数趋势图</span>
             </div>
             <div class="dataScreen-main-chart">
               <OverNext30Chart />
@@ -64,8 +59,8 @@
         <div class="dataScreen-rg">
           <div class="dataScreen-top">
             <div class="dataScreen-main-title">
-              <span>热门景区排行</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>流程运行数量排行</span>
+              <!-- <img src="./images/dataScreen-title.png" alt="" /> -->
             </div>
             <div class="dataScreen-main-chart">
               <HotPlateChart />
@@ -73,8 +68,7 @@
           </div>
           <div class="dataScreen-center">
             <div class="dataScreen-main-title">
-              <span>年度游客量对比</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>运行次数对比</span>
             </div>
             <div class="dataScreen-main-chart">
               <AnnualUseChart />
@@ -82,8 +76,7 @@
           </div>
           <div class="dataScreen-bottom">
             <div class="dataScreen-main-title">
-              <span>预约渠道数据统计</span>
-              <img src="./images/dataScreen-title.png" alt="" />
+              <span>插件使用统计</span>
             </div>
             <div class="dataScreen-main-chart">
               <PlatformSourceChart />
@@ -101,7 +94,7 @@ import { HOME_URL } from "@/config";
 import { useRouter } from "vue-router";
 import AgeRatioChart from "./components/AgeRatioChart.vue";
 import AnnualUseChart from "./components/AnnualUseChart.vue";
-import ChinaMapChart from "./components/ChinaMapChart.vue";
+// import ChinaMapChart from "./components/ChinaMapChart.vue";
 import HotPlateChart from "./components/HotPlateChart.vue";
 import MaleFemaleRatioChart from "./components/MaleFemaleRatioChart.vue";
 import OverNext30Chart from "./components/OverNext30Chart.vue";
