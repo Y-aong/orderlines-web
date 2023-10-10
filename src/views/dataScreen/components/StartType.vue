@@ -1,14 +1,14 @@
 <template>
-  <!-- 男女比例 -->
+  <!-- 启动比例 -->
   <div class="ratio-main">
     <div class="ratio-header">
       <div class="man">
-        <span>男士</span>
-        <img src="../images/man.png" alt="" />
+        <span>手动启动</span>
+        <img src="../images/trigger.svg" alt="" />
       </div>
       <div class="woman">
-        <span>女士</span>
-        <img src="../images/woman.png" alt="" />
+        <span>定时启动</span>
+        <img src="../images/schedule.svg" alt="" />
       </div>
     </div>
     <!-- echarts -->
@@ -47,7 +47,7 @@ const option: ECOption = {
     {
       type: "category",
       position: "left",
-      data: ["男生"],
+      data: ["手动启动"],
       axisTick: {
         show: false
       },
@@ -61,7 +61,7 @@ const option: ECOption = {
     {
       type: "category",
       position: "right",
-      data: ["女士"],
+      data: ["定时启动"],
       axisTick: {
         show: false
       },
@@ -103,7 +103,7 @@ const option: ECOption = {
         offset: [0, -20],
         fontSize: 12,
         formatter: () => {
-          return `男士 ${data.man * 100}%`;
+          return `手动启动 ${data.man * 100}%`;
         }
       }
     },
@@ -123,7 +123,7 @@ const option: ECOption = {
         offset: [0, -20],
         fontSize: 12,
         formatter: () => {
-          return `女士 ${data.woman * 100}%`;
+          return `定时启动 ${data.woman * 100}%`;
         }
       }
     }

@@ -118,7 +118,7 @@ const option: ECOption = {
     }
   ],
   yAxis: {
-    name: "(人数)",
+    name: "(运行总量)",
     nameTextStyle: {
       color: "#D6DFEA",
       fontSize: 12,

@@ -8,7 +8,7 @@
         <div class="header-ct">
           <div class="header-ct-title">
             <span>ORDERLINES数据大屏展示</span>
-            <div class="header-ct-warning">流程告警信息</div>
+            <div class="header-ct-warning">流程运行信息</div>
           </div>
         </div>
         <div class="header-ri">
@@ -20,10 +20,10 @@
         <div class="dataScreen-lf">
           <div class="dataScreen-top">
             <div class="dataScreen-main-title">
-              <span>实时运行任务</span>
+              <span>实时运行流程名称</span>
             </div>
             <div class="dataScreen-main-chart">
-              <RealTimeAccessChart />
+              <RunningProcess />
             </div>
           </div>
           <div class="dataScreen-center">
@@ -31,7 +31,7 @@
               <span>启动方式比例</span>
             </div>
             <div class="dataScreen-main-chart">
-              <MaleFemaleRatioChart />
+              <StartType />
             </div>
           </div>
           <div class="dataScreen-bottom">
@@ -39,39 +39,39 @@
               <span>流程状态统计</span>
             </div>
             <div class="dataScreen-main-chart">
-              <AgeRatioChart />
+              <RunningStatus />
             </div>
           </div>
         </div>
         <div class="dataScreen-ct">
           <div class="dataScreen-map">
             <div class="dataScreen-map-title"></div>
+            <RunningLog />
           </div>
           <div class="dataScreen-cb">
             <div class="dataScreen-main-title">
-              <span>流程运次数趋势图</span>
+              <span>流程运行次数趋势图</span>
             </div>
             <div class="dataScreen-main-chart">
-              <OverNext30Chart />
+              <RunningTrend />
             </div>
           </div>
         </div>
         <div class="dataScreen-rg">
           <div class="dataScreen-top">
             <div class="dataScreen-main-title">
-              <span>流程运行数量排行</span>
-              <!-- <img src="./images/dataScreen-title.png" alt="" /> -->
+              <span>流程告警数量黑榜</span>
             </div>
             <div class="dataScreen-main-chart">
-              <HotPlateChart />
+              <ProcessAlarm />
             </div>
           </div>
           <div class="dataScreen-center">
             <div class="dataScreen-main-title">
-              <span>运行次数对比</span>
+              <span>流程运行次数对比</span>
             </div>
             <div class="dataScreen-main-chart">
-              <AnnualUseChart />
+              <RunningCount />
             </div>
           </div>
           <div class="dataScreen-bottom">
@@ -79,7 +79,7 @@
               <span>插件使用统计</span>
             </div>
             <div class="dataScreen-main-chart">
-              <PlatformSourceChart />
+              <PluginStatus />
             </div>
           </div>
         </div>
@@ -92,14 +92,14 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { HOME_URL } from "@/config";
 import { useRouter } from "vue-router";
-import AgeRatioChart from "./components/AgeRatioChart.vue";
-import AnnualUseChart from "./components/AnnualUseChart.vue";
-// import ChinaMapChart from "./components/ChinaMapChart.vue";
-import HotPlateChart from "./components/HotPlateChart.vue";
-import MaleFemaleRatioChart from "./components/MaleFemaleRatioChart.vue";
-import OverNext30Chart from "./components/OverNext30Chart.vue";
-import PlatformSourceChart from "./components/PlatformSourceChart.vue";
-import RealTimeAccessChart from "./components/RealTimeAccessChart.vue";
+import RunningStatus from "./components/RunningStatus.vue";
+import RunningCount from "./components/RunningCount.vue";
+import RunningLog from "./components/RunningLog.vue";
+import ProcessAlarm from "./components/ProcessAlarm.vue";
+import StartType from "./components/StartType.vue";
+import RunningTrend from "./components/RunningTrend.vue";
+import PluginStatus from "./components/PluginStatus.vue";
+import RunningProcess from "./components/RunningProcess.vue";
 import dayjs from "dayjs";
 
 const router = useRouter();

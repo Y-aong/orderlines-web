@@ -2,8 +2,8 @@
   <!-- 热门板块 -->
   <div class="echarts-header">
     <span>排名</span>
-    <span>景区</span>
-    <span>预约数量</span>
+    <span>流程名称</span>
+    <span>运行次数</span>
   </div>
   <div class="echarts">
     <ECharts :option="option" :resize="false" />
@@ -25,31 +25,31 @@ interface ChartProp {
 const data = [
   {
     value: 79999,
-    name: "峨眉山",
+    name: "测试流程1",
     percentage: "80%",
     maxValue: 100000
   },
   {
     value: 59999,
-    name: "稻城亚丁",
+    name: "测试流程2",
     percentage: "60%",
     maxValue: 100000
   },
   {
     value: 49999,
-    name: "九寨沟",
+    name: "测试流程3",
     percentage: "50%",
     maxValue: 100000
   },
   {
     value: 39999,
-    name: "万里长城",
+    name: "测试流程4",
     percentage: "40%",
     maxValue: 100000
   },
   {
     value: 29999,
-    name: "北京故宫",
+    name: "测试流程5",
     percentage: "30%",
     maxValue: 100000
   }

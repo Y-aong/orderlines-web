@@ -16,10 +16,10 @@ interface ChartProp {
 }
 
 const data = [
-  { value: 40, name: "智慧文旅平台", percentage: "40%" },
-  { value: 10, name: "携程", percentage: "10%" },
-  { value: 20, name: "飞猪", percentage: "20%" },
-  { value: 30, name: "其他渠道", percentage: "30%" }
+  { value: 40, name: "插件A", percentage: "40%" },
+  { value: 10, name: "插件B", percentage: "10%" },
+  { value: 20, name: "插件C", percentage: "20%" },
+  { value: 30, name: "插件D", percentage: "30%" }
 ];
 
 const option: ECOption = {
