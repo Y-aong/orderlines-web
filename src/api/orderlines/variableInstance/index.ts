@@ -1,7 +1,7 @@
 import http from "@/api";
 
 enum API {
-  VARIABLE_INSTANCE_URL = "/variable"
+  VARIABLE_INSTANCE_URL = "/variable_instance"
 }
 
 export const getVariableInstanceRequest = (data: any) =>

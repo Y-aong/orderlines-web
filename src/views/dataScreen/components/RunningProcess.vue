@@ -36,7 +36,7 @@
   font-family: YouSheBiaoTiHei;
   font-size: 20px;
   color: #eeeeee;
-  background: url("../images/dataScreen-warn-bg.png") no-repeat;
+  background: url("../images/rankingChart-bg.png") no-repeat;
 }
 .load-img {
   width: 20px;

@@ -14,4 +14,4 @@ export const createProcessRequest = (data: ProcessItemType) => http.post(API.PRO
 
 export const updateProcessRequest = (data: ProcessItemType) => http.put(API.PROCESS_URL, data);
 
-export const deleteProcessRequest = (data: DeleteRequest) => http.delete(API.PROCESS_URL, { params: data });
+export const deleteProcessRequest = (data: DeleteRequest) => http.delete(`${API.PROCESS_URL}?id=${data.id}`);

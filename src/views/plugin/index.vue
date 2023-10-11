@@ -9,9 +9,9 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain>新增流程</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增流程</el-button>
         <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="primary" :icon="View" plain>详情页面</el-button>
+        <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
         <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
       </template>
 
@@ -20,11 +20,12 @@
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer(scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen">编辑</el-button>
-        <el-button type="primary" link :icon="Delete">删除</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除</el-button>
       </template>
     </ProTable>
+    <pluginDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
@@ -32,14 +33,42 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getPluginRequest } from "@/api/plugin/index";
+import { getPluginRequest, createPluginRequest, updatePluginRequest, deletePluginRequest } from "@/api/plugin/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import pluginDrawer from "./pluginDrawer.vue";
+import { useHandleData } from "@/hooks/useHandleData";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const proTable = ref<ProTableInstance>();
-const openDrawer = (row: any) => {
-  console.log("查看", row);
+
+// 新增，查看，编辑
+const drawerRef = ref<InstanceType<typeof pluginDrawer> | null>(null);
+const openDrawer = (title: string, row: any = {}) => {
+  const params = {
+    title,
+    isView: title === "查看",
+    row: { ...row },
+    api: title === "新增" ? createPluginRequest : title === "编辑" ? updatePluginRequest : undefined,
+    getTableList: proTable.value?.getTableList
+  };
+  drawerRef.value?.acceptParams(params);
+};
+
+// 删除流程信息
+const deletePlugin = async (params: any) => {
+  await useHandleData(deletePluginRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
+  proTable.value?.getTableList();
+};
+// 跳转详情页
+const toDetail = (row: any) => {
+  if (!row.selectedList[0]) {
+    ElMessage.error("请勾选行选择框后，点击详情按钮");
+  } else {
+    router.push(`/orderlines/variableInstance/detail/${row.selectedList[0].id}`);
+  }
 };
 
 // 表格拖拽排序
@@ -68,14 +97,14 @@ const getTableList = (params: any) => {
 
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
-  { type: "expand", label: "Expand", width: 85 },
+  { type: "expand", label: "Expand", width: 100 },
   { prop: "class_name", label: "插件名称", search: { el: "input" } },
   { prop: "version", label: "插件版本" },
   { prop: "method_name", label: "插件方法", search: { el: "input" } },
   { prop: "method_desc", label: "方法描述" },
   { prop: "node_type", label: "节点类型", search: { el: "input" } },
-  { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },
-  { prop: "updater", label: "修改者", width: 100, search: { el: "input" } },
+  { prop: "insert_time", label: "创建时间", width: 100 },
+  { prop: "update_time", label: "修改时间", width: 100 },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

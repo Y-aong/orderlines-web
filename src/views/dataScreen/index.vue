@@ -20,7 +20,7 @@
         <div class="dataScreen-lf">
           <div class="dataScreen-top">
             <div class="dataScreen-main-title">
-              <span>实时运行流程名称</span>
+              <span>实时运行流程</span>
             </div>
             <div class="dataScreen-main-chart">
               <RunningProcess />

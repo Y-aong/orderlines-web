@@ -7,19 +7,22 @@
       :init-param="initParam"
       :data-callback="dataCallback"
     >
+      <template #expand="scope">
+        {{ scope.row }}
+      </template>
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain>新增流程</el-button>
         <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="primary" :icon="View" plain>详情页面</el-button>
+        <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
         <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer(scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen">编辑</el-button>
-        <el-button type="primary" link :icon="Delete">删除</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deleteVariableInstance(scope.row)">删除</el-button>
       </template>
     </ProTable>
+    <variableInstanceDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
@@ -27,14 +30,48 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getVariableInstanceRequest } from "@/api/orderlines/variableInstance/index";
+import {
+  getVariableInstanceRequest,
+  createVariableInstanceRequest,
+  updateVariableInstanceRequest,
+  deleteVariableInstanceRequest
+} from "@/api/orderlines/variableInstance/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import variableInstanceDrawer from "./variableInstanceDrawer.vue";
+import { useHandleData } from "@/hooks/useHandleData";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
+const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
-const openDrawer = (row: any) => {
-  console.log("查看", row);
+// 新增，查看，编辑
+const drawerRef = ref<InstanceType<typeof variableInstanceDrawer> | null>(null);
+const openDrawer = (title: string, row: any = {}) => {
+  const params = {
+    title,
+    isView: title === "查看",
+    row: { ...row },
+    api:
+      title === "新增" ? createVariableInstanceRequest : title === "编辑" ? updateVariableInstanceRequest : undefined,
+    getTableList: proTable.value?.getTableList
+  };
+  drawerRef.value?.acceptParams(params);
+};
+
+// 删除流程信息
+const deleteVariableInstance = async (params: any) => {
+  await useHandleData(deleteVariableInstanceRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
+  proTable.value?.getTableList();
+};
+// 跳转详情页
+const toDetail = (row: any) => {
+  if (!row.selectedList[0]) {
+    ElMessage.error("请勾选行选择框后，点击详情按钮");
+  } else {
+    router.push(`/orderlines/variableInstance/detail/${row.selectedList[0].id}`);
+  }
 };
 
 const dataCallback = (data: any) => {
@@ -56,9 +93,8 @@ const getTableList = (params: any) => {
 
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 70 },
-  { type: "sort", label: "Sort", width: 80 },
+  { type: "expand", label: "Expand", width: 100 },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
-  { prop: "process_instance", label: "实例id", search: { el: "input" } },
   { prop: "variable_key", label: "变量名称", search: { el: "input" } },
   { prop: "variable_value", label: "变量值" },
   { prop: "variable_desc", label: "变量描述" },

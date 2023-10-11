@@ -69,7 +69,24 @@
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/orderlines/process/detail/:id",
+              "name": "orderlinesProcessDetail",
+              "component": "/orderlines/process/detail",
+              "meta": {
+                "icon": "Menu",
+                "title": "流程详情",
+                "activeMenu": "/orderlines/process",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         },
         {
           "path": "/orderlines/processInstance",
@@ -83,7 +100,24 @@
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/orderlines/processInstance/detail/:id",
+              "name": "orderlinesProcessInstanceDetail",
+              "component": "/orderlines/processInstance/detail",
+              "meta": {
+                "icon": "Menu",
+                "title": "流程实例详情",
+                "activeMenu": "/orderlines/processInstance",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         },
         {
           "path": "/orderlines/task",
@@ -97,7 +131,24 @@
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/orderlines/task/detail/:id",
+              "name": "orderlinesTaskDetail",
+              "component": "/orderlines/task/detail",
+              "meta": {
+                "icon": "Menu",
+                "title": "任务详情",
+                "activeMenu": "/orderlines/task",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         },
         {
           "path": "/orderlines/taskInstance",
@@ -111,7 +162,24 @@
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/orderlines/taskInstance/detail/:id",
+              "name": "orderlinesTaskInstanceDetail",
+              "component": "/orderlines/taskInstance/detail",
+              "meta": {
+                "icon": "Menu",
+                "title": "任务实例详情",
+                "activeMenu": "/orderlines/taskInstance",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         },
         {
           "path": "/orderlines/variable",
@@ -125,7 +193,24 @@
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/orderlines/variable/detail/:id",
+              "name": "orderlinesVariableDetail",
+              "component": "/orderlines/variable/detail",
+              "meta": {
+                "icon": "Menu",
+                "title": "变量详情",
+                "activeMenu": "/orderlines/variable",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         },
         {
           "path": "/orderlines/variableInstance",
@@ -139,7 +224,24 @@
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/orderlines/variableInstance/detail/:id",
+              "name": "orderlinesVariableInstanceDetail",
+              "component": "/orderlines/variableInstance/detail",
+              "meta": {
+                "icon": "Menu",
+                "title": "变量实例详情",
+                "activeMenu": "/orderlines/variableInstance",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         },
         {
           "path": "/orderlines/scheduleTask",

@@ -101,7 +101,3 @@ Geeker-Admin
 ├─ tsconfig.json          # typescript 全局配置
 └─ vite.config.ts         # vite 全局配置文件
 ```
-
-|     |     |
-| :-: | :-: |
-|     |     |

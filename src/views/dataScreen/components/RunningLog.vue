@@ -1,35 +1,18 @@
 <template>
-  <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-    <li v-for="i in count" :key="i" class="infinite-list-item">{{ i }}</li>
-  </ul>
+  <div class="log-card"></div>
 </template>
 
-<script lang="ts" setup name="RunningLog">
-import { ref } from "vue";
-const count = ref(0);
-const load = () => {
-  count.value += 2;
-};
-</script>
+<script lang="ts" setup name="RunningLog"></script>
 
 <style>
-.infinite-list {
+.log-card {
   height: 600px;
   padding-top: 10px;
   margin: 0;
   list-style: none;
-}
-.infinite-list .infinite-list-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 250px;
-  margin: 10px;
-  color: var(--el-color-primary);
-  background: #ffffff;
-  border-radius: 5px;
-}
-.infinite-list .infinite-list-item + .list-item {
-  margin-top: 20px;
+  background: rgb(25 24 42 / 83.4%);
+  border: 2px solid rgb(16 80 116);
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgb(11 183 218) inset;
 }
 </style>
