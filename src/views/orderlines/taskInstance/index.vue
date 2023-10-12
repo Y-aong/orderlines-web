@@ -115,9 +115,7 @@ const taskStatusTag: any = {
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
-  { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "task_name", label: "任务名称", search: { el: "input" } },
-  { prop: "task_id", label: "任务id", search: { el: "input" } },
   { prop: "task_desc", label: "任务描述" },
   {
     prop: "task_status",
