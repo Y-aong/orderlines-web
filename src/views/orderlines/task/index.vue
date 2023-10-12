@@ -89,6 +89,7 @@ const getTableList = (params: any) => {
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
+  { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "task_name", label: "任务名称", search: { el: "input" } },
   { prop: "task_id", label: "任务id", search: { el: "input" } },
   { prop: "desc", label: "任务描述" },

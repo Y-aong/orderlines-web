@@ -18,7 +18,7 @@
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="View" @click="toProcessConfig(scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
@@ -47,6 +47,9 @@ import { ElMessage } from "element-plus";
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
+const toProcessConfig = (row: any) => {
+  console.log(row);
+};
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessDrawer> | null>(null);
 const openDrawer = (title: string, row: any = {}) => {
@@ -94,7 +97,7 @@ const getTableList = (params: any) => {
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
-  { prop: "id", label: "序号", search: { el: "input" } },
+  { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },

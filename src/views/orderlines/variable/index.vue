@@ -94,6 +94,7 @@ const getTableList = (params: any) => {
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 70 },
   { type: "expand", label: "Expand", width: 100 },
+  { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "variable_key", label: "变量名称", search: { el: "input" } },
   { prop: "variable_value", label: "变量值" },
@@ -101,6 +102,7 @@ const columns = reactive<any>([
   {
     prop: "variable_type",
     label: "变量类型",
+    width: 120,
     render: (scope: any) => {
       return <el-tag>{scope.row.variable_type}</el-tag>;
     }
