@@ -29,7 +29,7 @@
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -94,17 +94,67 @@ const getTableList = (params: any) => {
   delete newParams.createTime;
   return getPluginRequest(newParams);
 };
+const nodeType: any = {
+  "start-node": "开始节点",
+  "end-node": "结束节点",
+  "select-node": "表记节点",
+  "parallel-node": "并行网关",
+  "process-control-node": "流程控制",
+  "group-node": "任务组",
+  "function-node": "普通任务"
+};
+const nodeTypeTag: any = {
+  "start-node": "success",
+  "end-node": "success",
+  "select-node": "info",
+  "parallel-node": "danger",
+  "process-control-node": "danger",
+  "group-node": "danger",
+  "function-node": ""
+};
+
+const pluginType: any = {
+  BuiltIn: "基础节点",
+  ProcessControl: "流程控制网关",
+  Group: "任务组网关",
+  Parallel: "并行网关"
+};
+
+const pluginTagTypes: any = {
+  BuiltIn: "success",
+  ProcessControl: "danger",
+  Group: "warning",
+  Parallel: "info"
+};
 
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
-  { prop: "class_name", label: "插件名称", search: { el: "input" } },
-  { prop: "version", label: "插件版本" },
-  { prop: "method_name", label: "插件方法", search: { el: "input" } },
-  { prop: "method_desc", label: "方法描述" },
-  { prop: "node_type", label: "节点类型", search: { el: "input" } },
-  { prop: "insert_time", label: "创建时间", width: 100 },
-  { prop: "update_time", label: "修改时间", width: 100 },
+  {
+    prop: "class_name",
+    label: "插件名称",
+    search: { el: "input" },
+    width: 140,
+    render: (scope: any) => {
+      const pluginTagType = pluginTagTypes[scope.row.class_name] ? pluginTagTypes[scope.row.class_name] : "";
+      const pluginName = pluginType[scope.row.class_name] ? pluginType[scope.row.class_name] : scope.row.class_name;
+      return <el-tag type={pluginTagType}>{pluginName}</el-tag>;
+    }
+  },
+  { prop: "version", label: "插件版本", width: 120 },
+  { prop: "method_name", label: "插件方法", search: { el: "input" }, width: 160 },
+  { prop: "method_desc", label: "方法描述", width: 120 },
+  {
+    prop: "node_type",
+    label: "节点类型",
+    search: { el: "input" },
+    width: 120,
+    render: (scope: any) => {
+      return <el-tag type={nodeTypeTag[scope.row.node_type]}>{nodeType[scope.row.node_type]}</el-tag>;
+    }
+  },
+  { prop: "insert_time", label: "创建时间" },
+  { prop: "update_time", label: "修改时间" },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

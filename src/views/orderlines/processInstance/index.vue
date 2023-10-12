@@ -26,7 +26,7 @@
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -86,6 +86,23 @@ const getTableList = (params: any) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getProcessInstanceRequest(newParams);
 };
+const processStatusDesc: any = {
+  SUCCESS: "运行成功",
+  FAILURE: "运行失败",
+  STOP: "运行停止",
+  RUNNING: "运行中",
+  PAUSED: "运行暂停",
+  PENDING: "运行排队"
+};
+
+const processStatusTag: any = {
+  SUCCESS: "success",
+  FAILURE: "danger",
+  STOP: "warning",
+  PENDING: "",
+  RUNNING: "info",
+  PAUSED: "warning"
+};
 
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
@@ -94,8 +111,25 @@ const columns = reactive<any>([
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
-  { prop: "process_status", label: "流程状态" },
-  { prop: "run_type", label: "触发方式" },
+  {
+    prop: "process_status",
+    label: "流程状态",
+    width: 120,
+    render: (scope: any) => {
+      return <el-tag type={processStatusTag[scope.row.run_type]}>{processStatusDesc[scope.row.process_status]}</el-tag>;
+    }
+  },
+  {
+    prop: "run_type",
+    label: "触发方式",
+    render: (scope: any) => {
+      return (
+        <el-tag type={scope.row.run_type === "trigger" ? "success" : "warning"}>
+          {scope.row.run_type === "trigger" ? "手动" : "定时"}
+        </el-tag>
+      );
+    }
+  },
   {
     prop: "start_time",
     label: "开始时间",

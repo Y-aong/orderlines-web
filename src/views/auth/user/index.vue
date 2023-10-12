@@ -9,7 +9,7 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain>新增流程</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain>新增用户</el-button>
         <el-button type="primary" :icon="Download" plain>导出数据</el-button>
         <el-button type="primary" :icon="View" plain>详情页面</el-button>
         <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
@@ -28,7 +28,7 @@
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -68,11 +68,28 @@ const getTableList = (params: any) => {
 
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
-  { type: "expand", label: "Expand", width: 85 },
+  { type: "sort", label: "Sort", width: 80 },
+  { type: "expand", label: "Expand", width: 100 },
   { prop: "username", label: "用户名", search: { el: "input" } },
   { prop: "email", label: "邮箱", search: { el: "input" } },
   { prop: "password", label: "密码" },
+  {
+    prop: "user_image",
+    label: "用户头像",
+    width: 120,
+    render: (scope: any) => {
+      return (
+        <el-image
+          style="width: 60px; height: 60px;border-radius: 50%"
+          src={scope.row.user_image}
+          lazy
+          preview-src-list={true}
+        />
+      );
+    }
+  },
   { prop: "create_time", label: "创建时间" },
+  { prop: "update_time", label: "修改时间" },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 
@@ -80,4 +97,3 @@ const initParam = reactive({ pageNum: 1, pageSize: 10 });
 </script>
 
 <style lang="scss" scoped></style>
-@/api/orderlines/process/index

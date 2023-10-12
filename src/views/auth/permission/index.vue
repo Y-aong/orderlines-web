@@ -9,7 +9,7 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain>新增流程</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain>新增权限</el-button>
         <el-button type="primary" :icon="Download" plain>导出数据</el-button>
         <el-button type="primary" :icon="View" plain>详情页面</el-button>
         <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
@@ -68,12 +68,14 @@ const getTableList = (params: any) => {
 
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
-  { type: "expand", label: "Expand", width: 85 },
+  { type: "expand", label: "Expand", width: 100 },
   { prop: "menu", label: "是否为菜单", search: { el: "input" } },
   { prop: "name", label: "权限名称", search: { el: "input" } },
   { prop: "method", label: "请求方法", search: { el: "input" } },
   { prop: "path", label: "请求路径" },
   { prop: "desc", label: "权限描述" },
+  { prop: "insert_time", label: "创建时间" },
+  { prop: "update_time", label: "修改时间" },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

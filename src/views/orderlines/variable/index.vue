@@ -27,7 +27,7 @@
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -98,7 +98,13 @@ const columns = reactive<any>([
   { prop: "variable_key", label: "变量名称", search: { el: "input" } },
   { prop: "variable_value", label: "变量值" },
   { prop: "variable_desc", label: "变量描述" },
-  { prop: "variable_type", label: "变量类型" },
+  {
+    prop: "variable_type",
+    label: "变量类型",
+    render: (scope: any) => {
+      return <el-tag>{scope.row.variable_type}</el-tag>;
+    }
+  },
   { prop: "is_cache", label: "是否缓存" },
   { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater_name", label: "修改者", width: 100 },

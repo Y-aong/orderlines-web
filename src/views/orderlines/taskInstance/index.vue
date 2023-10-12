@@ -26,7 +26,7 @@
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -90,6 +90,28 @@ const getTableList = (params: any) => {
   return getTaskInstanceRequest(newParams);
 };
 
+const taskStatusDesc: any = {
+  SUCCESS: "运行成功",
+  FAILURE: "运行失败",
+  STOP: "运行停止",
+  RUNNING: "运行中",
+  PAUSED: "运行暂停",
+  PENDING: "运行排队",
+  SKIP: "运行跳过",
+  RETRY: "运行重试"
+};
+
+const taskStatusTag: any = {
+  SUCCESS: "success",
+  FAILURE: "danger",
+  STOP: "warning",
+  RUNNING: "",
+  PAUSED: "warning",
+  PENDING: "info",
+  SKIP: "warning",
+  RETRY: "warning"
+};
+
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
@@ -97,12 +119,46 @@ const columns = reactive<any>([
   { prop: "task_name", label: "任务名称", search: { el: "input" } },
   { prop: "task_id", label: "任务id", search: { el: "input" } },
   { prop: "task_desc", label: "任务描述" },
-  { prop: "task_status", label: "任务状态", width: 100, search: { el: "input", width: 10 } },
-  { prop: "task_result", label: "任务结果", width: 100 },
+  {
+    prop: "task_status",
+    label: "任务状态",
+    width: 120,
+    search: { el: "input", width: 10 },
+    render: (scope: any) => {
+      return <el-tag type={taskStatusTag[scope.row.task_status]}>{taskStatusDesc[scope.row.task_status]}</el-tag>;
+    }
+  },
+  {
+    prop: "task_result",
+    label: "任务结果",
+    width: 100,
+    render: (scope: any) => {
+      return (
+        <el-button
+          type="primary"
+          link
+          onClick={() => ElMessage.success(scope.row.task_result ? scope.row.task_result : {})}
+        >
+          {"任务结果"}
+        </el-button>
+      );
+    }
+  },
+  {
+    prop: "task_error_info",
+    label: "任务异常",
+    width: 100,
+    render: (scope: any) => {
+      return (
+        <el-button type="primary" link onClick={() => ElMessage.error(scope.row.task_error_info)}>
+          {"异常信息"}
+        </el-button>
+      );
+    }
+  },
   {
     prop: "start_time",
     label: "开始时间",
-    width: 200,
     search: {
       el: "date-picker",
       span: 2,
@@ -113,7 +169,6 @@ const columns = reactive<any>([
   {
     prop: "end_time",
     label: "结束时间",
-    width: 200,
     search: {
       el: "date-picker",
       span: 2,

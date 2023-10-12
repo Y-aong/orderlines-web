@@ -53,7 +53,7 @@ import FlowTabbar from "./tabbar/index.vue";
 import FlowRightSidebar from "./rightSidebar/index.vue";
 import RunningLog from "./runningLog/index.vue";
 import { onMounted, reactive, ref } from "vue";
-import { ProcessItemType } from "@/api/process/type";
+import { ProcessItemType } from "@/api/orderlines/process/type";
 import { v4 as uuid4 } from "uuid";
 
 import { createProcessRequest } from "@/api/orderlines/process/index";
