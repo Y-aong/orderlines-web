@@ -70,6 +70,7 @@ const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "sort", label: "Sort", width: 80 },
   { type: "expand", label: "Expand", width: 100 },
+  { prop: "id", label: "序号", width: 70 },
   { prop: "role_name", label: "角色名称", search: { el: "input" } },
   { prop: "desc", label: "角色描述", search: { el: "input" } },
   { prop: "insert_time", label: "创建时间" },

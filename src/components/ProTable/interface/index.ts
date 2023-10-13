@@ -82,4 +82,9 @@ export interface ColumnProps<T = any>
   _children?: ColumnProps<T>[]; // 多级表头
 }
 
+export interface cardProps {
+  label: string;
+  value: string;
+}
+
 export type ProTableInstance = Omit<InstanceType<typeof ProTable>, keyof ComponentPublicInstance | keyof ProTableProps>;

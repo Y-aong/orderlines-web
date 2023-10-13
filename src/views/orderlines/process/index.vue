@@ -6,6 +6,10 @@
       :request-api="getTableList"
       :init-param="initParam"
       :data-callback="dataCallback"
+      :is-card="isCard"
+      :card-column="cardColumn"
+      :change-card="changeCard"
+      :card-title="cardTitle"
     >
       <template #expand="scope">
         {{ scope.row }}
@@ -13,12 +17,14 @@
       <template #tableHeader="scope">
         <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增流程</el-button>
         <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
+        <el-button v-if="!isCard" type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
+        <el-button v-if="!isCard" type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected">
+          批量删除
+        </el-button>
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="toProcessConfig(scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
@@ -37,19 +43,18 @@ import {
   updateProcessRequest,
   deleteProcessRequest
 } from "@/api/orderlines/process/index";
+
 import { ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
 import ProcessDrawer from "./ProcessDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-
+const isCard = ref<boolean>(true);
 const router = useRouter();
+
 const proTable = ref<ProTableInstance>();
 
-const toProcessConfig = (row: any) => {
-  console.log(row);
-};
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessDrawer> | null>(null);
 const openDrawer = (title: string, row: any = {}) => {
@@ -93,7 +98,16 @@ const getTableList = (params: any) => {
   delete newParams.createTime;
   return getProcessRequest(newParams);
 };
-
+const cardTitle = ref<string>("process_name");
+const cardColumn: any = reactive<any>([
+  { label: "流程序号", value: "id" },
+  { label: "流程名称", value: "process_name" },
+  { label: "流程描述", value: "desc" },
+  { label: "创建者", value: "creator" },
+  { label: "修改者", value: "updater" },
+  { label: "插入时间", value: "insert_time" },
+  { label: "修改时间", value: "update_time" }
+]);
 const columns = reactive<any>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
@@ -129,6 +143,9 @@ const columns = reactive<any>([
 ]);
 
 const initParam = reactive({ pageNum: 1, pageSize: 10 });
+const changeCard = () => {
+  isCard.value = !isCard.value;
+};
 </script>
 
 <style lang="scss" scoped></style>

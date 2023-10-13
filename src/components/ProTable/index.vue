@@ -25,13 +25,23 @@
       </div>
       <div v-if="toolButton" class="header-button-ri">
         <slot name="toolButton">
+          <!-- 刷新 -->
           <el-button v-if="showToolButton('refresh')" :icon="Refresh" circle @click="getTableList" />
+          <!-- 列配置 -->
           <el-button
-            v-if="showToolButton('setting') && columns.length"
+            v-if="showToolButton('setting') && columns.length && !props.isCard"
             :icon="Operation"
             circle
             @click="openColSetting"
           />
+          <!-- 卡片切换 -->
+          <el-button
+            v-if="showToolButton('setting') && columns.length"
+            :icon="TurnOff"
+            circle
+            @click="props.changeCard"
+          />
+          <!-- 搜索按钮 -->
           <el-button
             v-if="showToolButton('search') && searchColumns?.length"
             :icon="Search"
@@ -41,14 +51,17 @@
         </slot>
       </div>
     </div>
+    <!-- 卡片主体 -->
+    <CardColumn v-if="isCard" :table-data="TableData" :card-column="cardColumn" :card-title="cardTitle" />
     <!-- 表格主体 -->
     <el-table
       ref="tableRef"
       v-bind="$attrs"
-      :data="processTableData"
+      :data="TableData"
       :border="border"
       :row-key="rowKey"
       @selection-change="selectionChange"
+      v-if="!isCard"
     >
       <!-- 默认插槽 -->
       <slot />
@@ -117,13 +130,14 @@ import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
 import { BreakPoint } from "@/components/Grid/interface";
-import { ColumnProps, TypeProps } from "@/components/ProTable/interface";
-import { Refresh, Operation, Search } from "@element-plus/icons-vue";
+import { ColumnProps, TypeProps, cardProps } from "@/components/ProTable/interface";
+import { Refresh, Operation, Search, TurnOff } from "@element-plus/icons-vue";
 import { handleProp } from "@/utils";
 import SearchForm from "@/components/SearchForm/index.vue";
 import Pagination from "./components/Pagination.vue";
 import ColSetting from "./components/ColSetting.vue";
 import TableColumn from "./components/TableColumn.vue";
+import CardColumn from "./components/CardColumn.vue";
 import Sortable from "sortablejs";
 
 export interface ProTableProps {
@@ -139,7 +153,11 @@ export interface ProTableProps {
   border?: boolean; // 是否带有纵向边框 ==> 非必传（默认为true）
   toolButton?: ("refresh" | "setting" | "search")[] | boolean; // 是否显示表格功能按钮 ==> 非必传（默认为true）
   rowKey?: string; // 行数据的 Key，用来优化 Table 的渲染，当表格数据多选时，所指定的 id ==> 非必传（默认为 id）
-  searchCol?: number | Record<BreakPoint, number>; // 表格搜索项 每列占比配置 ==> 非必传 { xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }
+  searchCol?: number | Record<BreakPoint, number>; // 表格搜索项 每列占比配置 ==> 非必传 { xs: 1, sm: 2, md: 2, lg: 3,xl:4 }
+  isCard?: boolean;
+  cardColumn?: cardProps[];
+  changeCard?: () => void;
+  cardTitle?: string;
 }
 
 // 接受父组件参数，配置默认值
@@ -192,13 +210,18 @@ const clearSelection = () => tableRef.value!.clearSelection();
 
 // 初始化表格数据 && 拖拽排序
 onMounted(() => {
-  dragSort();
-  props.requestAuto && getTableList();
-  props.data && (pageable.value.total = props.data.length);
+  try {
+    dragSort();
+    props.requestAuto && getTableList();
+    props.data && (pageable.value.total = props.data.length);
+  } catch (error) {
+    // 这里有个报错，先忽略
+    props.requestAuto && getTableList();
+  }
 });
 
 // 处理表格数据
-const processTableData = computed(() => {
+const TableData = computed(() => {
   if (!props.data) return tableData.value;
   return props.data.slice(
     (pageable.value.pageNum - 1) * pageable.value.pageSize,
@@ -300,8 +323,8 @@ const dragSort = () => {
     handle: ".move",
     animation: 300,
     onEnd({ newIndex, oldIndex }) {
-      const [removedItem] = processTableData.value.splice(oldIndex!, 1);
-      processTableData.value.splice(newIndex!, 0, removedItem);
+      const [removedItem] = TableData.value.splice(oldIndex!, 1);
+      TableData.value.splice(newIndex!, 0, removedItem);
       emit("dargSort", { newIndex, oldIndex });
     }
   });
@@ -310,7 +333,7 @@ const dragSort = () => {
 // 暴露给父组件的参数和方法 (外部需要什么，都可以从这里暴露出去)
 defineExpose({
   element: tableRef,
-  tableData: processTableData,
+  tableData: TableData,
   radio,
   pageable,
   searchParam,
