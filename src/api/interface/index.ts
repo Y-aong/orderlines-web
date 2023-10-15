@@ -29,6 +29,9 @@ export namespace Upload {
     fileUrl: string;
   }
 }
+export interface DeleteRes {
+  id: number;
+}
 
 // 登录模块
 export namespace Login {

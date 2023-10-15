@@ -44,12 +44,11 @@
 <script setup lang="ts" name="taskInstanceDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import { v4 as uuid4 } from "uuid";
 
 const rules = reactive({
   process_id: [{ required: true, message: "请填写流程id" }],
   task_name: [{ required: true, message: "请填写任务名称" }],
-  desc: [{ required: true, message: "请填写任务描述" }],
+  desc: [{ required: false, message: "请填写任务描述" }],
   method_name: [{ required: true, message: "请填写方法名称" }],
   task_type: [{ required: true, message: "请填写任务类型" }],
   task_config: [{ required: true, message: "请填写任务配置" }]
@@ -82,11 +81,8 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      if (!drawerProps.value.row.process_id) {
-        drawerProps.value.row["process_id"] = uuid4();
-      }
       await drawerProps.value.api!(drawerProps.value.row);
-      ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
+      ElMessage.success({ message: `${drawerProps.value.title}任务实例成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;
     } catch (error) {

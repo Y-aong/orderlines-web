@@ -9,10 +9,8 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增流程</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增插件</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
       </template>
 
       <template #expand="scope">
@@ -33,15 +31,20 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getPluginRequest, createPluginRequest, updatePluginRequest, deletePluginRequest } from "@/api/plugin/index";
+import {
+  getPluginRequest,
+  createPluginRequest,
+  updatePluginRequest,
+  deletePluginRequest,
+  PluginExport
+} from "@/api/plugin/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
+import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import pluginDrawer from "./pluginDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { useRouter } from "vue-router";
+import { useDownload } from "@/hooks/useDownload";
 
-const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
@@ -57,18 +60,17 @@ const openDrawer = (title: string, row: any = {}) => {
   drawerRef.value?.acceptParams(params);
 };
 
-// 删除流程信息
-const deletePlugin = async (params: any) => {
-  await useHandleData(deletePluginRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
-  proTable.value?.getTableList();
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出插件配置?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(PluginExport, "插件配置", proTable.value?.searchParam);
+  });
 };
-// 跳转详情页
-const toDetail = (row: any) => {
-  if (!row.selectedList[0]) {
-    ElMessage.error("请勾选行选择框后，点击详情按钮");
-  } else {
-    router.push(`/orderlines/variableInstance/detail/${row.selectedList[0].id}`);
-  }
+
+// 删除插件信息
+const deletePlugin = async (params: any) => {
+  await useHandleData(deletePluginRequest, { id: [params.id] }, `删除【${params.method_name}】插件`);
+  proTable.value?.getTableList();
 };
 
 // 表格拖拽排序

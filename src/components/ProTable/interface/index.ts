@@ -87,4 +87,14 @@ export interface cardProps {
   value: string;
 }
 
+export interface cardLayoutProps {
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  height?: string;
+  width?: string;
+}
+
 export type ProTableInstance = Omit<InstanceType<typeof ProTable>, keyof ComponentPublicInstance | keyof ProTableProps>;

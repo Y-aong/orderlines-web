@@ -12,9 +12,8 @@
       </template>
       <template #tableHeader="scope">
         <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增任务</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
         <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
       </template>
 
       <template #operation="scope">
@@ -31,13 +30,20 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getTaskRequest, createTaskRequest, updateTaskRequest, deleteTaskRequest } from "@/api/orderlines/task/index";
+import {
+  getTaskRequest,
+  createTaskRequest,
+  updateTaskRequest,
+  deleteTaskRequest,
+  taskExport
+} from "@/api/orderlines/task/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import TaskDrawer from "./taskDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useDownload } from "@/hooks/useDownload";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
@@ -53,6 +59,13 @@ const openDrawer = (title: string, row: any = {}) => {
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value?.acceptParams(params);
+};
+
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出任务数据?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(taskExport, "任务数据", proTable.value?.searchParam);
+  });
 };
 
 // 删除流程信息

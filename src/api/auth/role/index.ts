@@ -5,8 +5,7 @@ enum API {
   ROLE_URL = "/role"
 }
 
-export const getRoleRequest = (data: any) =>
-  http.get(`${API.ROLE_URL}?pageNum=${data.pageNum}&pageSize=${data.pageSize}`);
+export const getRoleRequest = (data: any) => http.get(API.ROLE_URL, data);
 
 export const createRoleRequest = (data: any) => http.post(API.ROLE_URL, data);
 

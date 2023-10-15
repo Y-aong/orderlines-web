@@ -9,7 +9,7 @@
         <el-row :gutter="40">
           <el-col class="mb40" :xs="24" :sm="12" :md="12" :lg="6" :xl="6">
             <div class="item-left sle">
-              <span class="left-title">流程总运行数量</span>
+              <span class="left-title">今日流程总运行数量</span>
               <div class="img-box">
                 <img src="./images/book-sum.png" alt="" />
               </div>

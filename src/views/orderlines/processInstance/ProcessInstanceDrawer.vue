@@ -43,7 +43,7 @@
 <script setup lang="ts" name="ProcessDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import { v4 as uuid4 } from "uuid";
+import { getCurrentDate } from "@/utils/currentDateTime";
 
 const rules = reactive({
   process_name: [{ required: true, message: "请填写流程名称" }],
@@ -77,11 +77,11 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      if (!drawerProps.value.row.process_id) {
-        drawerProps.value.row["process_id"] = uuid4();
+      if (drawerProps.value.title === "编辑") {
+        drawerProps.value.row["end_time"] = getCurrentDate();
       }
       await drawerProps.value.api!(drawerProps.value.row);
-      ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
+      ElMessage.success({ message: `${drawerProps.value.title}流程实例成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;
     } catch (error) {

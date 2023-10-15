@@ -36,7 +36,7 @@
           />
           <!-- 卡片切换 -->
           <el-button
-            v-if="showToolButton('setting') && columns.length"
+            v-if="showToolButton('setting') && columns.length && props.cardColumn"
             :icon="TurnOff"
             circle
             @click="props.changeCard"
@@ -52,7 +52,16 @@
       </div>
     </div>
     <!-- 卡片主体 -->
-    <CardColumn v-if="isCard" :table-data="TableData" :card-column="cardColumn" :card-title="cardTitle" />
+    <CardColumn
+      v-if="isCard"
+      :table-data="TableData"
+      :card-column="cardColumn"
+      :card-title="cardTitle"
+      :card-layout="cardLayout"
+      :select-item="selectItem"
+      :update-item="updateItem"
+      :delete-item="deleteItem"
+    />
     <!-- 表格主体 -->
     <el-table
       ref="tableRef"
@@ -130,7 +139,7 @@ import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
 import { BreakPoint } from "@/components/Grid/interface";
-import { ColumnProps, TypeProps, cardProps } from "@/components/ProTable/interface";
+import { ColumnProps, TypeProps, cardProps, cardLayoutProps } from "@/components/ProTable/interface";
 import { Refresh, Operation, Search, TurnOff } from "@element-plus/icons-vue";
 import { handleProp } from "@/utils";
 import SearchForm from "@/components/SearchForm/index.vue";
@@ -158,6 +167,10 @@ export interface ProTableProps {
   cardColumn?: cardProps[];
   changeCard?: () => void;
   cardTitle?: string;
+  cardLayout?: cardLayoutProps;
+  selectItem?: (title: string, item: any) => void;
+  updateItem?: (title: string, item: any) => void;
+  deleteItem?: (item: any) => void;
 }
 
 // 接受父组件参数，配置默认值

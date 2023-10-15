@@ -10,17 +10,18 @@
       :card-column="cardColumn"
       :change-card="changeCard"
       :card-title="cardTitle"
+      :card-layout="cardLayout"
+      :select-item="openDrawer"
+      :update-item="openDrawer"
+      :delete-item="deleteProcess"
     >
       <template #expand="scope">
         {{ scope.row }}
       </template>
       <template #tableHeader="scope">
         <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增流程</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
         <el-button v-if="!isCard" type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button v-if="!isCard" type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected">
-          批量删除
-        </el-button>
       </template>
 
       <template #operation="scope">
@@ -41,15 +42,17 @@ import {
   getProcessRequest,
   createProcessRequest,
   updateProcessRequest,
-  deleteProcessRequest
+  deleteProcessRequest,
+  processExport
 } from "@/api/orderlines/process/index";
-
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
+import { cardLayoutProps } from "@/components/ProTable/interface";
+import { useDownload } from "@/hooks/useDownload";
 import ProcessDrawer from "./ProcessDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 const isCard = ref<boolean>(true);
 const router = useRouter();
 
@@ -82,6 +85,13 @@ const toDetail = (row: any) => {
   }
 };
 
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出流程数据?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(processExport, "流程列表", proTable.value?.searchParam);
+  });
+};
+
 const dataCallback = (data: any) => {
   return {
     list: data.list,
@@ -93,9 +103,6 @@ const dataCallback = (data: any) => {
 
 const getTableList = (params: any) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getProcessRequest(newParams);
 };
 const cardTitle = ref<string>("process_name");
@@ -124,8 +131,7 @@ const columns = reactive<any>([
     search: {
       el: "date-picker",
       span: 2,
-      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" },
-      defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"]
+      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
   {
@@ -135,14 +141,14 @@ const columns = reactive<any>([
     search: {
       el: "date-picker",
       span: 2,
-      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" },
-      defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"]
+      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
-
+const cardLayout = ref<cardLayoutProps>({ xs: 24, sm: 24, md: 12, lg: 6, xl: 8, height: "280px", width: "100%" });
 const initParam = reactive({ pageNum: 1, pageSize: 10 });
+// 切换卡片布局
 const changeCard = () => {
   isCard.value = !isCard.value;
 };

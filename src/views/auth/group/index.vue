@@ -9,10 +9,7 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain>新增群组</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="primary" :icon="View" plain>详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增群组</el-button>
       </template>
 
       <template #expand="scope">
@@ -20,11 +17,12 @@
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer(scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen">编辑</el-button>
-        <el-button type="primary" link :icon="Delete">删除</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deleteGroup(scope.row)">删除</el-button>
       </template>
     </ProTable>
+    <GroupDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
@@ -32,15 +30,33 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getGroupRequest } from "@/api/auth/group/index";
+import { getGroupRequest, createGroupRequest, updateGroupRequest, deleteGroupRequest } from "@/api/auth/group/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import GroupDrawer from "./groupDrawer.vue";
+import { useHandleData } from "@/hooks/useHandleData";
+
+const drawerRef = ref<InstanceType<typeof GroupDrawer> | null>(null);
+
+const openDrawer = (title: string, row: any) => {
+  const params = {
+    title,
+    isView: title === "查看",
+    row: { ...row },
+    api: title === "新增" ? createGroupRequest : title === "编辑" ? updateGroupRequest : undefined,
+    getTableList: proTable.value?.getTableList
+  };
+  drawerRef.value?.acceptParams(params);
+};
+
+// 删除权限
+const deleteGroup = async (params: any) => {
+  await useHandleData(deleteGroupRequest, { id: [params.id] }, `删除【${params.group_name}】群组`);
+  proTable.value?.getTableList();
+};
 
 const proTable = ref<ProTableInstance>();
-const openDrawer = (row: any) => {
-  console.log("查看", row);
-};
 
 // 表格拖拽排序
 const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: number }) => {
@@ -83,4 +99,3 @@ const initParam = reactive({ pageNum: 1, pageSize: 10 });
 </script>
 
 <style lang="scss" scoped></style>
-@/api/orderlines/process/index

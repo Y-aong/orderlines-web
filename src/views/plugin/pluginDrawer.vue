@@ -26,6 +26,7 @@
       <el-form-item label="插件描述" prop="method_desc" clearable>
         <el-input v-model="drawerProps.row!.method_desc" placeholder="请填写插件描述" clearable></el-input>
       </el-form-item>
+
       <el-form-item label="插件参数" prop="parameters" clearable>
         <el-input v-model="drawerProps.row!.parameters" placeholder="请填写插件参数" clearable></el-input>
       </el-form-item>
@@ -43,7 +44,6 @@
 <script setup lang="ts" name="taskInstanceDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import { v4 as uuid4 } from "uuid";
 
 const rules = reactive({
   class_name: [{ required: true, message: "请填写插件类名" }],
@@ -82,9 +82,7 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      if (!drawerProps.value.row.process_id) {
-        drawerProps.value.row["process_id"] = uuid4();
-      }
+      if (!drawerProps.value.row.node_type) drawerProps.value.row.node_type = "function-node";
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
       drawerProps.value.getTableList!();

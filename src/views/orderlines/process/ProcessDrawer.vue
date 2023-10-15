@@ -35,10 +35,11 @@
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { v4 as uuid4 } from "uuid";
+import { getCurrentDate } from "@/utils/currentDateTime";
 
 const rules = reactive({
   process_name: [{ required: true, message: "请填写流程名称" }],
-  desc: [{ required: true, message: "请填写流程描述" }]
+  desc: [{ required: false, message: "请填写流程描述" }]
 });
 
 interface DrawerProps {
@@ -68,9 +69,17 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      if (!drawerProps.value.row.process_id) {
+      if (!drawerProps.value.row.process_id && drawerProps.value.title === "新建")
         drawerProps.value.row["process_id"] = uuid4();
+      if (drawerProps.value.title === "编辑") {
+        let process: { id?: number; process_name?: string; desc?: string; update_time?: string } = {};
+        process.id = drawerProps.value.row.id;
+        process.process_name = drawerProps.value.row.process_name;
+        process.desc = drawerProps.value.row.desc;
+        process.update_time = getCurrentDate();
+        drawerProps.value.row = process;
       }
+
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
       drawerProps.value.getTableList!();

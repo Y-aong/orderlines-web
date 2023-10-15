@@ -8,9 +8,8 @@
       :data-callback="dataCallback"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增配置</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增配置</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
       </template>
 
       <template #operation="scope">
@@ -31,14 +30,24 @@ import {
   getSystemSettingRequest,
   createSystemSettingRequest,
   updateSystemSettingRequest,
-  deleteSystemSettingRequest
+  deleteSystemSettingRequest,
+  SystemSettingExport
 } from "@/api/system/setting/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import systemSettingDrawer from "./systemSettingDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
+import { useDownload } from "@/hooks/useDownload";
+import { ElMessageBox } from "element-plus";
 
 const proTable = ref<ProTableInstance>();
+
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出系统配置?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(SystemSettingExport, "系统配置", proTable.value?.searchParam);
+  });
+};
 
 // 新增，查看，编辑
 const drawerRef = ref<any>(null);
@@ -55,7 +64,7 @@ const openDrawer = (title: string, row: any = {}) => {
 
 // 删除流程信息
 const deleteSystemSetting = async (params: any) => {
-  await useHandleData(deleteSystemSettingRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
+  await useHandleData(deleteSystemSettingRequest, { id: [params.id] }, `删除【${params.config_name}】系统配置`);
   proTable.value?.getTableList();
 };
 
@@ -70,9 +79,6 @@ const dataCallback = (data: any) => {
 
 const getTableList = (params: any) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getSystemSettingRequest(newParams);
 };
 

@@ -7,12 +7,7 @@ enum API {
 }
 
 export const getProcessOptionRequest = () => http.get(`${API.PROCESS_OPTION_URL}`);
-
-export const getProcessInstanceRequest = (data: any) =>
-  http.get(`${API.PROCESS_INSTANCE_URL}?pageNum=${data.pageNum}&pageSize=${data.pageSize}`);
-
+export const getProcessInstanceRequest = (data: any) => http.get(API.PROCESS_INSTANCE_URL, data);
 export const createProcessInstanceRequest = (data: any) => http.post(API.PROCESS_INSTANCE_URL, data);
-
 export const updateProcessInstanceRequest = (data: any) => http.put(API.PROCESS_INSTANCE_URL, data);
-
-export const deleteProcessInstanceRequest = (data: any) => http.delete(API.PROCESS_INSTANCE_URL, { params: data });
+export const deleteProcessInstanceRequest = (data: any) => http.delete(`${API.PROCESS_INSTANCE_URL}?id=${data.id}`);

@@ -5,8 +5,7 @@ enum API {
   PERMISSION_URL = "/permission"
 }
 
-export const getPermissionRequest = (data: any) =>
-  http.get(`${API.PERMISSION_URL}?pageNum=${data.pageNum}&pageSize=${data.pageSize}`);
+export const getPermissionRequest = (data: any) => http.get(API.PERMISSION_URL, data);
 
 export const createPermissionRequest = (data: any) => http.post(API.PERMISSION_URL, data);
 

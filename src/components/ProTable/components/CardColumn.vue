@@ -1,30 +1,47 @@
 <template>
   <div class="cards">
-    <div class="card-box" v-for="(row, index) in props.tableData" :key="index">
-      <el-card class="box-card">
-        <template #header>
-          <div class="card-header">
-            <span> {{ row[cardTitle] }}</span>
-            <div>
-              <el-button size="small" :icon="View" />
-              <el-button size="small" :icon="Edit" />
-              <el-button size="small" :icon="Delete" />
-            </div>
-          </div>
-        </template>
-        <div class="card-context">
-          <div>
-            <div v-for="(card, i) in props.cardColumn" :key="i">
-              <el-text truncated>{{ card.label + "：" + row[card.value] }}</el-text>
-            </div>
-          </div>
+    <el-row :gutter="15">
+      <el-col
+        :xs="props.cardLayout ? props.cardLayout.xs : 24"
+        :sm="props.cardLayout ? props.cardLayout.sm : 24"
+        :md="props.cardLayout ? props.cardLayout.md : 12"
+        :lg="props.cardLayout ? props.cardLayout.lg : 8"
+        :xl="props.cardLayout ? props.cardLayout.xl : 6"
+        v-for="(row, index) in props.tableData"
+        :key="index"
+      >
+        <div
+          :style="{
+            width: props.cardLayout.width,
+            height: props.cardLayout.height
+          }"
+        >
+          <el-card class="box-card">
+            <template #header>
+              <div class="card-header">
+                <span> {{ row[cardTitle] }}</span>
+                <div>
+                  <el-button size="small" :icon="View" @click="props.selectItem('查看', row)" />
+                  <el-button size="small" :icon="Edit" @click="props.updateItem('编辑', row)" />
+                  <el-button size="small" :icon="Delete" @click="deleteItem(row)" />
+                </div>
+              </div>
+            </template>
+            <div class="card-context">
+              <div>
+                <div v-for="(card, i) in props.cardColumn" :key="i">
+                  <el-text truncated>{{ card.label + "：" }}{{ row[card.value] ? row[card.value] : "" }}</el-text>
+                </div>
+              </div>
 
-          <UploadImg v-if="row.img_url" v-model:image-url="row.img_url" width="180px" height="180px" :file-size="3">
-            <template #tip> 图片大小不能超过 3M </template>
-          </UploadImg>
+              <UploadImg v-if="row.img_url" v-model:image-url="row.img_url" width="180px" height="180px" :file-size="3">
+                <template #tip> 图片大小不能超过 3M </template>
+              </UploadImg>
+            </div>
+          </el-card>
         </div>
-      </el-card>
-    </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -33,37 +50,36 @@ import { defineProps } from "vue";
 import UploadImg from "@/components/Upload/Img.vue";
 import { Edit, View, Delete } from "@element-plus/icons-vue";
 // eslint-disable-next-line vue/require-prop-types
-const props = defineProps(["tableData", "cardColumn", "cardTitle"]);
+const props = defineProps([
+  "tableData",
+  "cardColumn",
+  "cardTitle",
+  "cardLayout",
+  "selectItem",
+  "updateItem",
+  "deleteItem"
+]);
 </script>
 <style scoped lang="scss">
-.cards {
+.card-header {
   display: flex;
-  height: 90vh;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: bold;
 }
-.card-box {
-  position: relative;
+.card-context {
   display: flex;
-  float: left;
-  .box-card {
-    width: 460px;
-    height: 300px;
-    margin: 15px 10px;
-    border-radius: 10px;
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 15px;
-      font-weight: bold;
-    }
-    .card-context {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      height: 230px;
-      font-size: 15px;
-      line-height: 1.5;
-    }
-  }
+  justify-content: space-between;
+  font-size: 15px;
+}
+.cards {
+  // height: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+.cards::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 </style>

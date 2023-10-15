@@ -10,7 +10,7 @@
       :hide-required-asterisk="drawerProps.isView"
     >
       <el-form-item label="用户头像" prop="user_image">
-        <UploadImg v-model:image-url="drawerProps.row!.user_image" width="135px" height="135px" :file-size="3">
+        <UploadImg v-model:image-url="drawerProps.row!.img_url" width="135px" height="135px" :file-size="3">
           <template #empty>
             <el-icon><Avatar /></el-icon>
             <span>请上传头像</span>
@@ -20,6 +20,9 @@
       </el-form-item>
       <el-form-item label="用户姓名" prop="username">
         <el-input v-model="drawerProps.row!.username" placeholder="请填写用户姓名" clearable></el-input>
+      </el-form-item>
+      <el-form-item v-if="drawerProps.title == '新增'" label="用户密码" prop="password">
+        <el-input v-model="drawerProps.row!.password" placeholder="请填写用户密码" clearable></el-input>
       </el-form-item>
       <el-form-item label="手机" prop="phone">
         <el-input v-model="drawerProps.row!.phone" placeholder="请填写手机" clearable></el-input>
@@ -41,10 +44,11 @@ import { ElMessage, FormInstance } from "element-plus";
 import UploadImg from "@/components/Upload/Img.vue";
 
 const rules = reactive({
-  user_image: [{ required: true, message: "请上传用户头像" }],
+  img_url: [{ required: false, message: "请上传用户头像" }],
   username: [{ required: true, message: "请填写用户姓名" }],
-  idCard: [{ required: true, message: "请填写身份证号" }],
-  email: [{ required: true, message: "请填写邮箱" }]
+  password: [{ required: true, message: "请填写密码" }],
+  phone: [{ required: false, message: "请填写手机号" }],
+  email: [{ required: false, message: "请填写邮箱" }]
 });
 
 interface DrawerProps {

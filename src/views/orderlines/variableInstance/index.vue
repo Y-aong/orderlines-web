@@ -11,9 +11,8 @@
         {{ scope.row }}
       </template>
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
         <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
       </template>
 
       <template #operation="scope">
@@ -34,14 +33,16 @@ import {
   getVariableInstanceRequest,
   createVariableInstanceRequest,
   updateVariableInstanceRequest,
-  deleteVariableInstanceRequest
+  deleteVariableInstanceRequest,
+  VariableInstanceExport
 } from "@/api/orderlines/variableInstance/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableInstanceDrawer from "./variableInstanceDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useDownload } from "@/hooks/useDownload";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
@@ -58,6 +59,13 @@ const openDrawer = (title: string, row: any = {}) => {
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value?.acceptParams(params);
+};
+
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出变量实例?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(VariableInstanceExport, "变量实例", proTable.value?.searchParam);
+  });
 };
 
 // 删除流程信息

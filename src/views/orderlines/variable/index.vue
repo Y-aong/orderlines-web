@@ -12,9 +12,8 @@
       </template>
       <template #tableHeader="scope">
         <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增变量</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
         <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
       </template>
 
       <template #operation="scope">
@@ -35,14 +34,16 @@ import {
   getVariableRequest,
   createVariableRequest,
   updateVariableRequest,
-  deleteVariableRequest
+  deleteVariableRequest,
+  variableExport
 } from "@/api/orderlines/variable/index";
 import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableDrawer from "./variableDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useDownload } from "@/hooks/useDownload";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
@@ -59,7 +60,12 @@ const openDrawer = (title: string, row: any = {}) => {
   };
   drawerRef.value?.acceptParams(params);
 };
-
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出变量配置数据?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(variableExport, "变量配置", proTable.value?.searchParam);
+  });
+};
 // 删除流程信息
 const deleteTaskInstance = async (params: any) => {
   await useHandleData(deleteVariableRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);

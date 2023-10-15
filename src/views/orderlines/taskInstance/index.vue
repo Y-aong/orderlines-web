@@ -21,8 +21,7 @@
       >
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
-          <el-button type="primary" :icon="Upload" plain>批量添加</el-button>
-          <el-button type="primary" :icon="Download" plain>导出数据</el-button>
+          <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
         </template>
         <!-- 表格操作 -->
         <template #operation="scope">
@@ -39,22 +38,24 @@
 </template>
 <script setup lang="tsx" name="scheduleTask">
 import { ref, reactive } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import SelectFilter from "@/components/SelectFilter/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
-import { Delete, EditPen, Download, Upload, View } from "@element-plus/icons-vue";
+import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import taskInstanceDrawer from "./taskInstanceDrawer.vue";
 import { getProcessOptionRequest } from "@/api/orderlines/processInstance/index";
 import {
   getTaskInstanceRequest,
   createTaskInstanceRequest,
   updateTaskInstanceRequest,
-  deleteTaskInstanceRequest
+  deleteTaskInstanceRequest,
+  TaskInstanceExport
 } from "@/api/orderlines/taskInstance/index";
+import { useDownload } from "@/hooks/useDownload";
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
@@ -79,6 +80,13 @@ const taskStatusTag: any = {
   PENDING: "info",
   SKIP: "warning",
   RETRY: "warning"
+};
+
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出流程数据?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(TaskInstanceExport, "任务实例", proTable.value?.searchParam);
+  });
 };
 
 // 表格配置项

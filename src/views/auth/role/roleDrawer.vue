@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="450px" :title="`${drawerProps.title}系统配置`">
+  <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="450px" :title="`${drawerProps.title}角色`">
     <el-form
       ref="ruleFormRef"
       label-width="100px"
@@ -9,19 +9,11 @@
       :model="drawerProps.row"
       :hide-required-asterisk="drawerProps.isView"
     >
-      <template v-if="drawerProps.title === '查看'">
-        <el-form-item label="id" prop="id">
-          <el-input v-model="drawerProps.row!.id" clearable></el-input>
-        </el-form-item>
-      </template>
-      <el-form-item label="配置名称" prop="config_name">
-        <el-input v-model="drawerProps.row!.config_name" placeholder="请填写配置名称" clearable></el-input>
+      <el-form-item label="角色名称" prop="role_name">
+        <el-input v-model="drawerProps.row!.role_name" placeholder="请填写角色名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="配置值" prop="config_value">
-        <el-input v-model="drawerProps.row!.config_value" placeholder="请填写配置值" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="配置描述" prop="desc">
-        <el-input v-model="drawerProps.row!.desc" placeholder="请填写配置描述" clearable></el-input>
+      <el-form-item label="角色描述" prop="desc">
+        <el-input v-model="drawerProps.row!.desc" placeholder="请填角色描述" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -31,14 +23,14 @@
   </el-drawer>
 </template>
 
-<script setup lang="ts" name="systemSettingDrawer">
+<script setup lang="ts" name="RoleDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
+import { getCurrentDate } from "@/utils/currentDateTime";
 
 const rules = reactive({
-  config_name: [{ required: true, message: "填写配置名称" }],
-  config_value: [{ required: true, message: "填写配置值" }],
-  desc: [{ required: true, message: "填写配置描述" }]
+  role_name: [{ required: true, message: "请填写角色名称" }],
+  desc: [{ required: true, message: "请填写角色描述" }]
 });
 
 interface DrawerProps {
@@ -68,8 +60,11 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
+      if (drawerProps.value.title === "编辑") {
+        drawerProps.value.row["update_time"] = getCurrentDate();
+      }
       await drawerProps.value.api!(drawerProps.value.row);
-      ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
+      ElMessage.success({ message: `${drawerProps.value.title}角色成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;
     } catch (error) {
