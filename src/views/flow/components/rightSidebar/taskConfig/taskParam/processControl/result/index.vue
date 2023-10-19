@@ -198,7 +198,7 @@ const updateFlowData = async () => {
 // 修改流程控制参数
 const updateProcessControlParam = async () => {
   let taskNode: TaskNodeType = {
-    id: parseInt(nodeConfig.value.id),
+    id: nodeConfig.value.id,
     process_id: process_id.value,
     method_kwargs: nodeParam.value
   };

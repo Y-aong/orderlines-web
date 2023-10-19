@@ -1,23 +1,23 @@
 import { defineStore } from "pinia";
 import { getTaskNodeRequest, getNodeMenuRequest, getFlowTaskDataRequest } from "@/api/flow";
 import { getStorage } from "@/utils/storage";
+import { FlowStoreType } from "../interface/index";
 
 const useFlowStore = defineStore("FlowStore", {
-  state: () => {
+  state: (): FlowStoreType => {
     return {
       // 流程名称
-      process_name: getStorage("PROCESS_NAME", "str"),
+      process_name: getStorage("PROCESS_NAME", "str") as string,
       // 流程id
-      process_id: getStorage("PROCESS_ID", "str"),
+      process_id: getStorage("PROCESS_ID", "str") as string,
       // 是否运行
-      isRunning: false,
+      isRunning: false as boolean,
       // 是否保存
-      isSave: false,
+      isSave: false as boolean,
       //节点菜单
       nodeMenu: [],
-
       // 节点配置
-      nodeConfig: [],
+      nodeConfig: {},
       // 节点参数
       nodeParam: [],
       // 节点结果

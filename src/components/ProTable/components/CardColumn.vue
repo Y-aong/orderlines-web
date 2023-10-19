@@ -12,14 +12,14 @@
       >
         <div
           :style="{
-            width: props.cardLayout.width,
-            height: props.cardLayout.height
+            width: props.cardLayout?.width,
+            height: props.cardLayout?.height
           }"
         >
           <el-card class="box-card">
             <template #header>
               <div class="card-header">
-                <span> {{ row[cardTitle] }}</span>
+                <span> {{ row?.cardTitle }}</span>
                 <div>
                   <el-button size="small" :icon="View" @click="props.selectItem('查看', row)" />
                   <el-button size="small" :icon="Edit" @click="props.updateItem('编辑', row)" />
@@ -49,16 +49,17 @@
 import { defineProps } from "vue";
 import UploadImg from "@/components/Upload/Img.vue";
 import { Edit, View, Delete } from "@element-plus/icons-vue";
-// eslint-disable-next-line vue/require-prop-types
-const props = defineProps([
-  "tableData",
-  "cardColumn",
-  "cardTitle",
-  "cardLayout",
-  "selectItem",
-  "updateItem",
-  "deleteItem"
-]);
+import { cardLayoutProps, cardProps } from "../interface";
+interface Props {
+  tableData: any;
+  cardColumn?: cardProps[];
+  cardTitle?: string;
+  cardLayout?: cardLayoutProps;
+  selectItem: any;
+  updateItem: any;
+  deleteItem: any;
+}
+const props = defineProps<Props>();
 </script>
 <style scoped lang="scss">
 .card-header {
@@ -74,7 +75,6 @@ const props = defineProps([
   font-size: 15px;
 }
 .cards {
-  // height: 90%;
   max-height: 90%;
   overflow: auto;
 }

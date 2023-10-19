@@ -59,3 +59,88 @@ export interface AuthState {
 export interface KeepAliveState {
   keepAliveName: string[];
 }
+export interface Node {
+  background: string;
+  class_name: string;
+  method_name: string;
+  task_type?: any;
+  text: string;
+  type: string;
+  version: string;
+}
+
+export interface NodeMenuType {
+  nodes: Node[];
+  nodesType: string;
+  title: string;
+}
+
+export interface CommonParamType {
+  default?: any;
+  desc: string;
+  name: string;
+  required: boolean;
+  title: string;
+  type: string;
+  value: string;
+}
+
+export interface nodeConfigType {
+  task_name: string;
+  desc: string;
+  version: string;
+  task_id: string;
+  method_name: string;
+  task_type: string;
+  id: number;
+}
+
+export interface nodeResultType {
+  default?: any;
+  desc: string;
+  name: string;
+  required: boolean;
+  result_key: string;
+  title: string;
+  type: string;
+}
+
+export interface SelectOption {
+  label: string;
+  value: string;
+}
+
+export interface DefaultTaskConfigType {
+  config_name: string;
+  config_value: string | SelectOption[];
+  desc: string;
+}
+
+export interface Condition {
+  condition: string;
+  task_status: string;
+}
+
+export interface Condition {
+  condition: Condition[];
+  task_id: string;
+}
+
+export interface ProcessControlStatus {
+  conditions: Condition[];
+  pc_type: string;
+}
+
+export interface FlowStoreType {
+  process_name: string;
+  process_id: string;
+  isRunning: boolean;
+  isSave: boolean;
+  nodeMenu: NodeMenuType[];
+  nodeConfig: nodeConfigType;
+  // nodeParam: CommonParamType[] | ProcessControlStatus;
+  nodeParam: any;
+  nodeResult: nodeResultType[];
+  defaultTaskConfig: DefaultTaskConfigType[];
+  processControlOptions: any;
+}

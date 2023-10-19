@@ -168,9 +168,9 @@ export interface ProTableProps {
   changeCard?: () => void;
   cardTitle?: string;
   cardLayout?: cardLayoutProps;
-  selectItem?: (title: string, item: any) => void;
-  updateItem?: (title: string, item: any) => void;
-  deleteItem?: (item: any) => void;
+  selectItem?: (title: string, item: any) => void | undefined;
+  updateItem?: (title: string, item: any) => void | undefined;
+  deleteItem?: (item: any) => void | undefined;
 }
 
 // 接受父组件参数，配置默认值
