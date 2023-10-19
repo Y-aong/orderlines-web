@@ -8,7 +8,7 @@ export namespace User {
     insert_time: string;
   }
 
-  export interface ResUserList {
+  export interface UserItem {
     id?: string;
     active?: boolean;
     username: string;

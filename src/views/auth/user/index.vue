@@ -61,7 +61,7 @@ const openDrawer = (title: string, row: any) => {
   drawerRef.value?.acceptParams(params);
 };
 
-const deleteUser = async (params: any) => {
+const deleteUser = async (params: User.UserItem) => {
   await useHandleData(deleteUserRequest, { id: [params.id] }, `删除【${params.username}】用户`);
   proTable.value?.getTableList();
 };
@@ -100,7 +100,7 @@ const cardColumn: any = reactive<any>([
   { label: "修改时间", value: "update_time" }
 ]);
 
-const columns = reactive<ColumnProps<User.ResUserList>[]>([
+const columns = reactive<ColumnProps<User.UserItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70 },
@@ -120,7 +120,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 
-const cardLayout = ref<cardLayoutProps>({ xs: 24, sm: 24, md: 12, lg: 6, xl: 8, height: "320px", width: "100%" });
+const cardLayout = ref<cardLayoutProps>({ xs: 24, sm: 24, md: 12, lg: 12, xl: 8, height: "320px", width: "100%" });
 const initParam = reactive({ pageNum: 1, pageSize: 10 });
 // 切换卡片布局
 const changeCard = () => {

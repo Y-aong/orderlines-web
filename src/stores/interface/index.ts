@@ -116,13 +116,13 @@ export interface DefaultTaskConfigType {
   desc: string;
 }
 
-export interface Condition {
+export interface ConditionItem {
   condition: string;
   task_status: string;
 }
 
 export interface Condition {
-  condition: Condition[];
+  condition: ConditionItem[];
   task_id: string;
 }
 

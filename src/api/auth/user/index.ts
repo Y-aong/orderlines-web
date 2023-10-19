@@ -7,10 +7,10 @@ enum API {
   USER_URL = "/user"
 }
 
-export const getUserRequest = (data: User.ReqUserParams) => http.get<ResPage<User.ResUserList>>(API.USER_URL, data);
+export const getUserRequest = (data: User.ReqUserParams) => http.get<ResPage<User.UserItem>>(API.USER_URL, data);
 
-export const createUserRequest = (data: User.ResUserList) => http.post(API.USER_URL, data);
+export const createUserRequest = (data: User.UserItem) => http.post(API.USER_URL, data);
 
-export const updateUserRequest = (data: User.ResUserList) => http.put(API.USER_URL, data);
+export const updateUserRequest = (data: User.UserItem) => http.put(API.USER_URL, data);
 
 export const deleteUserRequest = (data: DeleteRes) => http.delete(`${API.USER_URL}?id=${data.id}`);
