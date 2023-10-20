@@ -9,7 +9,16 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增群组</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增群组</el-button>
+        <el-button
+          type="danger"
+          :icon="Delete"
+          plain
+          :disabled="!scope.isSelected"
+          @click="batchDelete(scope.selectedListIds)"
+        >
+          批量删除
+        </el-button>
       </template>
 
       <template #expand="scope">
@@ -31,15 +40,23 @@ import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import { getGroupRequest, createGroupRequest, updateGroupRequest, deleteGroupRequest } from "@/api/auth/group/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import GroupDrawer from "./groupDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
+import { Group } from "@/api/auth/group/type";
 
 const drawerRef = ref<InstanceType<typeof GroupDrawer> | null>(null);
 
-const openDrawer = (title: string, row: any) => {
+// 批量删除
+const batchDelete = async (id: string[]) => {
+  await useHandleData(deleteGroupRequest, { id }, "删除所选群组信息");
+  proTable.value?.clearSelection();
+  proTable.value?.getTableList();
+};
+
+const openDrawer = (title: string, row: Partial<Group.GroupItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -51,7 +68,7 @@ const openDrawer = (title: string, row: any) => {
 };
 
 // 删除权限
-const deleteGroup = async (params: any) => {
+const deleteGroup = async (params: Group.GroupItem) => {
   await useHandleData(deleteGroupRequest, { id: [params.id] }, `删除【${params.group_name}】群组`);
   proTable.value?.getTableList();
 };
@@ -65,7 +82,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Group.GroupResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -76,17 +93,14 @@ const dataCallback = (data: any) => {
 
 const getTableList = (params: any) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getGroupRequest(newParams);
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Group.GroupItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "sort", label: "Sort", width: 80 },
   { type: "expand", label: "Expand", width: 100 },
-  { prop: "id", label: "序号", width: 70 },
+  { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "group_name", label: "群组名称", search: { el: "input" } },
   { prop: "desc", label: "群组描述", search: { el: "input" } },
   { prop: "owner_name", label: "群主名称", search: { el: "input" } },

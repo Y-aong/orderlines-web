@@ -80,5 +80,6 @@ export const getProcessControlRequest = (task_id: string, process_id: string) =>
 export const getPrevNodeResultRequest = (task_id: string, process_id: string) =>
   http.get(`${API.PREV_NODE_RESULT}?task_id=${task_id}&process_id=${process_id}`);
 
+// 获取变量下拉选项
 export const getVariableOptionRequest = (process_id: string) =>
   http.get(`${API.VARIABLE_OPTION}?process_id=${process_id}`);

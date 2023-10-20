@@ -28,7 +28,7 @@
         <template #default="scope">
           {{ scope.row }}
           <el-tag disable-transitions>
-            {{ nodeResult.required === undefined ? "无" : "有" }}
+            {{ scope.row.required === undefined ? "无" : "有" }}
           </el-tag>
         </template>
       </el-table-column>
@@ -44,7 +44,7 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { TaskNodeType } from "@/api/flow/type";
 import { createTaskFlowDataRequest, getVariableOptionRequest, updateTaskRequest } from "@/api/flow";
-import { notice } from "@/utils/notice";
+import { ElMessage } from "element-plus";
 
 let dialogTableVisible = ref<boolean>(false);
 let variableOption = ref<any>([]);
@@ -80,13 +80,13 @@ const updateTask = async (result_name: string, result_value: string) => {
       variable_key: result_value
     };
     let taskNode: TaskNodeType = {
-      id: parseInt(nodeConfig.value.id),
+      id: nodeConfig.value.id,
       task_id: nodeConfig.value.task_id,
       process_id: process_id.value,
       result_config: result_config
     };
     let result: any = await updateTaskRequest(taskNode);
-    if (result.code != 200) notice("任务配置修改失败");
+    if (result.code != 200) ElMessage.error("任务配置修改失败");
   } else {
     console.log("任务配置修改失败");
   }

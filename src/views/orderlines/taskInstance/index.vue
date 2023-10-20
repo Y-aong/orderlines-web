@@ -56,6 +56,7 @@ import {
   TaskInstanceExport
 } from "@/api/orderlines/taskInstance/index";
 import { useDownload } from "@/hooks/useDownload";
+import { TaskInstance } from "@/api/orderlines/taskInstance/type";
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
@@ -90,7 +91,7 @@ const downloadFile = async () => {
 };
 
 // 表格配置项
-const columns = reactive<ColumnProps<any>[]>([
+const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
   { prop: "id", label: "序号", width: 70 },
   { prop: "task_name", label: "任务名称", width: 120 },
   { prop: "method_name", label: "插件方法", width: 140 },
@@ -98,7 +99,7 @@ const columns = reactive<ColumnProps<any>[]>([
     prop: "task_status",
     label: "任务状态",
     width: 120,
-    render: (scope: any) => {
+    render: scope => {
       return <el-tag type={taskStatusTag[scope.row.task_status]}>{taskStatusDesc[scope.row.task_status]}</el-tag>;
     }
   },
@@ -108,7 +109,7 @@ const columns = reactive<ColumnProps<any>[]>([
     prop: "task_result",
     label: "任务结果",
     width: 110,
-    render: (scope: any) => {
+    render: scope => {
       return (
         <el-button
           type="primary"
@@ -124,7 +125,7 @@ const columns = reactive<ColumnProps<any>[]>([
     prop: "task_error_info",
     label: "任务异常",
     width: 110,
-    render: (scope: any) => {
+    render: scope => {
       return (
         <el-button type="primary" link onClick={() => ElMessage.error(scope.row.task_error_info)}>
           {"异常信息"}
@@ -166,14 +167,14 @@ const changeTreeFilter = (val: string[]) => {
 };
 
 // 删除流程信息
-const deleteTaskInstance = async (params: any) => {
+const deleteTaskInstance = async (params: TaskInstance.TaskInstanceItem) => {
   await useHandleData(deleteTaskInstanceRequest, { id: [params.id] }, `删除【${params.task_name}】任务实例`);
   proTable.value?.getTableList();
 };
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof taskInstanceDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<any> = {}) => {
+const openDrawer = (title: string, row: Partial<TaskInstance.TaskInstanceItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",

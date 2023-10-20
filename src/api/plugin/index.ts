@@ -1,4 +1,5 @@
 import http from "@/api";
+import { Plugin } from "./type";
 
 //项目用户相关的请求地址
 enum API {
@@ -6,8 +7,8 @@ enum API {
   PLUGIN_EXPORT_URL = "/export/plugin"
 }
 
-export const PluginExport = (data: any) => http.download(API.PLUGIN_EXPORT_URL, data);
-export const getPluginRequest = (data: any) => http.get(API.PLUGIN_URL, data);
-export const createPluginRequest = (data: any) => http.post(API.PLUGIN_URL, data);
-export const updatePluginRequest = (data: any) => http.put(API.PLUGIN_URL, data);
-export const deletePluginRequest = (data: any) => http.delete(`${API.PLUGIN_URL}?id=${data.id}`);
+export const PluginExport = (data: Plugin.PluginFilter) => http.download(API.PLUGIN_EXPORT_URL, data);
+export const getPluginRequest = (data: Plugin.PluginFilter) => http.get<Plugin.PluginItem>(API.PLUGIN_URL, data);
+export const createPluginRequest = (data: Plugin.PluginItem) => http.post(API.PLUGIN_URL, data);
+export const updatePluginRequest = (data: Plugin.PluginItem) => http.put(API.PLUGIN_URL, data);
+export const deletePluginRequest = (data: Plugin.PluginItem) => http.delete(`${API.PLUGIN_URL}?id=${data.id}`);

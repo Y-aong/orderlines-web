@@ -37,20 +37,21 @@ import {
   deleteTaskRequest,
   taskExport
 } from "@/api/orderlines/task/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import TaskDrawer from "./taskDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
+import { Task } from "@/api/orderlines/task/type";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof TaskDrawer> | null>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<Task.TaskItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -69,8 +70,8 @@ const downloadFile = async () => {
 };
 
 // 删除流程信息
-const deleteTask = async (params: any) => {
-  await useHandleData(deleteTaskRequest, { id: [params.id] }, `删除【${params.process_name}】流程`);
+const deleteTask = async (params: Task.TaskItem) => {
+  await useHandleData(deleteTaskRequest, { id: [params.id] }, `删除【${params.task_name}】任务`);
   proTable.value?.getTableList();
 };
 // 跳转详情页
@@ -82,7 +83,7 @@ const toDetail = (row: any) => {
   }
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Task.TaskResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -91,22 +92,19 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Task.TaskFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getTaskRequest(newParams);
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Task.TaskItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "task_name", label: "任务名称", search: { el: "input" } },
   { prop: "task_id", label: "任务id", search: { el: "input" } },
   { prop: "desc", label: "任务描述" },
-  { prop: "creator", label: "创建者", width: 100, search: { el: "input", width: 10 } },
+  { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater", label: "修改者", width: 100, search: { el: "input" } },
   {
     prop: "insert_time",

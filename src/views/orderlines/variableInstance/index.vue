@@ -36,20 +36,21 @@ import {
   deleteVariableInstanceRequest,
   VariableInstanceExport
 } from "@/api/orderlines/variableInstance/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableInstanceDrawer from "./variableInstanceDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
+import { VariableInstance } from "@/api/orderlines/variableInstance/type";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof variableInstanceDrawer> | null>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<VariableInstance.VariableInstanceItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -69,8 +70,8 @@ const downloadFile = async () => {
 };
 
 // 删除流程信息
-const deleteVariableInstance = async (params: any) => {
-  await useHandleData(deleteVariableInstanceRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
+const deleteVariableInstance = async (params: VariableInstance.VariableInstanceItem) => {
+  await useHandleData(deleteVariableInstanceRequest, { id: [params.id] }, `删除【${params.variable_key}】变量实例`);
   proTable.value?.getTableList();
 };
 // 跳转详情页
@@ -82,7 +83,7 @@ const toDetail = (row: any) => {
   }
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: VariableInstance.VariableInstanceResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -91,15 +92,12 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: VariableInstance.VariableInstanceFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getVariableInstanceRequest(newParams);
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<VariableInstance.VariableInstanceItem>[]>([
   { type: "selection", fixed: "left", width: 70 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },

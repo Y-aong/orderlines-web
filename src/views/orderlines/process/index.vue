@@ -45,7 +45,7 @@ import {
   deleteProcessRequest,
   processExport
 } from "@/api/orderlines/process/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance, cardProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import { cardLayoutProps } from "@/components/ProTable/interface";
 import { useDownload } from "@/hooks/useDownload";
@@ -53,14 +53,14 @@ import ProcessDrawer from "./ProcessDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { Process } from "@/api/orderlines/process/type";
+
 const isCard = ref<boolean>(true);
 const router = useRouter();
-
 const proTable = ref<ProTableInstance>();
-
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessDrawer> | null>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<Process.ProcessItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -72,7 +72,7 @@ const openDrawer = (title: string, row: any = {}) => {
 };
 
 // 删除流程信息
-const deleteProcess = async (params: any) => {
+const deleteProcess = async (params: Process.ProcessItem) => {
   await useHandleData(deleteProcessRequest, { id: [params.id] }, `删除【${params.process_name}】流程`);
   proTable.value?.getTableList();
 };
@@ -92,7 +92,7 @@ const downloadFile = async () => {
   });
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Process.ProcessResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -101,12 +101,12 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Process.ProcessFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getProcessRequest(newParams);
 };
 const cardTitle = ref<string>("process_name");
-const cardColumn: any = reactive<any>([
+const cardColumn: cardProps[] = reactive<cardProps[]>([
   { label: "流程序号", value: "id" },
   { label: "流程名称", value: "process_name" },
   { label: "流程描述", value: "desc" },
@@ -115,14 +115,14 @@ const cardColumn: any = reactive<any>([
   { label: "插入时间", value: "insert_time" },
   { label: "修改时间", value: "update_time" }
 ]);
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
-  { prop: "creator", label: "创建者", width: 100, search: { el: "input", width: 10 } },
+  { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater", label: "修改者", width: 100, search: { el: "input" } },
   {
     prop: "insert_time",

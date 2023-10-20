@@ -1,35 +1,28 @@
-import { BaseResponse } from "@/api/responseType";
+import { ReqPage, ResPage } from "@/api/interface/index";
+export namespace Process {
+  export interface ProcessItem {
+    id: number;
+    creator?: any;
+    creator_id?: any;
+    desc: string;
+    insert_time: string;
+    process_config: string;
+    process_id: string;
+    process_name: string;
+    process_params: string;
+    update_time?: any;
+    updater?: any;
+    updater_id?: any;
+  }
+  export interface ProcessFilter extends ReqPage {
+    id?: number;
+    process_name?: string;
+    process_id?: string;
+    creator?: string;
+    updater?: string;
+    insert_time?: string;
+    update_time?: string;
+  }
 
-export interface ProcessItemType {
-  id?: number;
-  process_id?: string;
-  creator?: any;
-  process_params?: string | {} | undefined;
-  process_config?: string | {} | undefined;
-  process_name: string | {} | undefined;
-  desc?: string | {} | undefined;
-  update_time?: string;
-  updater?: string;
-}
-
-export type ItemType = ProcessItemType[];
-
-export interface ProcessDataType {
-  items: ItemType;
-  total: number;
-}
-
-export interface ProcessResponseType extends BaseResponse {
-  data: ProcessDataType;
-}
-
-export interface queryProcessType {
-  keyword?: string;
-  process_name?: string;
-  process_id?: string;
-  desc?: string;
-  creator?: string;
-  updater?: string;
-  pageNum: number;
-  pageSize: number;
+  export interface ProcessResponse extends ResPage<ProcessItem> {}
 }

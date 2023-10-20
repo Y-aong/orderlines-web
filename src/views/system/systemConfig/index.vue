@@ -8,8 +8,17 @@
       :data-callback="dataCallback"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增配置</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增配置</el-button>
         <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
+        <el-button
+          type="danger"
+          :icon="Delete"
+          plain
+          :disabled="!scope.isSelected"
+          @click="batchDelete(scope.selectedListIds)"
+        >
+          批量删除
+        </el-button>
       </template>
 
       <template #operation="scope">
@@ -33,12 +42,13 @@ import {
   deleteSystemSettingRequest,
   SystemSettingExport
 } from "@/api/system/setting/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import systemSettingDrawer from "./systemSettingDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
 import { ElMessageBox } from "element-plus";
+import { Conf } from "@/api/system/setting/type";
 
 const proTable = ref<ProTableInstance>();
 
@@ -51,7 +61,7 @@ const downloadFile = async () => {
 
 // 新增，查看，编辑
 const drawerRef = ref<any>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<Conf.ConfItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -62,13 +72,20 @@ const openDrawer = (title: string, row: any = {}) => {
   drawerRef.value?.acceptParams(params);
 };
 
+// 批量删除
+const batchDelete = async (id: string[]) => {
+  await useHandleData(deleteSystemSettingRequest, { id }, "删除所选角色信息");
+  proTable.value?.clearSelection();
+  proTable.value?.getTableList();
+};
+
 // 删除流程信息
-const deleteSystemSetting = async (params: any) => {
+const deleteSystemSetting = async (params: Conf.ConfItem) => {
   await useHandleData(deleteSystemSettingRequest, { id: [params.id] }, `删除【${params.config_name}】系统配置`);
   proTable.value?.getTableList();
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Conf.ConfResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -77,12 +94,12 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Conf.ConfFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getSystemSettingRequest(newParams);
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Conf.ConfItem>[]>([
   { type: "selection", fixed: "left", width: 70 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "config_name", label: "配置名称", search: { el: "input" } },

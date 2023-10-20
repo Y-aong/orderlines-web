@@ -9,7 +9,16 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增权限</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增权限</el-button>
+        <el-button
+          type="danger"
+          :icon="Delete"
+          plain
+          :disabled="!scope.isSelected"
+          @click="batchDelete(scope.selectedListIds)"
+        >
+          批量删除
+        </el-button>
       </template>
 
       <template #expand="scope">
@@ -36,16 +45,17 @@ import {
   updatePermissionRequest,
   deletePermissionRequest
 } from "@/api/auth/permission/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import PermissionDrawer from "./permissionDrawer.vue";
+import { Permission } from "@/api/auth/permission/type";
 
 const proTable = ref<ProTableInstance>();
 const drawerRef = ref<InstanceType<typeof PermissionDrawer> | null>(null);
 
-const openDrawer = (title: string, row: any) => {
+const openDrawer = (title: string, row: Partial<Permission.PermissionItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -56,9 +66,16 @@ const openDrawer = (title: string, row: any) => {
   drawerRef.value?.acceptParams(params);
 };
 
+// 批量删除
+const batchDelete = async (id: string[]) => {
+  await useHandleData(deletePermissionRequest, { id }, "删除所选权限信息");
+  proTable.value?.clearSelection();
+  proTable.value?.getTableList();
+};
+
 // 删除权限
-const deletePermission = async (params: any) => {
-  await useHandleData(deletePermissionRequest, { id: [params.id] }, `删除【${params.role_name}】角色`);
+const deletePermission = async (params: Permission.PermissionItem) => {
+  await useHandleData(deletePermissionRequest, { id: [params.id] }, `删除【${params.name}】权限`);
   proTable.value?.getTableList();
 };
 
@@ -69,7 +86,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Permission.PermissionResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -78,10 +95,8 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Permission.PermissionFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  delete newParams.createTime;
-  console.log("newParams", newParams);
   return getPermissionRequest(newParams);
 };
 const reqMethods: any = {
@@ -97,7 +112,7 @@ const reqMethodTag: any = {
   PUT: "",
   DELETE: "danger"
 };
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Permission.PermissionItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },

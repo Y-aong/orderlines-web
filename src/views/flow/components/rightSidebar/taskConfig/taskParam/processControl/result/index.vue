@@ -161,7 +161,7 @@ import { TaskNodeType } from "@/api/flow/type";
 import { setStorage } from "@/utils/storage";
 import { branchItem, conditionItem, processControlStatusItem, signs } from "@/utils/variable";
 import { Delete, Plus } from "@element-plus/icons-vue";
-import { notice } from "@/utils/notice";
+import { ElMessage } from "element-plus";
 
 let { nodeParam, process_id, nodeConfig, processControlOptions } = storeToRefs(useFlowStore());
 let depth = ref(5);
@@ -205,7 +205,7 @@ const updateProcessControlParam = async () => {
   await updateTaskRequest(taskNode);
   await updateFlowData();
   await getProcessControlParam();
-  notice("保存流程控制参数成功", "success");
+  ElMessage.success("保存流程控制参数成功");
   updateResult.value = false;
 };
 // 增加分支

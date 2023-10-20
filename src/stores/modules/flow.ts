@@ -17,7 +17,15 @@ const useFlowStore = defineStore("FlowStore", {
       //节点菜单
       nodeMenu: [],
       // 节点配置
-      nodeConfig: {},
+      nodeConfig: {
+        task_name: "",
+        desc: "",
+        version: "",
+        task_id: "",
+        method_name: "",
+        task_type: "",
+        id: 0
+      },
       // 节点参数
       nodeParam: [],
       // 节点结果

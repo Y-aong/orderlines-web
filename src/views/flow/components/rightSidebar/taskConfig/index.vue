@@ -57,7 +57,7 @@ const activeNames = ref(["taskParams"]);
 // 修改任务
 const updateTask = async () => {
   let taskNode: TaskNodeType = {
-    id: parseInt(nodeConfig.value.id),
+    id: nodeConfig.value.id,
     process_id: process_id.value,
     task_name: nodeConfig.value.task_name,
     desc: nodeConfig.value.desc

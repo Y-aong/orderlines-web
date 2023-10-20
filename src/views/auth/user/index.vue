@@ -17,7 +17,17 @@
       :delete-item="deleteUser"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增用户</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增用户</el-button>
+        <el-button
+          v-if="!isCard"
+          type="danger"
+          :icon="Delete"
+          plain
+          :disabled="!scope.isSelected"
+          @click="batchDelete(scope.selectedListIds)"
+        >
+          批量删除
+        </el-button>
       </template>
 
       <template #expand="scope">
@@ -39,7 +49,7 @@ import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import { getUserRequest, createUserRequest, updateUserRequest, deleteUserRequest } from "@/api/auth/user/index";
-import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps, cardProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import UserDrawer from "./userDrawer.vue";
@@ -50,7 +60,7 @@ import { User } from "@/api/auth/user/type";
 const isCard = ref<boolean>(true);
 const proTable = ref<ProTableInstance>();
 const drawerRef = ref<InstanceType<typeof UserDrawer> | null>(null);
-const openDrawer = (title: string, row: any) => {
+const openDrawer = (title: string, row: Partial<User.UserItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -59,6 +69,13 @@ const openDrawer = (title: string, row: any) => {
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value?.acceptParams(params);
+};
+
+// 批量删除
+const batchDelete = async (id: string[]) => {
+  await useHandleData(deleteUserRequest, { id }, "删除所选用户信息");
+  proTable.value?.clearSelection();
+  proTable.value?.getTableList();
 };
 
 const deleteUser = async (params: User.UserItem) => {
@@ -73,7 +90,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: User.UserResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -82,16 +99,13 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: User.UserFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getUserRequest(newParams);
 };
 const cardTitle = ref<string>("username");
 
-const cardColumn: any = reactive<any>([
+const cardColumn: cardProps[] = reactive<cardProps[]>([
   { label: "用户编号", value: "id" },
   { label: "用户名称", value: "username" },
   { label: "用户手机", value: "phone" },

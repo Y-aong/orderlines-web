@@ -39,7 +39,7 @@
     <el-button style="width: 100%" type="primary" @click="getTaskConfig"> 查看任务配置 </el-button>
   </el-collapse-item>
 
-  <el-dialog v-model="dialogTableVisible" :title="`${defaultTaskConfig.config_name}——返回值说明`">
+  <el-dialog v-model="dialogTableVisible" title="返回值说明">
     <el-table :data="defaultTaskConfig" style="width: 100%" border>
       <el-table-column prop="config_name" label="任务配置名称" min-width="150" />
       <el-table-column prop="config_value" label="任务运行配置" min-width="150">
@@ -73,7 +73,7 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { TaskNodeType } from "@/api/flow/type";
 import { createFlowDataRequest, updateTaskRequest } from "@/api/flow";
-import { notice } from "@/utils/notice";
+import { ElMessage } from "element-plus";
 
 const flowStore = useFlowStore();
 const defaultTaskStrategy = ref("报错");
@@ -105,13 +105,13 @@ const updateTask = async (config_name: string, config_value: string) => {
   let task_config: any = {};
   task_config[config_name] = config_value;
   let taskNode: TaskNodeType = {
-    id: parseInt(nodeConfig.value.id),
+    id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
     task_config: task_config
   };
   let result: any = await updateTaskRequest(taskNode);
-  if (result.code != 200) notice("任务配置修改失败");
+  if (result.code != 200) ElMessage.error("任务配置修改失败");
 };
 </script>
 <script lang="ts">

@@ -37,20 +37,21 @@ import {
   deleteVariableRequest,
   variableExport
 } from "@/api/orderlines/variable/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableDrawer from "./variableDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
+import { Variable } from "@/api/orderlines/variable/type";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof variableDrawer> | null>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<Variable.VariableItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -67,7 +68,7 @@ const downloadFile = async () => {
   });
 };
 // 删除流程信息
-const deleteTaskInstance = async (params: any) => {
+const deleteTaskInstance = async (params: Variable.VariableItem) => {
   await useHandleData(deleteVariableRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
   proTable.value?.getTableList();
 };
@@ -80,7 +81,7 @@ const toDetail = (row: any) => {
   }
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Variable.VariableResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -89,15 +90,12 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Variable.VariableFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getVariableRequest(newParams);
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
   { type: "selection", fixed: "left", width: 70 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },

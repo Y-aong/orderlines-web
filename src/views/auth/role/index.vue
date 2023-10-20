@@ -8,7 +8,16 @@
       :data-callback="dataCallback"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增角色</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增角色</el-button>
+        <el-button
+          type="danger"
+          :icon="Delete"
+          plain
+          :disabled="!scope.isSelected"
+          @click="batchDelete(scope.selectedListIds)"
+        >
+          批量删除
+        </el-button>
       </template>
 
       <template #expand="scope">
@@ -30,15 +39,16 @@ import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import { getRoleRequest, createRoleRequest, updateRoleRequest, deleteRoleRequest } from "@/api/auth/role/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import RoleDrawer from "./roleDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
+import { Role } from "@/api/auth/role/type";
 
 const proTable = ref<ProTableInstance>();
 const drawerRef = ref<InstanceType<typeof RoleDrawer> | null>(null);
 
-const openDrawer = (title: string, row: any) => {
+const openDrawer = (title: string, row: Partial<Role.RoleItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -49,12 +59,19 @@ const openDrawer = (title: string, row: any) => {
   drawerRef.value?.acceptParams(params);
 };
 
-const deleteRole = async (params: any) => {
+// 批量删除
+const batchDelete = async (id: string[]) => {
+  await useHandleData(deleteRoleRequest, { id }, "删除所选角色信息");
+  proTable.value?.clearSelection();
+  proTable.value?.getTableList();
+};
+
+const deleteRole = async (params: Role.RoleItem) => {
   await useHandleData(deleteRoleRequest, { id: [params.id] }, `删除【${params.role_name}】角色`);
   proTable.value?.getTableList();
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Role.RoleResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -63,13 +80,12 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Role.RoleFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  delete newParams.createTime;
   return getRoleRequest(newParams);
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Role.RoleItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70 },

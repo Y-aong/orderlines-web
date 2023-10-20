@@ -47,7 +47,7 @@ import useFlowStore from "@/stores/modules/flow";
 import { TaskNodeType } from "@/api/flow/type";
 import { createTaskFlowDataRequest, updateTaskRequest, getVariableOptionRequest } from "@/api/flow";
 import { ElNotification } from "element-plus";
-import { notice } from "@/utils/notice";
+import { ElMessage } from "element-plus";
 
 const { nodeParam, nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
 let dialogTableVisible = ref<boolean>(false);
@@ -83,16 +83,16 @@ const updateTask = async (row: any) => {
       let method_kwargs: any = {};
       method_kwargs[param_name] = param_value;
       let taskNode: TaskNodeType = {
-        id: parseInt(nodeConfig.value.id),
+        id: nodeConfig.value.id,
         process_id: process_id.value,
         method_kwargs: method_kwargs
       };
       let result: any = await updateTaskRequest(taskNode);
-      if (result.code !== 200) notice("任务配置修改失败");
+      if (result.code !== 200) ElMessage.error("任务配置修改失败");
       await updateFlowData();
     }
   } else {
-    notice("修改任务参数失败参数值为空");
+    ElMessage.error("修改任务参数失败参数值为空");
   }
 };
 

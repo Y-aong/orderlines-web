@@ -36,7 +36,7 @@ import { v4 as uuid4 } from "uuid";
 import { createTaskFlowDataRequest, createTaskRequest } from "@/api/flow/index";
 import { Location } from "@element-plus/icons-vue";
 import { processControlStatusItem } from "@/utils/variable";
-import { notice } from "@/utils/notice";
+import { ElMessage } from "element-plus";
 
 let { getNodeMenu, getTaskNode } = useFlowStore();
 let { nodeConfig, nodeResult, nodeParam, process_id, defaultTaskConfig, nodeMenu } = storeToRefs(useFlowStore());
@@ -111,7 +111,7 @@ const startDrag = async (item: any) => {
       nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
     }
     const res: any = await createTaskFlowDataRequest(flow_data);
-    if (res.code !== 200) notice("存放流程数据失败");
+    if (res.code !== 200) ElMessage.error("存放流程数据失败");
     const node_config: any = {
       task_name: item.text,
       desc: item.text,
@@ -137,7 +137,7 @@ const checkStartNode = (nodeType: string, graphData: any): boolean => {
   const nodes = graphData.nodes;
   nodes.forEach((val: any) => {
     if (val.type === "start-node" && nodeType === "start-node") {
-      notice("一个流程中只可以存在一个开始节点");
+      ElMessage.error("一个流程中只可以存在一个开始节点");
       return false;
     }
   });

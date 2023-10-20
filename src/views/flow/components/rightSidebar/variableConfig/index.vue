@@ -72,7 +72,6 @@ import { VariableItemType } from "@/api/flow/type";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { notice } from "@/utils/notice";
 
 let { process_id, process_name, isRunning } = storeToRefs(useFlowStore());
 
@@ -157,16 +156,10 @@ const getVariableDetail = async (t_id: number) => {
 const deleteVariable = async (t_id: number) => {
   let res: any = await deleteVariableRequest(t_id);
   if (res.code == 200) {
-    ElMessage({
-      type: "success",
-      message: "删除变量完成"
-    });
+    ElMessage.success("删除变量完成");
     await getVariable();
   } else {
-    ElMessage({
-      type: "error",
-      message: "删除变量失败"
-    });
+    ElMessage.error("删除变量失败");
   }
   await getVariable();
 };
@@ -190,7 +183,7 @@ const confirm = async () => {
     };
     let result: any = await updateVariableRequest(variableCreateData as VariableItemType);
     if (result.code !== 200) {
-      notice("修改变量失败");
+      ElMessage.error("修改变量失败");
     }
   } else {
     // 创建变量
@@ -204,7 +197,7 @@ const confirm = async () => {
     };
     let result: any = await createVariableRequest(variableCreateData as VariableItemType);
     if (result.code !== 200) {
-      notice("创建变量失败");
+      ElMessage.error("创建变量失败");
     }
   }
   VariableItem.variable_key = "";

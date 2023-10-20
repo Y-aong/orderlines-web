@@ -99,7 +99,7 @@ export interface nodeResultType {
   default?: any;
   desc: string;
   name: string;
-  required: boolean;
+  required?: boolean;
   result_key: string;
   title: string;
   type: string;

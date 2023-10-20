@@ -78,71 +78,44 @@ const options = [
 const startProcess = async () => {
   const result: any = await startProcessRequest(process_id.value);
   if (result.code == 200) {
-    ElMessage({
-      type: "success",
-      message: "流程启动成功"
-    });
+    ElMessage.success("流程启动成功");
     isRunning.value = true;
     setStorage(true, "IS_RUNNING");
   } else {
-    ElMessage({
-      type: "error",
-      message: result.message
-    });
+    ElMessage.error("流程启动成功");
   }
 };
 
 const stopProcess = async () => {
   let result: any = await stopProcessRequest(process_id.value);
   if (result.code == 200) {
-    ElMessage({
-      type: "success",
-      message: "流程停止成功"
-    });
+    ElMessage.success("流程停止成功");
   } else {
-    ElMessage({
-      type: "error",
-      message: result.message
-    });
+    ElMessage.error("流程停止失败" + result.message);
   }
 };
 
 const pausedProcess = async () => {
   let result: any = await pausedProcessRequest(process_id.value);
   if (result.code === 200) {
-    ElMessage({
-      type: "success",
-      message: "流程暂停成功"
-    });
+    ElMessage.success("流程暂停成功");
   } else {
-    ElMessage({
-      type: "error",
-      message: result.message
-    });
+    ElMessage.error("流程暂停失败" + result.message);
   }
 };
 
 const recoverProcess = async () => {
   let result: any = await recoverProcessRequest(process_id.value);
   if (result.code == 200) {
-    ElMessage({
-      type: "success",
-      message: "流程恢复成功"
-    });
+    ElMessage.success("流程恢复成功");
   } else {
-    ElMessage({
-      type: "error",
-      message: result.message
-    });
+    ElMessage.error("流程恢复失败" + result.message);
   }
 };
 
 const saveProcess = async () => {
   if (isSave.value) {
-    ElMessage({
-      type: "success",
-      message: "流程开始编辑！"
-    });
+    ElMessage.success("流程开始编辑！");
     isSave.value = false;
     isRunning.value = false;
   } else {
@@ -153,17 +126,11 @@ const saveProcess = async () => {
     if (response.code === 200) {
       isSave.value = true;
       setStorage(true, "IS_SAVE");
-      ElMessage({
-        type: "success",
-        message: "流程保存成功！"
-      });
+      ElMessage.success("流程保存成功！");
       isRunning.value = false;
       isSave.value = true;
     } else {
-      ElMessage({
-        type: "error",
-        message: "流程保存失败！"
-      });
+      ElMessage.error("流程保存失败！");
     }
   }
 };

@@ -36,19 +36,20 @@ import {
   updateProcessInstanceRequest,
   deleteProcessInstanceRequest
 } from "@/api/orderlines/processInstance/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import ProcessInstanceDrawer from "./ProcessInstanceDrawer.vue";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { PInstance } from "@/api/orderlines/processInstance/type";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessInstanceDrawer> | null>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<PInstance.ProcessInstanceItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -60,7 +61,7 @@ const openDrawer = (title: string, row: any = {}) => {
 };
 
 // 删除流程信息
-const deleteProcess = async (params: any) => {
+const deleteProcess = async (params: PInstance.ProcessInstanceItem) => {
   await useHandleData(deleteProcessInstanceRequest, { id: [params.id] }, `删除【${params.process_name}】流程`);
   proTable.value?.getTableList();
 };
@@ -73,7 +74,7 @@ const toDetail = (row: any) => {
   }
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: PInstance.ProcessInstanceResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -82,7 +83,7 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: PInstance.ProcessInstanceFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getProcessInstanceRequest(newParams);
 };
@@ -104,7 +105,7 @@ const processStatusTag: any = {
   PAUSED: "warning"
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
@@ -115,14 +116,14 @@ const columns = reactive<any>([
     prop: "process_status",
     label: "流程状态",
     width: 120,
-    render: (scope: any) => {
+    render: scope => {
       return <el-tag type={processStatusTag[scope.row.run_type]}>{processStatusDesc[scope.row.process_status]}</el-tag>;
     }
   },
   {
     prop: "run_type",
     label: "触发方式",
-    render: (scope: any) => {
+    render: scope => {
       return (
         <el-tag type={scope.row.run_type === "trigger" ? "success" : "warning"}>
           {scope.row.run_type === "trigger" ? "手动" : "定时"}
@@ -137,8 +138,7 @@ const columns = reactive<any>([
     search: {
       el: "date-picker",
       span: 2,
-      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" },
-      defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"]
+      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
   {
@@ -148,8 +148,7 @@ const columns = reactive<any>([
     search: {
       el: "date-picker",
       span: 2,
-      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" },
-      defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"]
+      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }

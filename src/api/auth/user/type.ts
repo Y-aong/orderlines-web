@@ -1,22 +1,20 @@
-import { ReqPage } from "@/api/interface/index";
-
+import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace User {
-  export interface ReqUserParams extends ReqPage {
+  export interface UserItem {
+    id?: number;
+    desc: string;
     username: string;
-    email: string;
-    phone: string;
+    phone?: string;
+    email?: string;
     insert_time: string;
+    update_time: string;
+  }
+  export interface UserFilter extends ReqPage {
+    id?: number;
+    username?: string;
+    phone?: string;
+    email?: string;
   }
 
-  export interface UserItem {
-    id?: string;
-    active?: boolean;
-    username: string;
-    email?: string;
-    phone?: string;
-    insert_time: string;
-    img_url?: string;
-    group_owner?: string;
-    dept_id?: number;
-  }
+  export interface UserResponse extends ResPage<UserItem> {}
 }

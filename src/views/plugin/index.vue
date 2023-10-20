@@ -9,8 +9,17 @@
       @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增插件</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增插件</el-button>
         <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
+        <el-button
+          type="danger"
+          :icon="Delete"
+          plain
+          :disabled="!scope.isSelected"
+          @click="batchDelete(scope.selectedListIds)"
+        >
+          批量删除
+        </el-button>
       </template>
 
       <template #expand="scope">
@@ -38,18 +47,19 @@ import {
   deletePluginRequest,
   PluginExport
 } from "@/api/plugin/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import pluginDrawer from "./pluginDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
+import { Plugin } from "@/api/plugin/type";
 
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof pluginDrawer> | null>(null);
-const openDrawer = (title: string, row: any = {}) => {
+const openDrawer = (title: string, row: Partial<Plugin.PluginItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -67,8 +77,15 @@ const downloadFile = async () => {
   });
 };
 
+// 批量删除
+const batchDelete = async (id: string[]) => {
+  await useHandleData(deletePluginRequest, { id }, "删除所选角色信息");
+  proTable.value?.clearSelection();
+  proTable.value?.getTableList();
+};
+
 // 删除插件信息
-const deletePlugin = async (params: any) => {
+const deletePlugin = async (params: Plugin.PluginItem) => {
   await useHandleData(deletePluginRequest, { id: [params.id] }, `删除【${params.method_name}】插件`);
   proTable.value?.getTableList();
 };
@@ -80,7 +97,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: any) => {
+const dataCallback = (data: Plugin.PluginResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -89,11 +106,8 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Plugin.PluginFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
   return getPluginRequest(newParams);
 };
 const nodeType: any = {
@@ -129,7 +143,7 @@ const pluginTagTypes: any = {
   Parallel: "info"
 };
 
-const columns = reactive<any>([
+const columns = reactive<ColumnProps<Plugin.PluginItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   {
