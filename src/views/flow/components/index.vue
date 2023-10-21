@@ -53,7 +53,6 @@ import FlowTabbar from "./tabbar/index.vue";
 import FlowRightSidebar from "./rightSidebar/index.vue";
 import RunningLog from "./runningLog/index.vue";
 import { onMounted, reactive, ref } from "vue";
-import { ProcessItemType } from "@/api/orderlines/process/type";
 import { v4 as uuid4 } from "uuid";
 
 import { createProcessRequest } from "@/api/orderlines/process/index";
@@ -61,6 +60,7 @@ import { ElMessage } from "element-plus";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
 import { setStorage } from "@/utils/storage";
+import { Process } from "@/api/orderlines/process/type";
 let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
 let dialogFormVisible = ref<boolean>(false);
 
@@ -71,7 +71,7 @@ onMounted(async () => {
   }
 });
 
-let ProcessItem = reactive<any>({
+let ProcessItem = reactive<Process.ProcessItem>({
   process_id: "",
   process_name: "",
   creator: "",
@@ -83,7 +83,7 @@ let ProcessItem = reactive<any>({
 });
 
 const confirm = async () => {
-  let requestData: ProcessItemType = {
+  let requestData: Process.ProcessItem = {
     process_id: uuid4(),
     process_name: ProcessItem.process_name,
     desc: ProcessItem.desc,

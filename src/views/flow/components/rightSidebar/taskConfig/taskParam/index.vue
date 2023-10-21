@@ -11,10 +11,11 @@
             <el-select
               v-model="scope.row.value"
               :placeholder="`类型${scope.row.type}，下拉框使用变量`"
-              clearable
               filterable
               allow-create
-              @blur="updateTask(scope.row)"
+              @change="updateTask(scope.row)"
+              @clear="clearFlag = true"
+              @focus="clearFlag = false"
               @click="getVariableOption"
               :disabled="isRunning"
               style="width: 280px"
@@ -44,21 +45,35 @@ import ProcessControl from "./processControl/index.vue";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { TaskNodeType } from "@/api/flow/type";
-import { createTaskFlowDataRequest, updateTaskRequest, getVariableOptionRequest } from "@/api/flow";
+import { updateTaskRequest } from "@/api/orderlines/task/index";
+import { getVariableOptionRequest } from "@/api/flow/variable/index";
+import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
+import { Task } from "@/api/orderlines/task/type";
+import { FlowVariable } from "@/api/flow/variable/type";
 
 const { nodeParam, nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
 let dialogTableVisible = ref<boolean>(false);
-let variableOption = ref<any>([]);
+let variableOption = ref<FlowVariable.VariableOption[]>([{ label: "", value: "" }]);
+let clearFlag = ref<boolean>(false);
+
+interface ParamItem {
+  default: undefined | string;
+  desc: string;
+  name: string;
+  required: boolean;
+  title: string;
+  type: string;
+  value?: string;
+}
+
 const cancel = () => {
-  //对话框隐藏
   dialogTableVisible.value = true;
 };
 
 const getVariableOption = async () => {
-  const result = await getVariableOptionRequest(process_id.value);
+  const result: any = await getVariableOptionRequest(process_id.value);
   console.log("获取变量选项:", result);
   variableOption.value = result.data;
 };
@@ -72,17 +87,18 @@ const updateFlowData = async () => {
   await createTaskFlowDataRequest(update_task_param_flow);
 };
 const height = ref(isRunning ? "30vh" : "65vh");
-// 修改任务参数
-const updateTask = async (row: any) => {
-  console.log("修改任务参数", row);
 
+// 修改任务参数
+const updateTask = async (row: ParamItem) => {
+  console.log("修改任务参数", clearFlag.value, row, row.value, row.name);
+  if (clearFlag.value) return;
   if (row.value) {
     let param_name = row.name;
     let param_value = await checkParam(row);
     if (param_value) {
       let method_kwargs: any = {};
       method_kwargs[param_name] = param_value;
-      let taskNode: TaskNodeType = {
+      let taskNode: Task.TaskItem = {
         id: nodeConfig.value.id,
         process_id: process_id.value,
         method_kwargs: method_kwargs

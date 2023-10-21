@@ -31,9 +31,10 @@ import LogicFlow from "@logicflow/core";
 import { onMounted } from "vue";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { TaskNodeType } from "@/api/flow/type";
 import { v4 as uuid4 } from "uuid";
-import { createTaskFlowDataRequest, createTaskRequest } from "@/api/flow/index";
+import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
+import { createTaskRequest } from "@/api/orderlines/task/index";
+
 import { Location } from "@element-plus/icons-vue";
 import { processControlStatusItem } from "@/utils/variable";
 import { ElMessage } from "element-plus";
@@ -89,7 +90,7 @@ const startDrag = async (item: any) => {
     // 创建节点
     const taskType = taskTypes[item.type];
     //创建节点
-    let task: TaskNodeType = {
+    let task: any = {
       task_id: task_id,
       task_name: item.text,
       desc: item.text,

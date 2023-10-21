@@ -1,23 +1,15 @@
 {
-  "name": "geeker-admin",
+  "name": "orderlines",
   "private": true,
   "version": "1.2.0",
   "type": "module",
-  "description": "geeker-admin open source management system",
+  "description": "Keep the process organized",
   "author": {
     "name": "Geeker",
     "email": "848130454@qq.com",
     "url": "https://github.com/HalseySpicy"
   },
   "license": "MIT",
-  "homepage": "https://github.com/HalseySpicy/Geeker-Admin",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:HalseySpicy/Geeker-Admin.git"
-  },
-  "bugs": {
-    "url": "https://github.com/HalseySpicy/Geeker-Admin/issues"
-  },
   "scripts": {
     "dev": "vite",
     "serve": "vite",

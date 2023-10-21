@@ -1,5 +1,6 @@
 import http from "@/api";
 import { Task } from "./type";
+import { ResultData, BaseUpdate } from "@/api/interface";
 
 enum API {
   TASK_URL = "/task",
@@ -12,6 +13,6 @@ export const getTaskRequest = (data: Task.TaskFilter) => http.get<Task.TaskItem>
 
 export const createTaskRequest = (data: Task.TaskItem) => http.post(API.TASK_URL, data);
 
-export const updateTaskRequest = (data: Task.TaskItem) => http.put(API.TASK_URL, data);
+export const updateTaskRequest = (data: Task.TaskItem) => http.put<ResultData<BaseUpdate>>(API.TASK_URL, data);
 
 export const deleteTaskRequest = (data: Task.TaskItem) => http.delete(`${API.TASK_URL}?id=${data.id}`);

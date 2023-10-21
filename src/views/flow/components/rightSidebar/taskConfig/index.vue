@@ -47,8 +47,7 @@ import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { TaskNodeType } from "@/api/flow/type";
-import { updateTaskRequest } from "@/api/flow";
+import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 
 let { nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
@@ -56,7 +55,7 @@ const activeNames = ref(["taskParams"]);
 
 // 修改任务
 const updateTask = async () => {
-  let taskNode: TaskNodeType = {
+  let taskNode: any = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
     task_name: nodeConfig.value.task_name,

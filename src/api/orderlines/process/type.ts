@@ -1,11 +1,11 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace Process {
   export interface ProcessItem {
-    id: number;
+    id?: number;
     creator?: any;
     creator_id?: any;
     desc: string;
-    insert_time: string;
+    insert_time?: string;
     process_config: string;
     process_id: string;
     process_name: string;

@@ -7,28 +7,27 @@
           <el-select
             v-model="scope.row.result_key"
             :placeholder="`${scope.row.type}下拉框使用变量`"
-            clearable
             filterable
             :disabled="isRunning"
             style="width: 220px"
             @click="getVariableOption"
-            @blur="updateTask(scope.row.name, scope.row.result_key)"
+            @change="updateTask(scope.row.name, scope.row.result_key)"
           >
             <el-option v-for="(item, index) in variableOption" :key="index" :label="item.label" :value="item.value" />
           </el-select>
         </template>
       </el-table-column>
     </el-table>
-    <el-button style="width: 100%" type="primary" @click="cancel"> 查看返回值 </el-button>
+    <el-button style="width: 100%" type="primary" @click="dialogTableVisible = true"> 查看返回值 </el-button>
   </el-collapse-item>
   <el-dialog v-model="dialogTableVisible" :title="`${nodeConfig.task_name}——返回值说明`">
     <el-table :data="nodeResult" style="width: 100%" border>
-      <el-table-column prop="name" label="参数名称" min-width="150" />
+      <el-table-column prop="name" label="返回值名称" min-width="150" />
+      <el-table-column prop="result_key" label="返回值参数" min-width="150" />
       <el-table-column label="默认值" min-width="120">
         <template #default="scope">
-          {{ scope.row }}
           <el-tag disable-transitions>
-            {{ scope.row.required === undefined ? "无" : "有" }}
+            {{ scope.row.default ? scope.row.default : "无默认值" }}
           </el-tag>
         </template>
       </el-table-column>
@@ -42,9 +41,11 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { TaskNodeType } from "@/api/flow/type";
-import { createTaskFlowDataRequest, getVariableOptionRequest, updateTaskRequest } from "@/api/flow";
+import { getVariableOptionRequest } from "@/api/flow/variable/index";
+import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
+import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
+import { Task } from "@/api/orderlines/task/type";
 
 let dialogTableVisible = ref<boolean>(false);
 let variableOption = ref<any>([]);
@@ -55,10 +56,6 @@ const height = ref(isRunning ? "30vh" : "65vh");
 const getVariableOption = async () => {
   const result = await getVariableOptionRequest(process_id.value);
   variableOption.value = result.data;
-};
-
-const cancel = () => {
-  dialogTableVisible.value = true;
 };
 
 // 修改流程图数据
@@ -79,7 +76,7 @@ const updateTask = async (result_name: string, result_value: string) => {
       result_key: result_name,
       variable_key: result_value
     };
-    let taskNode: TaskNodeType = {
+    let taskNode: Task.TaskItem = {
       id: nodeConfig.value.id,
       task_id: nodeConfig.value.task_id,
       process_id: process_id.value,
@@ -88,7 +85,7 @@ const updateTask = async (result_name: string, result_value: string) => {
     let result: any = await updateTaskRequest(taskNode);
     if (result.code != 200) ElMessage.error("任务配置修改失败");
   } else {
-    console.log("任务配置修改失败");
+    ElMessage.error("任务配置修改失败");
   }
 };
 </script>

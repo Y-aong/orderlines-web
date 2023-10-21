@@ -8,7 +8,7 @@ import piniaPersistConfig from "@/stores/helper/persist";
 const keepAliveStore = useKeepAliveStore();
 
 export const useTabsStore = defineStore({
-  id: "geeker-tabs",
+  id: "tabs",
   state: (): TabsState => ({
     tabsMenuList: []
   }),
@@ -71,5 +71,5 @@ export const useTabsStore = defineStore({
       });
     }
   },
-  persist: piniaPersistConfig("geeker-tabs")
+  persist: piniaPersistConfig("tabs")
 });

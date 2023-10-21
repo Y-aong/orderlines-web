@@ -151,13 +151,9 @@
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { ref } from "vue";
-import {
-  createTaskFlowDataRequest,
-  getFlowTaskDataRequest,
-  getPrevNodeResultRequest,
-  updateTaskRequest
-} from "@/api/flow";
-import { TaskNodeType } from "@/api/flow/type";
+import { createTaskFlowDataRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
+import { updateTaskRequest } from "@/api/orderlines/task/index";
+import { getPrevNodeResultRequest } from "@/api/flow/processControl/index";
 import { setStorage } from "@/utils/storage";
 import { branchItem, conditionItem, processControlStatusItem, signs } from "@/utils/variable";
 import { Delete, Plus } from "@element-plus/icons-vue";
@@ -197,7 +193,7 @@ const updateFlowData = async () => {
 
 // 修改流程控制参数
 const updateProcessControlParam = async () => {
-  let taskNode: TaskNodeType = {
+  let taskNode: any = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
     method_kwargs: nodeParam.value

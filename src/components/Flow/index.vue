@@ -14,15 +14,9 @@ import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
-import {
-  createFlowDataRequest,
-  deleteTaskRequest,
-  getFlowDataRequest,
-  getFlowTaskDataRequest,
-  getProcessControlRequest,
-  getTaskRequest,
-  updateTaskRequest
-} from "@/api/flow/index.ts";
+import { getProcessControlRequest } from "@/api/flow/processControl/index.ts";
+import { getTaskRequest, updateTaskRequest, deleteTaskRequest } from "@/api/orderlines/task/index";
+import { getFlowDataRequest, getFlowTaskDataRequest, createFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
 
 let { getFlowTaskData } = useFlowStore();
@@ -73,10 +67,7 @@ export default {
                   if (node.type !== "select-node") {
                     let result = await deleteTaskRequest(node.id);
                     if (result.code !== 200) {
-                      ElMessage({
-                        type: "error",
-                        message: "删除节点失败！"
-                      });
+                      ElMessage.error("删除节点失败！");
                     }
                   }
                   this.lf.deleteNode(node.id);
@@ -107,13 +98,12 @@ export default {
     // 获取流程图数据
     await this.getGraphData();
     this.lf.render(this.graphData);
-
     // 文本更新监听
     this.lf.on("text:update", async data => {
       if (data.type.search("node") !== -1) {
         nodeConfig.value.task_name = data.text;
         let taskNode = {
-          id: parseInt(nodeConfig.value.id),
+          id: nodeConfig.value.id,
           process_id: process_id.value,
           task_name: nodeConfig.value.task_name,
           desc: nodeConfig.value.desc
@@ -131,7 +121,7 @@ export default {
       defaultTaskConfig.value = [];
 
       // 获取接口中的数据
-      const taskResponse = await getTaskRequest(data.id);
+      const taskResponse = await getTaskRequest({ task_id: data.id });
       if (taskResponse.code === 200) {
         // 重新设置接口数据
         let task_node = taskResponse.data;
@@ -147,10 +137,7 @@ export default {
         };
         nodeConfig.value = _task_config;
       } else {
-        ElMessage({
-          type: "error",
-          message: "获取任务信息失败"
-        });
+        ElMessage.error("获取任务信息失败");
       }
       // 获取流程控制节点的后续节点
       if (data.type === "process-control-node") {
@@ -158,10 +145,7 @@ export default {
         if (pcResponse.code === 200) {
           processControlOptions.value = pcResponse.data;
         } else {
-          ElMessage({
-            type: "error",
-            message: "流程控制节点没有前置节点"
-          });
+          ElMessage.error("流程控制节点没有前置节点");
         }
         // 获取流程图的返回
         const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);

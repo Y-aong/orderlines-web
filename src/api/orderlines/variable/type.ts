@@ -1,14 +1,13 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace Variable {
   export interface VariableItem {
-    active: number;
     creator_id?: any;
     creator_name?: any;
-    id: number;
+    id?: number;
     insert_time?: any;
     is_cache?: any;
-    process_id: string;
-    process_name: string;
+    process_id?: string;
+    process_name?: string;
     update_time?: any;
     updater_id?: any;
     updater_name?: any;

@@ -14,7 +14,7 @@ import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "../../../stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { getFlowDataRequest } from "@/api/flow/index.ts";
+import { getFlowDataRequest } from "@/api/flow/taskNode/index.ts";
 
 let { process_id } = storeToRefs(useFlowStore());
 

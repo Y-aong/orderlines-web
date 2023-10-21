@@ -71,8 +71,8 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { TaskNodeType } from "@/api/flow/type";
-import { createFlowDataRequest, updateTaskRequest } from "@/api/flow";
+import { createFlowDataRequest } from "@/api/flow/taskNode/index";
+import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 
 const flowStore = useFlowStore();
@@ -104,7 +104,7 @@ const updateTask = async (config_name: string, config_value: string) => {
   // 修改数据库节点数据
   let task_config: any = {};
   task_config[config_name] = config_value;
-  let taskNode: TaskNodeType = {
+  let taskNode: any = {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,

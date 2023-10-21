@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
-import { getTaskNodeRequest, getNodeMenuRequest, getFlowTaskDataRequest } from "@/api/flow";
+import { getNodeMenuRequest, getTaskNodeRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
+
 import { getStorage } from "@/utils/storage";
 import { FlowStoreType } from "../interface/index";
+import { TaskNodeNS } from "@/api/flow/taskNode/type";
 
 const useFlowStore = defineStore("FlowStore", {
   state: (): FlowStoreType => {
@@ -48,8 +50,8 @@ const useFlowStore = defineStore("FlowStore", {
       }
     },
     // 获取任务节点数据
-    async getTaskNode(process_id: string) {
-      let result: any = await getTaskNodeRequest(process_id);
+    async getTaskNode(taskNode: TaskNodeNS.TaskNodeParam) {
+      let result: any = await getTaskNodeRequest(taskNode);
       console.log("获取任务节点数据", result);
       if (result.code == 200) {
         let data = result.data;
@@ -66,7 +68,7 @@ const useFlowStore = defineStore("FlowStore", {
     // 获取流程图数据
     async getFlowTaskData(process_id: string, task_id: string) {
       let result: any = await getFlowTaskDataRequest(process_id, task_id);
-      console.log("result", result);
+      console.log("获取流程图数据", result);
 
       if (result.code == 200) {
         let data = result.data;

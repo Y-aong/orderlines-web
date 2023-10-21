@@ -1,7 +1,7 @@
 <template>
   <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
     <el-form-item prop="username">
-      <el-input v-model="loginForm.username" placeholder="用户名：admin / user">
+      <el-input v-model="loginForm.username" placeholder="默认用户：orderlines">
         <template #prefix>
           <el-icon class="el-input__icon">
             <user />
@@ -13,7 +13,7 @@
       <el-input
         v-model="loginForm.password"
         type="password"
-        placeholder="密码：123456"
+        placeholder="默认密码：orderlines"
         show-password
         autocomplete="new-password"
       >
@@ -75,6 +75,7 @@ const login = (formEl: FormInstance | undefined) => {
     try {
       // 1.执行登录接口
       const { data } = await loginApi({ ...loginForm, password: loginForm.password });
+
       userStore.setToken(data.token);
 
       // 2.添加动态路由

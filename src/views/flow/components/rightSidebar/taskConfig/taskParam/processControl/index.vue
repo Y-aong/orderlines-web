@@ -15,7 +15,7 @@ import { processControlResult, processControlStatusItem } from "@/utils/variable
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { setStorage } from "@/utils/storage";
-import { getFlowTaskDataRequest } from "@/api/flow";
+import { getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
 
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
 

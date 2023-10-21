@@ -65,19 +65,19 @@ import {
   createVariableRequest,
   deleteVariableRequest,
   getVariableDetailRequest,
-  getVariableRequest,
   updateVariableRequest
-} from "@/api/flow";
-import { VariableItemType } from "@/api/flow/type";
+} from "@/api/orderlines/variable/index";
+import { getVariableRequest } from "@/api/flow/variable/index";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
+import { Variable } from "@/api/orderlines/variable/type";
 
 let { process_id, process_name, isRunning } = storeToRefs(useFlowStore());
 
 let dialogFormVisible = ref<boolean>(false);
 let detailVisible = ref<boolean>(false);
-let VariableItem = reactive<VariableItemType>({
+let VariableItem = reactive<Variable.VariableItem>({
   variable_key: "",
   variable_value: "",
   variable_type: "",
@@ -128,7 +128,6 @@ const getVariable = async () => {
   }
 };
 const createVariable = async () => {
-  VariableItem.id = "";
   VariableItem.variable_key = "";
   VariableItem.variable_type = "";
   VariableItem.variable_desc = "";
@@ -148,16 +147,13 @@ const updateVariable = async (row: any) => {
 const getVariableDetail = async (t_id: number) => {
   detailVisible.value = true;
   let res: any = await getVariableDetailRequest(t_id);
-  if (res.code === 200) {
-    variableDetail.value = res.data.items;
-  }
+  if (res.code === 200) variableDetail.value = res.data.items;
 };
 
-const deleteVariable = async (t_id: number) => {
-  let res: any = await deleteVariableRequest(t_id);
+const deleteVariable = async (id: number) => {
+  let res: any = await deleteVariableRequest(id);
   if (res.code == 200) {
     ElMessage.success("删除变量完成");
-    await getVariable();
   } else {
     ElMessage.error("删除变量失败");
   }
@@ -172,7 +168,7 @@ const cancel = () => {
 const confirm = async () => {
   if (VariableItem.id) {
     // 修改变量
-    let variableCreateData = {
+    let variableItem = {
       id: VariableItem.id,
       process_id: process_id.value,
       process_name: process_name.value,
@@ -181,13 +177,13 @@ const confirm = async () => {
       variable_type: "str",
       variable_desc: VariableItem.variable_desc
     };
-    let result: any = await updateVariableRequest(variableCreateData as VariableItemType);
+    let result: any = await updateVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {
       ElMessage.error("修改变量失败");
     }
   } else {
     // 创建变量
-    let variableCreateData = {
+    let variableItem = {
       process_id: process_id.value,
       process_name: process_name.value,
       variable_key: VariableItem.variable_key,
@@ -195,7 +191,7 @@ const confirm = async () => {
       variable_type: "str",
       variable_desc: VariableItem.variable_desc
     };
-    let result: any = await createVariableRequest(variableCreateData as VariableItemType);
+    let result: any = await createVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {
       ElMessage.error("创建变量失败");
     }
