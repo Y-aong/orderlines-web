@@ -172,7 +172,6 @@ export default {
     async getGraphData() {
       if (process_id.value) {
         const result = await getFlowDataRequest({ process_id: process_id.value });
-        console.log("result", result);
         if (result && result.code === 200) {
           this.graphData = result.data.graphData;
         }

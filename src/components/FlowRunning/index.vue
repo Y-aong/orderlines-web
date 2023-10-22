@@ -16,6 +16,7 @@ import useFlowStore from "../../stores/modules/flow";
 import { storeToRefs } from "pinia";
 import { getFlowDataRequest, getRunningEdgeRequest } from "@/api/flow/taskNode/index.ts";
 import { ElMessage } from "element-plus";
+import Websocket from "@/utils/websocket/websocket.js";
 
 let { process_id, process_instance_id, runningTask } = storeToRefs(useFlowStore());
 
@@ -33,6 +34,10 @@ export default {
   },
 
   async mounted() {
+    const ws = new Websocket("ws://localhost:8080");
+    console.log(ws);
+    ws.connect();
+    // ws.send("hello world");
     this.lf = new LogicFlow({
       container: this.$refs.container,
       // 设置静默模式，不可以编辑
@@ -97,7 +102,6 @@ export default {
       };
       let res = await getRunningEdgeRequest(RunningEdgeFilter);
       if (res.code === 200 && res.data.running_task != null) {
-        console.log("running_task", res.data.running_task);
         runningTask.value = res.data.running_task;
       }
       return res.code === 200 ? res.data.running_edge : [];

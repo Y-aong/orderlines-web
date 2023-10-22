@@ -8,8 +8,14 @@
               任务名称: <el-tag>{{ runningTask.task_name }}</el-tag>
             </span>
             <div>
-              <el-button size="small" icon="View" type="primary" circle></el-button>
-              <el-button size="small" icon="BellFilled" type="warning" circle></el-button>
+              <el-button v-if="runningTask.task_result" size="small" icon="View" type="primary" circle></el-button>
+              <el-button
+                v-if="runningTask.task_error_info"
+                size="small"
+                icon="BellFilled"
+                type="warning"
+                circle
+              ></el-button>
             </div>
           </div>
         </template>
@@ -22,13 +28,25 @@
         </div>
       </el-card>
     </el-collapse-item>
+    <el-dialog :title="runningTask.task_result ? '查看任务结果' : '查看任务异常'" width="80%">
+      <json-viewer
+        :value="runningTask.task_result ? runningTask.task_result : runningTask.task_error_info"
+        copyable
+        boxed
+        sort
+        expanded
+        :expand-depth="depth"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 const { runningTask } = storeToRefs(useFlowStore());
+const depth = ref<number>(5);
 </script>
 <script lang="ts">
 export default {

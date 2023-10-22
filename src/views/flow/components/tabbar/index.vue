@@ -78,7 +78,6 @@ const options = [
 
 const startProcess = async () => {
   const result: any = await startProcessRequest(process_id.value);
-  console.log("流程启动成功", result);
   process_instance_id.value = result.data;
   if (result.code == 200) {
     ElMessage.success("流程启动成功");
@@ -86,7 +85,7 @@ const startProcess = async () => {
     setStorage(true, "IS_RUNNING");
     await getRunningTask();
   } else {
-    ElMessage.error("流程启动成功");
+    ElMessage.error("流程启动失败");
   }
 };
 
