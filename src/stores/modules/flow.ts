@@ -12,6 +12,7 @@ const useFlowStore = defineStore("FlowStore", {
       process_name: getStorage("PROCESS_NAME", "str") as string,
       // 流程id
       process_id: getStorage("PROCESS_ID", "str") as string,
+      process_instance_id: "",
       // 是否运行
       isRunning: false as boolean,
       // 是否保存
@@ -35,7 +36,16 @@ const useFlowStore = defineStore("FlowStore", {
       // 节点任务配置文件
       defaultTaskConfig: [],
       // 流程控制任务id options
-      processControlOptions: []
+      processControlOptions: [],
+      // 正在运行的任务
+      runningTask: {
+        task_name: "",
+        task_status: "",
+        start_time: "",
+        end_time: "",
+        task_result: "",
+        task_error_info: ""
+      }
     };
   },
   actions: {

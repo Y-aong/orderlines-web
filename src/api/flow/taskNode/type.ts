@@ -68,4 +68,9 @@ export namespace TaskNodeNS {
     class_name: string;
     version: string;
   }
+
+  export interface FlowDataFilter {
+    process_id: string;
+    process_instance_id: string;
+  }
 }

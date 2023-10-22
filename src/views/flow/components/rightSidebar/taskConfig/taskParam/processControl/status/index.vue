@@ -2,24 +2,30 @@
   <el-tab-pane label="任务状态" name="status">
     <template v-if="nodeParam.pc_type === 'status'">
       <p>流程控制——任务状态</p>
+      {{ isRunning }}
       <el-table :data="nodeParam.conditions" style="width: 100%" title>
         <el-table-column label="任务条件" min-width="90">
           <template #default="scope">
-            <el-select v-model="scope.row.condition[0].condition" placeholder="请选择条件" @click="getTaskIdOption">
+            <el-select
+              v-model="scope.row.condition[0].condition"
+              placeholder="请选择条件"
+              @click="getTaskIdOption"
+              :disabled="isRunning"
+            >
               <el-option v-for="item in taskIdOption" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </template>
         </el-table-column>
         <el-table-column label="运行状态" min-width="100">
           <template #default="scope">
-            <el-select v-model="scope.row.condition[0].task_status" placeholder="请选择任务状态">
+            <el-select v-model="scope.row.condition[0].task_status" placeholder="请选择任务状态" :disabled="isRunning">
               <el-option v-for="item in taskStatusOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </template>
         </el-table-column>
         <el-table-column label="任务分支" min-width="100">
           <template #default="scope">
-            <el-select v-model="scope.row.task_id" placeholder="请选择任务分支">
+            <el-select v-model="scope.row.task_id" placeholder="请选择任务分支" :disabled="isRunning">
               <el-option
                 v-for="item in processControlOptions"
                 :key="item.value"
@@ -33,7 +39,7 @@
     </template>
     <div class="button">
       <el-button style="width: 50%" type="primary" @click="updateProcessControlParam">保存</el-button>
-      <el-button style="width: 50%" type="success" @click="visible = true">查看</el-button>
+      <el-button style="width: 50%" type="success" @click="checkParam">查看</el-button>
     </div>
   </el-tab-pane>
 
@@ -44,19 +50,7 @@
         <el-button type="danger" @click="close"> Close </el-button>
       </div>
     </template>
-    <el-table :data="[nodeParam]" border style="width: 100%; height: 100%">
-      <el-table-column prop="pc_type" label="判断状态" width="100" align="center">
-        <template #default="props">
-          {{ props }}
-          <el-tag>运行状态</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="判断条件">
-        <template #default="props">
-          <json-viewer :value="props.row.conditions" copyable boxed sort expanded :expand-depth="depth" />
-        </template>
-      </el-table-column>
-    </el-table>
+    <json-viewer :value="nodeParam" copyable boxed sort expanded :expand-depth="depth" />
   </el-dialog>
 </template>
 
@@ -71,7 +65,7 @@ import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
 
-let { nodeParam, process_id, nodeConfig, processControlOptions } = storeToRefs(useFlowStore());
+let { nodeParam, process_id, nodeConfig, processControlOptions, isRunning } = storeToRefs(useFlowStore());
 let taskIdOption = ref<any>([]);
 let visible = ref(false);
 let depth = ref(5);
@@ -81,6 +75,10 @@ const getTaskIdOption = async () => {
   if (preTaskConfigResponse.code === 200) {
     taskIdOption.value = preTaskConfigResponse.data.pre_task_config;
   }
+};
+
+const checkParam = () => {
+  visible.value = true;
 };
 
 const getProcessControlParam = async () => {

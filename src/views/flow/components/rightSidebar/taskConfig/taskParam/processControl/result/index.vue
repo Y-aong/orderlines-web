@@ -2,6 +2,7 @@
   <el-tab-pane label="任务返回" name="result">
     <template v-if="nodeParam.pc_type === 'result'">
       <p>流程控制——任务返回值</p>
+
       <el-table :data="nodeParam.conditions" style="width: 100%" title>
         <el-table-column label="任务分支" min-width="90">
           <template #default="scope">
@@ -24,7 +25,7 @@
     </template>
     <div class="button">
       <el-button style="width: 50%" type="primary" @click="getTaskIdOption">编辑</el-button>
-      <el-button style="width: 50%" type="success" @click="visible = true">查看</el-button>
+      <el-button style="width: 50%" type="success" @click="checkParam">查看</el-button>
     </div>
   </el-tab-pane>
 
@@ -133,18 +134,7 @@
         <el-button type="danger" @click="close"> Close </el-button>
       </div>
     </template>
-    <el-table :data="[nodeParam]" border style="width: 100%; height: 100%">
-      <el-table-column prop="pc_type" label="判断状态" width="100" align="center">
-        <template #default="props">
-          <el-tag>{{ props.row.pc_type === "status" ? "运行状态" : "运行结果" }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="判断条件">
-        <template #default="props">
-          <json-viewer :value="props.row.conditions" copyable boxed sort expanded :expand-depth="depth" />
-        </template>
-      </el-table-column>
-    </el-table>
+    <json-viewer :value="nodeParam" copyable boxed sort expanded :expand-depth="depth" />
   </el-dialog>
 </template>
 <script setup lang="ts">
@@ -165,6 +155,10 @@ let prevResultOption = ref<any>([]);
 let visible = ref(false);
 let updateResult = ref(false);
 const expand = ref(true);
+
+const checkParam = () => {
+  visible.value = true;
+};
 
 const getTaskIdOption = async () => {
   let preTaskConfigResponse: any = await getPrevNodeResultRequest(nodeConfig.value.task_id, process_id.value);

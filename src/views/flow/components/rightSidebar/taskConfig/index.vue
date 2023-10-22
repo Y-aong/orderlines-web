@@ -1,5 +1,5 @@
 <template>
-  <el-card :class="{ right_running_sidebar: isRunning, right_config_sidebar: !isRunning }">
+  <el-card class="right_config_sidebar">
     <div class="task_config">
       <div class="task_running_config">
         <h3>任务配置</h3>
@@ -30,10 +30,12 @@
           </el-form-item>
         </el-form>
 
-        <el-collapse v-model="activeNames" accordion>
-          <TaskTaskParam></TaskTaskParam>
-          <TaskResultParam></TaskResultParam>
-          <TaskRunningConfig></TaskRunningConfig>
+        <el-collapse v-model="activeNames" :accordion="accordion">
+          <TaskTaskParam v-if="!isRunning"></TaskTaskParam>
+          <TaskResultParam v-if="!isRunning"></TaskResultParam>
+          <TaskRunningConfig v-if="!isRunning"></TaskRunningConfig>
+          <RunningImage v-if="isRunning"></RunningImage>
+          <RunningLog v-if="isRunning"></RunningLog>
         </el-collapse>
       </div>
     </div>
@@ -45,13 +47,17 @@ import { ref } from "vue";
 import TaskTaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
+import RunningLog from "./runningLog/index.vue";
+import RunningImage from "./runningImage/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 
 let { nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
-const activeNames = ref(["taskParams"]);
+const activeNames = isRunning ? ref(["runningImage", "runningLog"]) : ref(["taskParams"]);
+
+const accordion = true;
 
 // 修改任务
 const updateTask = async () => {
@@ -62,12 +68,7 @@ const updateTask = async () => {
     desc: nodeConfig.value.desc
   };
   let result: any = await updateTaskRequest(taskNode);
-  if (result.code != 200) {
-    ElMessage({
-      type: "error",
-      message: "任务配置修改失败"
-    });
-  }
+  if (result.code != 200) ElMessage.error("任务配置修改失败");
 };
 </script>
 
@@ -78,11 +79,6 @@ export default {
 </script>
 
 <style scoped>
-.right_running_sidebar {
-  width: 100%;
-  height: 75vh;
-  background: #ffffff;
-}
 .right_config_sidebar {
   width: 100%;
   height: 100vh;

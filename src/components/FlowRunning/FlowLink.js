@@ -3,18 +3,14 @@ import { CurvedEdge, CurvedEdgeModel } from "@logicflow/extension";
 class CustomCurvedEdge extends CurvedEdge {}
 
 class CustomCurvedEdgeModel extends CurvedEdgeModel {
-  // setAttributes() {
-  //   this.isAnimation = true;
-  // }
-  // getEdgeAnimationStyle() {
-  //   const style = super.getEdgeAnimationStyle();
-  //   style.strokeDasharray = "8 5";
-  //   style.animationDuration = "15s";
-  //   style.stroke = "rgb(61, 152, 247)";
-  //   style.strokeWidth = 2;
-
-  //   return style;
-  // }
+  getEdgeAnimationStyle() {
+    const style = super.getEdgeAnimationStyle();
+    style.strokeDasharray = "8 5";
+    style.animationDuration = "15s";
+    style.stroke = "rgb(61, 152, 247)";
+    style.strokeWidth = 2;
+    return style;
+  }
 
   initEdgeData(data) {
     super.initEdgeData(data);

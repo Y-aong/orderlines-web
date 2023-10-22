@@ -6,8 +6,13 @@ enum API {
   TASK_NODE = "/task_node",
   FLOW_TASK_CONFIG = "/flow_task_config",
   FLOW_DATA = "/flow_data",
-  FLOW_SAVE = "/flow_save"
+  FLOW_SAVE = "/flow_save",
+  RunningEdge = "/running_edge"
 }
+
+// 获取正在运行的节点线
+export const getRunningEdgeRequest = (RunningEdgeFilter: TaskNodeNS.FlowDataFilter) =>
+  http.get(API.RunningEdge, RunningEdgeFilter);
 
 // 获取节点菜单
 export const getNodeMenuRequest = () => http.get<NodeMenu>(`${API.PLUGIN_NODE}`);
@@ -23,7 +28,7 @@ export const getFlowTaskDataRequest = (process_id: string, task_id: string) =>
 export const createTaskFlowDataRequest = (flow_data: any) => http.post(API.FLOW_TASK_CONFIG, flow_data);
 
 // 流程图任务配置
-export const getFlowDataRequest = (process_id: string) => http.get(`${API.FLOW_DATA}?process_id=${process_id}`);
+export const getFlowDataRequest = (data: TaskNodeNS.FlowDataFilter) => http.get(API.FLOW_DATA, data);
 
 // 创建流程图信息
 export const createFlowDataRequest = (flow_data: any) => http.post(API.FLOW_DATA, flow_data);

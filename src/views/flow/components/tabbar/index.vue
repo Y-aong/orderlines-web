@@ -45,12 +45,12 @@ import {
   startProcessRequest,
   stopProcessRequest
 } from "@/api/flow/operate";
-import { saveFlowRequest } from "@/api/flow/taskNode/index";
+import { getRunningEdgeRequest, saveFlowRequest } from "@/api/flow/taskNode/index";
 
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
 
-let { process_id, process_name, isSave, isRunning } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, process_name, isSave, isRunning, runningTask } = storeToRefs(useFlowStore());
 
 const value = ref("Option1");
 const options = [
@@ -78,13 +78,28 @@ const options = [
 
 const startProcess = async () => {
   const result: any = await startProcessRequest(process_id.value);
+  console.log("流程启动成功", result);
+  process_instance_id.value = result.data;
   if (result.code == 200) {
     ElMessage.success("流程启动成功");
     isRunning.value = true;
     setStorage(true, "IS_RUNNING");
+    await getRunningTask();
   } else {
     ElMessage.error("流程启动成功");
   }
+};
+
+const getRunningTask = async () => {
+  const RunningEdgeFilter = {
+    process_id: process_id.value,
+    process_instance_id: process_instance_id.value
+  };
+  let res: any = await getRunningEdgeRequest(RunningEdgeFilter);
+  if (res.code === 200 && res.data.running_task != null) {
+    runningTask.value = res.data.running_task;
+  }
+  return res.code === 200 ? res.data.running_edge : [];
 };
 
 const stopProcess = async () => {
@@ -141,7 +156,7 @@ const saveProcess = async () => {
 .tabbar {
   display: flex;
   justify-content: space-between;
-  width: 77%;
+  width: 75%;
   height: 100%;
 }
 .tabbar_left {
