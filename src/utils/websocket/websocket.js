@@ -1,39 +1,23 @@
 import WebSocket from "ws";
 
-class Websocket {
-  constructor(url, options = {}) {
-    this.url = url;
-    this.options = options;
-    this.ws = null;
-  }
+// 创建了一个客户端的socket,然后让这个客户端去连接服务器的socket
+let sock = new WebSocket("ws://127.0.0.1:8765");
+sock.on("open", function () {
+  console.log("connect success !!!!");
+  sock.send("HelloWorld1");
+  sock.send("HelloWorld2");
+  sock.send("HelloWorld3");
+  sock.send("HelloWorld4");
+});
 
-  connect() {
-    this.ws = new WebSocket(this.url, this.options);
-    this.ws.onopen = () => {
-      console.log("Websocket connection opened.");
-    };
-    this.ws.onmessage = event => {
-      console.log("Websocket message received.", event.data);
-    };
-    this.ws.onerror = error => {
-      console.error("Websocket error occurred.", error);
-    };
-    this.ws.onclose = () => {
-      console.log("Websocket connection closed.");
-    };
-  }
+sock.on("error", function (err) {
+  console.log("error: ", err);
+});
 
-  send(data) {
-    if (this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(data);
-    } else {
-      console.error("Websocket connection not open.");
-    }
-  }
+sock.on("close", function () {
+  console.log("close");
+});
 
-  close() {
-    this.ws.close();
-  }
-}
-
-export default Websocket;
+sock.on("message", function (data) {
+  console.log("data==", data);
+});

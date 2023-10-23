@@ -80,6 +80,9 @@ dependencies:
   vue-i18n:
     specifier: ^9.4.0
     version: 9.4.0(vue@3.3.4)
+  vue-native-websocket:
+    specifier: ^2.0.15
+    version: 2.0.15
   vue-router:
     specifier: ^4.2.4
     version: 4.2.4(vue@3.3.4)
@@ -9811,6 +9814,10 @@ packages:
       '@intlify/shared': 9.4.0
       '@vue/devtools-api': 6.5.0
       vue: 3.3.4
+    dev: false
+
+  /vue-native-websocket@2.0.15:
+    resolution: {integrity: sha512-i3UvRL99rY8ytV0VJzcWDwY3fRPoeh2fGYvB9862JocEQOx/oCw/VtPIUwP4tSzmzJvJZNkvP71wfhfS1sVhxQ==}
     dev: false
 
   /vue-router@4.2.4(vue@3.3.4):

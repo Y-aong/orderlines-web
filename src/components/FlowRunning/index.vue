@@ -16,7 +16,6 @@ import useFlowStore from "../../stores/modules/flow";
 import { storeToRefs } from "pinia";
 import { getFlowDataRequest, getRunningEdgeRequest } from "@/api/flow/taskNode/index.ts";
 import { ElMessage } from "element-plus";
-import Websocket from "@/utils/websocket/websocket.js";
 
 let { process_id, process_instance_id, runningTask } = storeToRefs(useFlowStore());
 
@@ -34,10 +33,10 @@ export default {
   },
 
   async mounted() {
-    const ws = new Websocket("ws://localhost:8080");
-    console.log(ws);
-    ws.connect();
-    // ws.send("hello world");
+    socket.value.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
     this.lf = new LogicFlow({
       container: this.$refs.container,
       // 设置静默模式，不可以编辑
