@@ -157,4 +157,5 @@ export interface FlowStoreType {
   processControlOptions: any;
   runningTask: runningTask[];
   taskProgress: number;
+  clickCheckTask: runningTask;
 }

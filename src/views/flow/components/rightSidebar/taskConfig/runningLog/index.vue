@@ -7,42 +7,39 @@
             <div class="card-header">
               <span>
                 任务名称: <el-tag>{{ item.task_name }}</el-tag>
+                &nbsp;
+                <el-tag type="success">{{ item.task_status }}</el-tag>
               </span>
 
               <div>
-                <el-tooltip content="点击查看任务结果" placement="top">
-                  <el-button
-                    v-if="JSON.stringify(item.task_result) !== '{}'"
-                    size="small"
-                    icon="View"
-                    type="primary"
-                    circle
-                    @click="check('查看任务结果', item.task_result)"
-                  />
-                </el-tooltip>
+                <el-button
+                  v-if="JSON.stringify(item.task_result) !== '{}'"
+                  size="small"
+                  icon="View"
+                  type="primary"
+                  circle
+                  @click="check('查看任务结果', item.task_result)"
+                />
 
-                <el-tooltip content="点击查看任务异常" placement="top">
-                  <el-button
-                    v-if="JSON.stringify(item.task_error_info) !== '{}'"
-                    size="small"
-                    icon="BellFilled"
-                    type="warning"
-                    circle
-                    @click="check('查看任务异常', item.task_error_info)"
-                  />
-                </el-tooltip>
+                <el-button
+                  v-if="JSON.stringify(item.task_error_info) !== '{}'"
+                  size="small"
+                  icon="BellFilled"
+                  type="warning"
+                  circle
+                  @click="check('查看任务异常', item.task_error_info)"
+                />
               </div>
             </div>
           </template>
           <div class="card-context">
             <div>
-              任务状态：<el-tag>{{ item.task_status }}</el-tag>
-            </div>
-            <div @click="check('查看任务参数', item.method_kwargs)">
-              任务参数：<el-button size="small">点击查看</el-button>
-            </div>
-            <div @click="check('查看任务配置', item.task_config)">
-              任务配置：<el-button size="small">点击查看</el-button>
+              <el-button size="small" type="primary" @click="check('查看任务参数', item.method_kwargs)">
+                查看参数
+              </el-button>
+              <el-button size="small" type="danger" @click="check('查看任务配置', item.task_config)">
+                查看配置
+              </el-button>
             </div>
             <div>开始时间：{{ item.start_time }}</div>
             <div>结束时间：{{ item.end_time }}</div>
@@ -88,12 +85,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
 }
 .card-context {
   font-size: 14px;
-  line-height: 35px;
+  line-height: 32px;
 }
 .box-card {
   width: 100%;

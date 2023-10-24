@@ -29,15 +29,13 @@
             />
           </el-form-item>
         </el-form>
-        <el-collapse
-          :model-value="isRunning ? ['runningImage', 'runningLog'] : ['taskParams']"
-          :accordion="isRunning ? true : false"
-        >
+        <el-collapse :model-value="isRunning ? ['runningImage', 'clickCheck'] : ['taskParams']" :accordion="!isRunning">
           <TaskParam v-if="!isRunning" />
           <TaskResultParam v-if="!isRunning" />
           <TaskRunningConfig v-if="!isRunning" />
+          <clickCheckTask v-if="isRunning" />
           <RunningImage v-if="isRunning" />
-          <RunningLog v-if="isRunning" />
+          <!-- <RunningLog v-if="isRunning" /> -->
         </el-collapse>
       </div>
     </div>
@@ -48,8 +46,9 @@
 import TaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
-import RunningLog from "./runningLog/index.vue";
+// import RunningLog from "./runningLog/index.vue";
 import RunningImage from "./runningImage/index.vue";
+import clickCheckTask from "./clickCheck/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateTaskRequest } from "@/api/orderlines/task/index";

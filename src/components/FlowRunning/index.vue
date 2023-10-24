@@ -14,10 +14,10 @@ import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "../../stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { getFlowDataRequest, getRunningEdgeRequest } from "@/api/flow/taskNode/index.ts";
+import { getFlowDataRequest, getRunningEdgeRequest, getTaskInstanceItem } from "@/api/flow/taskNode/index.ts";
 import { ElMessage } from "element-plus";
 
-let { process_id, process_instance_id, runningTask, taskProgress } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, runningTask, taskProgress, clickCheckTask } = storeToRefs(useFlowStore());
 
 export default {
   name: "FlowRunning",
@@ -67,6 +67,10 @@ export default {
         lf.extension.miniMap.show(position.domOverlayPosition.x - 120, position.domOverlayPosition.y + 35);
       }
     });
+    this.lf.on("node:click", async ({ data }) => {
+      let res = await getTaskInstanceItem(process_instance_id.value, data.id);
+      clickCheckTask.value = res.data;
+    });
     // 获取流程图数据
     await this.getGraphData();
     await this.lf.render(this.graphData);
@@ -98,11 +102,9 @@ export default {
         process_instance_id: process_instance_id.value
       };
       let res = await getRunningEdgeRequest(RunningEdgeFilter);
-      if (res.code === 200 && res.data.running_task != null) {
-        runningTask.value = res.data.running_task;
-      }
-      taskProgress.value = res.data.task_progress;
-      return res.code === 200 ? res.data.running_edge : [];
+      if (res.data.running_task) runningTask.value = res.data.running_task;
+      if (res.data.task_progress) taskProgress.value = res.data.task_progress;
+      return res.data.running_edge;
     },
     async getRunningEdge(flow) {
       this.timer = setInterval(async () => {
