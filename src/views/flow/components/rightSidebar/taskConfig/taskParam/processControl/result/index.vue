@@ -148,6 +148,7 @@ import { setStorage } from "@/utils/storage";
 import { branchItem, conditionItem, processControlStatusItem, signs } from "@/utils/variable";
 import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import "vue3-json-viewer/dist/index.css";
 
 let { nodeParam, process_id, nodeConfig, processControlOptions } = storeToRefs(useFlowStore());
 let depth = ref(5);

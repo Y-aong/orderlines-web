@@ -2,8 +2,8 @@
   <el-card class="right_config_sidebar">
     <div class="task_config">
       <div class="task_running_config">
-        <h3>任务配置</h3>
-        <el-form :inline="true">
+        <el-form :inline="true" v-if="!isRunning">
+          <h3>任务配置</h3>
           <el-form-item label="任务序号" style="width: 95%">
             <el-input v-model="nodeConfig.task_id" disabled />
           </el-form-item>
@@ -29,13 +29,15 @@
             />
           </el-form-item>
         </el-form>
-
-        <el-collapse v-model="activeNames" :accordion="accordion">
-          <TaskTaskParam v-if="!isRunning"></TaskTaskParam>
-          <TaskResultParam v-if="!isRunning"></TaskResultParam>
-          <TaskRunningConfig v-if="!isRunning"></TaskRunningConfig>
-          <RunningImage v-if="isRunning"></RunningImage>
-          <RunningLog v-if="isRunning"></RunningLog>
+        <el-collapse
+          :model-value="isRunning ? ['runningImage', 'runningLog'] : ['taskParams']"
+          :accordion="isRunning ? true : false"
+        >
+          <TaskParam v-if="!isRunning" />
+          <TaskResultParam v-if="!isRunning" />
+          <TaskRunningConfig v-if="!isRunning" />
+          <RunningImage v-if="isRunning" />
+          <RunningLog v-if="isRunning" />
         </el-collapse>
       </div>
     </div>
@@ -43,8 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import TaskTaskParam from "./taskParam/index.vue";
+import TaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
 import RunningLog from "./runningLog/index.vue";
@@ -55,9 +56,6 @@ import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 
 let { nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
-const activeNames = isRunning ? ref(["runningImage", "runningLog"]) : ref(["taskParams"]);
-
-const accordion = true;
 
 // 修改任务
 const updateTask = async () => {

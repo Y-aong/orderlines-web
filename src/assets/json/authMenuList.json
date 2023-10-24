@@ -288,6 +288,20 @@
       }
     },
     {
+      "path": "/archive",
+      "name": "archive",
+      "component": "/archive/index",
+      "meta": {
+        "icon": "UploadFilled",
+        "title": "流程归档",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
       "path": "/auth",
       "name": "auth",
       "redirect": "/auth/menu",

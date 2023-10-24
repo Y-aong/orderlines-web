@@ -8,7 +8,7 @@
       :data-callback="dataCallback"
     >
       <template #expand="scope">
-        {{ scope.row }}
+        <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
       <template #tableHeader="scope">
         <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>

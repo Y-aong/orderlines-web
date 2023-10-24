@@ -50,7 +50,7 @@
         <el-button type="danger" @click="close"> Close </el-button>
       </div>
     </template>
-    <json-viewer :value="nodeParam" copyable boxed sort expanded :expand-depth="depth" />
+    <json-viewer :value="nodeParam" copyable boxed sort expanded :expand-depth="depth" :theme="theme" />
   </el-dialog>
 </template>
 
@@ -64,11 +64,13 @@ import { getPrevNodeResultRequest } from "@/api/flow/processControl/index";
 import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
+import "vue3-json-viewer/dist/index.css";
 
 let { nodeParam, process_id, nodeConfig, processControlOptions, isRunning } = storeToRefs(useFlowStore());
 let taskIdOption = ref<any>([]);
 let visible = ref(false);
 let depth = ref(5);
+let theme = ref("vs-code");
 
 const getTaskIdOption = async () => {
   let preTaskConfigResponse: any = await getPrevNodeResultRequest(nodeConfig.value.task_id, process_id.value);

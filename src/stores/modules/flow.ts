@@ -38,14 +38,8 @@ const useFlowStore = defineStore("FlowStore", {
       // 流程控制任务id options
       processControlOptions: [],
       // 正在运行的任务
-      runningTask: {
-        task_name: "",
-        task_status: "",
-        start_time: "",
-        end_time: "",
-        task_result: "",
-        task_error_info: ""
-      }
+      runningTask: [],
+      taskProgress: 0
     };
   },
   actions: {
@@ -62,7 +56,6 @@ const useFlowStore = defineStore("FlowStore", {
     // 获取任务节点数据
     async getTaskNode(taskNode: TaskNodeNS.TaskNodeParam) {
       let result: any = await getTaskNodeRequest(taskNode);
-      console.log("获取任务节点数据", result);
       if (result.code == 200) {
         let data = result.data;
         // 获取任务默认参数
@@ -78,8 +71,6 @@ const useFlowStore = defineStore("FlowStore", {
     // 获取流程图数据
     async getFlowTaskData(process_id: string, task_id: string) {
       let result: any = await getFlowTaskDataRequest(process_id, task_id);
-      console.log("获取流程图数据", result);
-
       if (result.code == 200) {
         let data = result.data;
         // 获取任务默认参数

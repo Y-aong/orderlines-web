@@ -80,9 +80,6 @@ dependencies:
   vue-i18n:
     specifier: ^9.4.0
     version: 9.4.0(vue@3.3.4)
-  vue-native-websocket:
-    specifier: ^2.0.15
-    version: 2.0.15
   vue-router:
     specifier: ^4.2.4
     version: 4.2.4(vue@3.3.4)
@@ -93,8 +90,8 @@ dependencies:
     specifier: ^4.1.0
     version: 4.1.0(vue@3.3.4)
   ws:
-    specifier: ^8.14.2
-    version: 8.14.2
+    specifier: ^8.12.0
+    version: 8.12.0
 
 devDependencies:
   '@commitlint/cli':
@@ -9816,10 +9813,6 @@ packages:
       vue: 3.3.4
     dev: false
 
-  /vue-native-websocket@2.0.15:
-    resolution: {integrity: sha512-i3UvRL99rY8ytV0VJzcWDwY3fRPoeh2fGYvB9862JocEQOx/oCw/VtPIUwP4tSzmzJvJZNkvP71wfhfS1sVhxQ==}
-    dev: false
-
   /vue-router@4.2.4(vue@3.3.4):
     resolution: {integrity: sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==}
     peerDependencies:
@@ -10184,8 +10177,8 @@ packages:
         optional: true
     dev: false
 
-  /ws@8.14.2:
-    resolution: {integrity: sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==}
+  /ws@8.12.0:
+    resolution: {integrity: sha512-kU62emKIdKVeEIOIKVegvqpXMSTAMLJozpHZaJNDYqBjzlSYXQGviYwN1osDLJ9av68qHd4a2oSjd7yD4pacig==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

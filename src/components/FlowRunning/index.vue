@@ -17,7 +17,7 @@ import { storeToRefs } from "pinia";
 import { getFlowDataRequest, getRunningEdgeRequest } from "@/api/flow/taskNode/index.ts";
 import { ElMessage } from "element-plus";
 
-let { process_id, process_instance_id, runningTask } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, runningTask, taskProgress } = storeToRefs(useFlowStore());
 
 export default {
   name: "FlowRunning",
@@ -33,10 +33,6 @@ export default {
   },
 
   async mounted() {
-    socket.value.onopen = () => {
-      console.log("WebSocket connected");
-    };
-
     this.lf = new LogicFlow({
       container: this.$refs.container,
       // 设置静默模式，不可以编辑
@@ -79,7 +75,9 @@ export default {
   onUnmounted() {
     clearInterval(this.timer);
   },
-
+  onBeforeUnmount() {
+    clearInterval(this.timer);
+  },
   methods: {
     async getGraphData() {
       const flowDataFilter = {
@@ -103,6 +101,7 @@ export default {
       if (res.code === 200 && res.data.running_task != null) {
         runningTask.value = res.data.running_task;
       }
+      taskProgress.value = res.data.task_progress;
       return res.code === 200 ? res.data.running_edge : [];
     },
     async getRunningEdge(flow) {

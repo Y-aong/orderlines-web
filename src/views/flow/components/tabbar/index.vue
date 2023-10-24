@@ -20,7 +20,7 @@
           {{ isSave ? "编辑" : "保存" }}
         </el-button>
 
-        <el-select v-model="value" clearable placeholder="选择版本" style="width: 110px; margin-left: 15px">
+        <el-select v-model="value" clearable placeholder="选择版本" style="width: 100px; margin-left: 15px">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
@@ -56,23 +56,23 @@ const value = ref("Option1");
 const options = [
   {
     value: "Option1",
-    label: "Option1"
+    label: "版本1"
   },
   {
     value: "Option2",
-    label: "Option2"
+    label: "版本2"
   },
   {
     value: "Option3",
-    label: "Option3"
+    label: "版本3"
   },
   {
     value: "Option4",
-    label: "Option4"
+    label: "版本4"
   },
   {
     value: "Option5",
-    label: "Option5"
+    label: "版本5"
   }
 ];
 
