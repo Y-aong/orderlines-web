@@ -6,14 +6,6 @@
       :request-api="getTableList"
       :init-param="initParam"
       :data-callback="dataCallback"
-      :is-card="isCard"
-      :card-column="cardColumn"
-      :change-card="changeCard"
-      :card-title="cardTitle"
-      :card-layout="cardLayout"
-      :select-item="openDrawer"
-      :update-item="openDrawer"
-      :delete-item="deleteProcess"
     >
       <template #expand="scope">
         <json-viewer :value="scope.row" copyable boxed sort expanded />
@@ -25,7 +17,7 @@
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="View" @click="toProcessConfig(scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
@@ -45,19 +37,30 @@ import {
   deleteProcessRequest,
   processExport
 } from "@/api/orderlines/process/index";
-import { ColumnProps, ProTableInstance, cardProps } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
-import { cardLayoutProps } from "@/components/ProTable/interface";
 import { useDownload } from "@/hooks/useDownload";
 import ProcessDrawer from "./ProcessDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Process } from "@/api/orderlines/process/type";
+import { storeToRefs } from "pinia";
+import useFlowStore from "@/stores/modules/flow";
+let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
 
 const isCard = ref<boolean>(true);
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
+
+// 跳转到流程编辑页面
+const toProcessConfig = (row: Process.ProcessItem) => {
+  process_id.value = row.process_id;
+  process_name.value = row.process_name;
+  isRunning.value = false;
+  router.push(`/flow/index`);
+};
+
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessDrawer> | null>(null);
 const openDrawer = (title: string, row: Partial<Process.ProcessItem> = {}) => {
@@ -105,16 +108,6 @@ const getTableList = (params: Process.ProcessFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getProcessRequest(newParams);
 };
-const cardTitle = ref<string>("process_name");
-const cardColumn: cardProps[] = reactive<cardProps[]>([
-  { label: "流程序号", value: "id" },
-  { label: "流程名称", value: "process_name" },
-  { label: "流程描述", value: "desc" },
-  { label: "创建者", value: "creator" },
-  { label: "修改者", value: "updater" },
-  { label: "插入时间", value: "insert_time" },
-  { label: "修改时间", value: "update_time" }
-]);
 const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
@@ -146,12 +139,7 @@ const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
-const cardLayout = ref<cardLayoutProps>({ xs: 24, sm: 24, md: 12, lg: 6, xl: 8, height: "280px", width: "100%" });
 const initParam = reactive({ pageNum: 1, pageSize: 10 });
-// 切换卡片布局
-const changeCard = () => {
-  isCard.value = !isCard.value;
-};
 </script>
 
 <style lang="scss" scoped></style>

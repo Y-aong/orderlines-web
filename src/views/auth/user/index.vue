@@ -31,7 +31,7 @@
       </template>
 
       <template #expand="scope">
-        {{ scope.row }}
+        <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
 
       <template #operation="scope">
@@ -56,6 +56,7 @@ import UserDrawer from "./userDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { cardLayoutProps } from "@/components/ProTable/interface";
 import { User } from "@/api/auth/user/type";
+import "vue3-json-viewer/dist/index.css";
 
 const isCard = ref<boolean>(true);
 const proTable = ref<ProTableInstance>();
@@ -110,7 +111,7 @@ const cardColumn: cardProps[] = reactive<cardProps[]>([
   { label: "用户名称", value: "username" },
   { label: "用户手机", value: "phone" },
   { label: "用户邮箱", value: "email" },
-  { label: "创建时间", value: "create_time" },
+  { label: "创建时间", value: "insert_time" },
   { label: "修改时间", value: "update_time" }
 ]);
 
@@ -129,7 +130,7 @@ const columns = reactive<ColumnProps<User.UserItem>[]>([
       return <el-image style="width: 60px; height: 60px;border-radius: 50%" src={scope.row.img_url} lazy />;
     }
   },
-  { prop: "create_time", label: "创建时间" },
+  { prop: "insert_time", label: "创建时间" },
   { prop: "update_time", label: "修改时间" },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);

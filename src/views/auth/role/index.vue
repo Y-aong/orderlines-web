@@ -21,7 +21,7 @@
       </template>
 
       <template #expand="scope">
-        {{ scope.row }}
+        <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
 
       <template #operation="scope">
@@ -44,6 +44,7 @@ import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import RoleDrawer from "./roleDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { Role } from "@/api/auth/role/type";
+import "vue3-json-viewer/dist/index.css";
 
 const proTable = ref<ProTableInstance>();
 const drawerRef = ref<InstanceType<typeof RoleDrawer> | null>(null);

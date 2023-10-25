@@ -17,7 +17,7 @@
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="View" @click="toProcessRunning(scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">归档</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
@@ -44,8 +44,20 @@ import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { PInstance } from "@/api/orderlines/processInstance/type";
 
+import { storeToRefs } from "pinia";
+import useFlowStore from "@/stores/modules/flow";
+let { isRunning, process_name, process_id, process_instance_id } = storeToRefs(useFlowStore());
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
+
+// 跳转到流程编辑页面
+const toProcessRunning = (row: PInstance.ProcessInstanceItem) => {
+  process_id.value = row.process_id;
+  process_name.value = row.process_name;
+  process_instance_id.value = row.process_instance_id;
+  isRunning.value = true;
+  router.push(`/flow/index`);
+};
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessInstanceDrawer> | null>(null);

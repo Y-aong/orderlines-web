@@ -22,7 +22,7 @@
       </template>
 
       <template #expand="scope">
-        {{ scope.row }}
+        <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
 
       <template #operation="scope">
@@ -51,6 +51,7 @@ import { ElMessage } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import PermissionDrawer from "./permissionDrawer.vue";
 import { Permission } from "@/api/auth/permission/type";
+import "vue3-json-viewer/dist/index.css";
 
 const proTable = ref<ProTableInstance>();
 const drawerRef = ref<InstanceType<typeof PermissionDrawer> | null>(null);

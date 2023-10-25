@@ -22,7 +22,7 @@
       </template>
 
       <template #expand="scope">
-        {{ scope.row }}
+        <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
 
       <template #operation="scope">
@@ -46,6 +46,7 @@ import { ElMessage } from "element-plus";
 import GroupDrawer from "./groupDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { Group } from "@/api/auth/group/type";
+import "vue3-json-viewer/dist/index.css";
 
 const drawerRef = ref<InstanceType<typeof GroupDrawer> | null>(null);
 

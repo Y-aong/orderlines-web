@@ -15,7 +15,7 @@
       </template>
 
       <template #expand="scope">
-        {{ scope.row }}
+        <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
 
       <template #operation="scope">
