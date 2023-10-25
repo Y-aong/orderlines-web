@@ -2,7 +2,6 @@
   <el-tab-pane label="任务状态" name="status">
     <template v-if="nodeParam.pc_type === 'status'">
       <p>流程控制——任务状态</p>
-      {{ isRunning }}
       <el-table :data="nodeParam.conditions" style="width: 100%" title>
         <el-table-column label="任务条件" min-width="90">
           <template #default="scope">

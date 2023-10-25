@@ -3,7 +3,7 @@ export namespace PInstance {
   export interface ProcessInstanceItem {
     active: number;
     end_time: string;
-    id?: number;
+    id: number;
     process_config: string;
     process_error_info: string;
     process_id: string;

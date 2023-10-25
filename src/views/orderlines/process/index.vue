@@ -48,6 +48,7 @@ import { Process } from "@/api/orderlines/process/type";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
+import { setStorage } from "@/utils/storage";
 
 const isCard = ref<boolean>(true);
 const router = useRouter();
@@ -57,6 +58,9 @@ const proTable = ref<ProTableInstance>();
 const toProcessConfig = (row: Process.ProcessItem) => {
   process_id.value = row.process_id;
   process_name.value = row.process_name;
+  setStorage(row.process_id, "PROCESS_ID");
+  setStorage(row.process_name, "PROCESS_NAME");
+
   isRunning.value = false;
   router.push(`/flow/index`);
 };

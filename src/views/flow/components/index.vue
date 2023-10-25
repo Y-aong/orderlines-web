@@ -1,6 +1,5 @@
 <template>
   <div class="flow_tabbar">
-    {{ isRunning }}
     <FlowTabbar />
   </div>
 

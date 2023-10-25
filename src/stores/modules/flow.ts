@@ -14,9 +14,9 @@ const useFlowStore = defineStore("FlowStore", {
       process_id: getStorage("PROCESS_ID", "str") as string,
       process_instance_id: "",
       // 是否运行
-      isRunning: false as boolean,
+      isRunning: false,
       // 是否保存
-      isSave: false as boolean,
+      isSave: false,
       //节点菜单
       nodeMenu: [],
       // 节点配置
@@ -55,6 +55,10 @@ const useFlowStore = defineStore("FlowStore", {
     };
   },
   actions: {
+    // change running
+    changeRunning() {
+      this.isRunning = true;
+    },
     // 获取插件节点信息
     async getNodeMenu() {
       const result: any = await getNodeMenuRequest();

@@ -1,6 +1,6 @@
 <template>
   <el-collapse-item title="任务运行配置" name="taskRunning">
-    <el-table :data="defaultTaskConfig" style="width: 100%" :max-height="height" :height="height" stripe>
+    <el-table :data="defaultTaskConfig" style="width: 100%" max-height="65vh" stripe>
       <el-table-column prop="config_name" label="运行参数名" min-width="100" />
       <el-table-column prop="config_value" label="运行参数值" min-width="150">
         <template #default="scope">
@@ -80,8 +80,6 @@ const defaultTaskStrategy = ref("报错");
 const defaultNoticeType = ref("失败");
 const { nodeConfig, defaultTaskConfig, process_id, isRunning } = storeToRefs(flowStore);
 let dialogTableVisible = ref<boolean>(false);
-
-const height = ref(isRunning ? "30vh" : "65vh");
 
 const getTaskConfig = () => {
   dialogTableVisible.value = true;

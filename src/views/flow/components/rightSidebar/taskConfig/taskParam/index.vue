@@ -4,7 +4,7 @@
       <ProcessControl />
     </template>
     <template v-if="nodeConfig.task_type === 'common'">
-      <el-table :data="nodeParam" :max-height="height" :height="height" stripe show-header style="width: 100%">
+      <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
         <el-table-column fixed prop="desc" label="参数名" min-width="80" />
         <el-table-column prop="desc" label="参数值" min-width="240">
           <template #default="scope">
@@ -86,7 +86,6 @@ const updateFlowData = async () => {
   };
   await createTaskFlowDataRequest(update_task_param_flow);
 };
-const height = ref(isRunning ? "30vh" : "65vh");
 
 // 修改任务参数
 const updateTask = async (row: ParamItem) => {

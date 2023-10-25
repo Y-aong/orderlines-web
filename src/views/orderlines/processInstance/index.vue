@@ -13,11 +13,12 @@
 
       <template #tableHeader="scope">
         <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
+        <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
       </template>
 
       <template #operation="scope">
         <el-button type="primary" link :icon="View" @click="toProcessRunning(scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="Download" @click="downloadExport(scope.row)">报告</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">归档</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
@@ -28,35 +29,56 @@
 </template>
 <script setup lang="tsx">
 import { reactive, ref } from "vue";
+import { storeToRefs } from "pinia";
+import useFlowStore from "@/stores/modules/flow";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import {
   getProcessInstanceRequest,
   createProcessInstanceRequest,
   updateProcessInstanceRequest,
-  deleteProcessInstanceRequest
+  deleteProcessInstanceRequest,
+  processInstanceExport,
+  downExport
 } from "@/api/orderlines/processInstance/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import ProcessInstanceDrawer from "./ProcessInstanceDrawer.vue";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { PInstance } from "@/api/orderlines/processInstance/type";
-
-import { storeToRefs } from "pinia";
-import useFlowStore from "@/stores/modules/flow";
-let { isRunning, process_name, process_id, process_instance_id } = storeToRefs(useFlowStore());
+import { setStorage } from "@/utils/storage";
+import { useDownload } from "@/hooks/useDownload";
+let { process_id, process_instance_id, process_name, isSave, isRunning } = storeToRefs(useFlowStore());
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
+// 导出报告
+const downloadExport = async (row: any) => {
+  ElMessageBox.confirm("确认导出流程报告?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(downExport, "流程报告", row.id, true, ".html");
+  });
+};
+
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认导出流程数据?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(processInstanceExport, "流程列表", proTable.value?.searchParam);
+  });
+};
 // 跳转到流程编辑页面
 const toProcessRunning = (row: PInstance.ProcessInstanceItem) => {
   process_id.value = row.process_id;
   process_name.value = row.process_name;
   process_instance_id.value = row.process_instance_id;
-  isRunning.value = true;
+  setStorage(row.process_id, "PROCESS_ID");
+  setStorage(row.process_name, "PROCESS_NAME");
+  isSave.value = false;
   router.push(`/flow/index`);
+  setTimeout(() => {
+    isRunning.value = true;
+  }, 500);
 };
 
 // 新增，查看，编辑
@@ -163,7 +185,7 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
-  { prop: "operation", label: "操作", fixed: "right", width: 240 }
+  { prop: "operation", label: "操作", fixed: "right", width: 320 }
 ]);
 
 const initParam = reactive({ pageNum: 1, pageSize: 10 });
