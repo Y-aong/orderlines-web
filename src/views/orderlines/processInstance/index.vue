@@ -50,7 +50,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { PInstance } from "@/api/orderlines/processInstance/type";
 import { setStorage } from "@/utils/storage";
 import { useDownload } from "@/hooks/useDownload";
-let { process_id, process_instance_id, process_name, isSave, isRunning } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, process_name, isSave, isRedirect, isRunning } = storeToRefs(useFlowStore());
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
@@ -75,10 +75,9 @@ const toProcessRunning = (row: PInstance.ProcessInstanceItem) => {
   setStorage(row.process_id, "PROCESS_ID");
   setStorage(row.process_name, "PROCESS_NAME");
   isSave.value = false;
+  isRunning.value = false;
+  isRedirect.value = true;
   router.push(`/flow/index`);
-  setTimeout(() => {
-    isRunning.value = true;
-  }, 500);
 };
 
 // 新增，查看，编辑

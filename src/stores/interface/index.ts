@@ -148,6 +148,7 @@ export interface FlowStoreType {
   process_instance_id: string;
   isRunning: boolean;
   isSave: boolean;
+  isRedirect: boolean;
   nodeMenu: NodeMenuType[];
   nodeConfig: nodeConfigType;
   // nodeParam: CommonParamType[] | ProcessControlStatus;

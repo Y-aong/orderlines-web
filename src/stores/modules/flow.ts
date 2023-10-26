@@ -15,6 +15,8 @@ const useFlowStore = defineStore("FlowStore", {
       process_instance_id: "",
       // 是否运行
       isRunning: false,
+      // 是否为跳转的链接
+      isRedirect: false,
       // 是否保存
       isSave: false,
       //节点菜单

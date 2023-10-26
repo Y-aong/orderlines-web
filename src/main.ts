@@ -39,4 +39,4 @@ Object.keys(Icons).forEach(key => {
   app.component(key, Icons[key as keyof typeof Icons]);
 });
 
-app.use(JsonViewer).use(ElementPlus).use(directives).use(router).use(I18n).use(pinia).mount("#app");
+app.use(pinia).use(JsonViewer).use(ElementPlus).use(directives).use(router).use(I18n).mount("#app");

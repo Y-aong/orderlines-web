@@ -4,11 +4,11 @@
   </div>
 
   <div class="container">
-    <template v-if="isRunning">
-      <FlowRunning />
-    </template>
     <template v-if="!isRunning">
       <FLOW />
+    </template>
+    <template v-if="isRunning">
+      <FlowRunning />
     </template>
   </div>
   <div :class="{ running_right: isRunning, config_right: !isRunning }">

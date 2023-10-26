@@ -36,6 +36,24 @@ import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { v4 as uuid4 } from "uuid";
 import { getCurrentDate } from "@/utils/currentDateTime";
+import { storeToRefs } from "pinia";
+
+import { Process } from "@/api/orderlines/process/type";
+import useFlowStore from "@/stores/modules/flow";
+let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
+import { setStorage } from "@/utils/storage";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+// 跳转到流程编辑页面
+const toProcessConfig = async (row: Process.ProcessItem) => {
+  process_id.value = row.process_id;
+  process_name.value = row.process_name;
+  setStorage(row.process_id, "PROCESS_ID");
+  setStorage(row.process_name, "PROCESS_NAME");
+  isRunning.value = false;
+  router.push(`/flow/index`);
+};
 
 const rules = reactive({
   process_name: [{ required: true, message: "请填写流程名称" }],
@@ -69,8 +87,8 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      if (!drawerProps.value.row.process_id && drawerProps.value.title === "新建")
-        drawerProps.value.row["process_id"] = uuid4();
+      if (drawerProps.value.title === "新增") drawerProps.value.row["process_id"] = uuid4();
+
       if (drawerProps.value.title === "编辑") {
         let process: { id?: number; process_name?: string; desc?: string; update_time?: string } = {};
         process.id = drawerProps.value.row.id;
@@ -79,11 +97,13 @@ const handleSubmit = () => {
         process.update_time = getCurrentDate();
         drawerProps.value.row = process;
       }
+      console.log(drawerProps.value.row);
 
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;
+      await toProcessConfig(drawerProps.value.row as Process.ProcessItem);
     } catch (error) {
       console.log(error);
     }

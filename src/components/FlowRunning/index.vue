@@ -1,6 +1,6 @@
 <template>
   <div class="flow-chart">
-    <div ref="container" class="container"></div>
+    <div ref="runningContainer" class="container"></div>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
 
   async mounted() {
     this.lf = new LogicFlow({
-      container: this.$refs.container,
+      container: this.$refs.runningContainer,
       // 设置静默模式，不可以编辑
       isSilentMode: true,
       grid: {
@@ -51,7 +51,7 @@ export default {
       },
       hoverOutline: false,
       edgeSelectedOutline: false,
-      plugins: [OrderlinesNodeExtension, Control, Group, MiniMap, InsertNodeInPolyline, Menu]
+      plugins: [Control, Group, MiniMap, InsertNodeInPolyline, Menu, OrderlinesNodeExtension]
     });
     // 增加导航;
     this.lf.extension.control.addItem({

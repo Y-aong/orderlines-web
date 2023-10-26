@@ -11,7 +11,7 @@
 
       <div class="process_operate">
         <template v-if="isSave">
-          <el-button v-if="!isRunning && isSave" size="small" type="success" @click="startProcess">启动 </el-button>
+          <el-button v-if="!isRunning && isSave" size="small" type="success" @click="startProcess"> 启动 </el-button>
           <el-button v-if="isRunning" size="small" type="danger" @click="stopProcess">停止 </el-button>
           <el-button v-if="isRunning" size="small" type="warning" @click="pausedProcess">暂停 </el-button>
           <el-button v-if="isRunning" size="small" type="primary" @click="recoverProcess">继续 </el-button>
@@ -19,6 +19,8 @@
         <el-button size="small" type="primary" @click="saveProcess">
           {{ isSave ? "编辑" : "保存" }}
         </el-button>
+
+        <el-button v-if="isRedirect" size="small" type="success" @click="runningStatus"> 状态 </el-button>
 
         <el-select v-model="value" clearable placeholder="选择版本" style="width: 100px; margin-left: 15px">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
@@ -50,7 +52,9 @@ import { getRunningEdgeRequest, saveFlowRequest } from "@/api/flow/taskNode/inde
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
 
-let { process_id, process_instance_id, process_name, isSave, isRunning, runningTask } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, process_name, isSave, isRunning, runningTask, isRedirect } = storeToRefs(
+  useFlowStore()
+);
 
 const value = ref("Option1");
 const options = [
@@ -75,6 +79,12 @@ const options = [
     label: "版本5"
   }
 ];
+
+const runningStatus = () => {
+  isRunning.value = true;
+  isRedirect.value = false;
+  isSave.value = true;
+};
 
 const startProcess = async () => {
   const result: any = await startProcessRequest(process_id.value);

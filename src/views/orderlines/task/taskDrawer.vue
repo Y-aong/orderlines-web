@@ -84,7 +84,7 @@ const handleSubmit = () => {
         if (key === "task_instance") delete drawerProps.value.row[key];
       }
       await drawerProps.value.api!(drawerProps.value.row);
-      ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
+      ElMessage.success({ message: `${drawerProps.value.title}任务成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;
     } catch (error) {
