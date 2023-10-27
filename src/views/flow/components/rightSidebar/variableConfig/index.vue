@@ -8,11 +8,10 @@
         <el-table-column prop="variable_type" label="类型" min-width="80" width="80" />
         <el-table-column fixed="right" label="active" min-width="120" align="center">
           <template #default="scope">
-            <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row.id)" circle icon="View">
+            <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row)" circle icon="View">
             </el-button>
             <el-button type="warning" size="small" @click.prevent="updateVariable(scope.row)" circle icon="Edit">
             </el-button>
-
             <el-button type="danger" size="small" @click.prevent="deleteVariable(scope.row.id)" circle icon="Delete">
             </el-button>
           </template>
@@ -49,12 +48,8 @@
   <el-dialog v-model="detailVisible" title="查看流程变量详情">
     <el-table :data="variableDetail" style="width: 100%" height="240" border>
       <el-table-column fixed prop="variable_key" label="变量名" min-width="100" align="center" />
-      <el-table-column prop="variable_value" label="变量值" min-width="120" align="center" />
+      <el-table-column prop="variable_value" label="变量值" min-width="240" align="center" />
       <el-table-column prop="variable_desc" label="变量描述" min-width="120" align="center" />
-      <el-table-column prop="creator" label="创建人" min-width="120" align="center" />
-      <el-table-column prop="updater" label="修改人" min-width="120" align="center" />
-      <el-table-column prop="insert_time" label="创建时间" min-width="180" align="center" />
-      <el-table-column prop="update_time" label="修改时间" min-width="180" align="center" />
     </el-table>
   </el-dialog>
 </template>
@@ -65,7 +60,8 @@ import {
   createVariableRequest,
   deleteVariableRequest,
   getVariableDetailRequest,
-  updateVariableRequest
+  updateVariableRequest,
+  getVariableInstanceDetailRequest
 } from "@/api/orderlines/variable/index";
 import { getVariableRequest } from "@/api/flow/variable/index";
 import { ElMessage } from "element-plus";
@@ -73,7 +69,7 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { Variable } from "@/api/orderlines/variable/type";
 
-let { process_id, process_name, isRunning } = storeToRefs(useFlowStore());
+let { process_id, process_name, process_instance_id, isRunning } = storeToRefs(useFlowStore());
 
 let dialogFormVisible = ref<boolean>(false);
 let detailVisible = ref<boolean>(false);
@@ -144,10 +140,15 @@ const updateVariable = async (row: any) => {
   VariableItem.variable_desc = row.variable_desc;
   dialogFormVisible.value = true;
 };
-const getVariableDetail = async (t_id: number) => {
+const getVariableDetail = async (row: any) => {
   detailVisible.value = true;
-  let res: any = await getVariableDetailRequest(t_id);
-  if (res.code === 200) variableDetail.value = res.data.items;
+  if (isRunning.value) {
+    let res: any = await getVariableInstanceDetailRequest(process_instance_id.value, row.variable_key);
+    if (res.code === 200) variableDetail.value = [res.data];
+  } else {
+    let res: any = await getVariableDetailRequest(row.id);
+    if (res.code === 200) variableDetail.value = [res.data];
+  }
 };
 
 const deleteVariable = async (id: number) => {
