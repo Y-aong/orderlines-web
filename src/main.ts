@@ -31,6 +31,7 @@ import I18n from "@/languages/index";
 // pinia store
 import pinia from "@/stores";
 import JsonViewer from "vue3-json-viewer";
+import "vue3-json-viewer/dist/index.css";
 
 const app = createApp(App);
 

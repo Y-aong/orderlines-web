@@ -43,6 +43,20 @@ export namespace Plugin {
     method_name?: string;
     node_type?: string;
   }
+  export interface PluginMangerFilter extends ReqPage {
+    id?: number;
+    model_name?: string;
+    file_name?: string;
+  }
+  export interface PluginManagerItem {
+    active: number;
+    id: number;
+    insert_time: string;
+    update_time: string;
+    model_name: string;
+    file_name: string;
+    enable: number;
+  }
 
   export interface PluginResponse extends ResPage<PluginItem> {}
 }

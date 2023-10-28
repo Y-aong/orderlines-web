@@ -274,20 +274,6 @@
       }
     },
     {
-      "path": "/plugin",
-      "name": "plugin",
-      "component": "/plugin/index",
-      "meta": {
-        "icon": "Paperclip",
-        "title": "插件管理",
-        "isLink": "",
-        "isHide": false,
-        "isFull": false,
-        "isAffix": false,
-        "isKeepAlive": true
-      }
-    },
-    {
       "path": "/archive",
       "name": "archive",
       "component": "/archive/index",
@@ -300,6 +286,50 @@
         "isAffix": false,
         "isKeepAlive": true
       }
+    },
+    {
+      "path": "/plugin",
+      "name": "plugin",
+      "redirect": "/plugin/info",
+      "meta": {
+        "icon": "Paperclip",
+        "title": "插件管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/plugin/info",
+          "name": "pluginInfo",
+          "component": "/plugin/info/index",
+          "meta": {
+            "icon": "Tickets",
+            "title": "插件信息",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/plugin/manager",
+          "name": "pluginManager",
+          "component": "/plugin/manager/index",
+          "meta": {
+            "icon": "Setting",
+            "title": "插件管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     },
     {
       "path": "/auth",
