@@ -144,7 +144,7 @@ const saveProcess = async () => {
     isSave.value = false;
     isRunning.value = false;
   } else {
-    const response: any = await saveFlowRequest(process_id.value);
+    const response: any = await saveFlowRequest({ process_id: process_id.value });
     if (response.code === 200) {
       isSave.value = true;
       setStorage(true, "IS_SAVE");

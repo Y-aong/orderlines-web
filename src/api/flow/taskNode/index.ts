@@ -35,7 +35,7 @@ export const getFlowDataRequest = (data: TaskNodeNS.FlowDataFilter) => http.get(
 export const createFlowDataRequest = (flow_data: any) => http.post(API.FLOW_DATA, flow_data);
 
 // 保存流程
-export const saveFlowRequest = (process_id: string) => http.get(`${API.FLOW_SAVE}?process_id=${process_id}`);
+export const saveFlowRequest = (data: any) => http.post(API.FLOW_SAVE, data);
 
 // 获取任务实例根据流程实例id和任务id
 export const getTaskInstanceItem = (process_instance_id: string, task_id: string) =>

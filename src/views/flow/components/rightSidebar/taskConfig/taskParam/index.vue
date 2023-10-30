@@ -1,6 +1,5 @@
 <template>
   <el-collapse-item title="任务参数配置" name="taskParams">
-    {{ nodeConfig.task_type }}
     <template v-if="nodeConfig.task_type === 'process_control'">
       <ProcessControl />
     </template>
