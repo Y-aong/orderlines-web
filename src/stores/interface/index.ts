@@ -160,3 +160,12 @@ export interface FlowStoreType {
   taskProgress: number;
   clickCheckTask: runningTask;
 }
+
+export interface TaskGroupItem {
+  task_name: string;
+  task_id: string;
+}
+
+export interface TaskGroupStore {
+  taskGroup: TaskGroupItem[];
+}

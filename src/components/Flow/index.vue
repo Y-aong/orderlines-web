@@ -13,16 +13,16 @@ import { Control, Group, MiniMap, SelectionSelect, InsertNodeInPolyline, Menu } 
 import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "@/stores/modules/flow";
+import useTaskGroupStore from "@/stores/modules/taskGroup";
 import { storeToRefs } from "pinia";
 import { getProcessControlRequest } from "@/api/flow/processControl/index.ts";
 import { getTaskRequest, updateTaskRequest, deleteTaskRequest } from "@/api/orderlines/task/index";
 import { getFlowDataRequest, getFlowTaskDataRequest, createFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
-
-let { getFlowTaskData } = useFlowStore();
-
+const { getFlowTaskData } = useFlowStore();
 let { isRunning, process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig, processControlOptions } =
   storeToRefs(useFlowStore());
+let { taskGroup } = storeToRefs(useTaskGroupStore());
 
 export default {
   name: "FLOW",
@@ -141,6 +141,7 @@ export default {
       }
       // 获取流程控制节点的后续节点
       if (data.type === "process-control-node") {
+        console.log("流程控制");
         let pcResponse = await getProcessControlRequest(data.id, process_id.value);
         if (pcResponse.code === 200) {
           processControlOptions.value = pcResponse.data;
@@ -149,8 +150,18 @@ export default {
         }
         // 获取流程图的返回
         const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
-        console.log("taskFlowResponse", taskFlowResponse);
         nodeParam.value = taskFlowResponse.data.nodeParam;
+      } else if (data.type === "group-node") {
+        let _taskGroup = [];
+        const children = data.children;
+        children.forEach(task_id => {
+          const task_name = this.lf.getNodeModelById(task_id).text.value;
+          _taskGroup.push({
+            task_name: task_name,
+            task_id: task_id
+          });
+        });
+        taskGroup.value = _taskGroup;
       } else {
         // 获取节点的展示数据
         await getFlowTaskData(process_id.value, data.id);

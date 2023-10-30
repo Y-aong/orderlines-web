@@ -47,7 +47,7 @@ import {
   startProcessRequest,
   stopProcessRequest
 } from "@/api/flow/operate";
-import { getRunningEdgeRequest, saveFlowRequest } from "@/api/flow/taskNode/index";
+import { getRunningTaskRequest, saveFlowRequest } from "@/api/flow/taskNode/index";
 
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
@@ -100,11 +100,11 @@ const startProcess = async () => {
 };
 
 const getRunningTask = async () => {
-  const RunningEdgeFilter = {
+  const RunningTaskFilter = {
     process_id: process_id.value,
     process_instance_id: process_instance_id.value
   };
-  let res: any = await getRunningEdgeRequest(RunningEdgeFilter);
+  let res: any = await getRunningTaskRequest(RunningTaskFilter);
   if (res.code === 200 && res.data.running_task != null) {
     runningTask.value = res.data.running_task;
   }
@@ -144,10 +144,7 @@ const saveProcess = async () => {
     isSave.value = false;
     isRunning.value = false;
   } else {
-    const saveFlowRequestData = {
-      process_id: process_id.value
-    };
-    const response: any = await saveFlowRequest(saveFlowRequestData);
+    const response: any = await saveFlowRequest(process_id.value);
     if (response.code === 200) {
       isSave.value = true;
       setStorage(true, "IS_SAVE");

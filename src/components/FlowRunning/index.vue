@@ -14,7 +14,7 @@ import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "../../stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { getFlowDataRequest, getRunningEdgeRequest, getTaskInstanceItem } from "@/api/flow/taskNode/index.ts";
+import { getFlowDataRequest, getRunningTaskRequest, getTaskInstanceItem } from "@/api/flow/taskNode/index.ts";
 import { ElMessage } from "element-plus";
 
 let { process_id, process_instance_id, runningTask, taskProgress, clickCheckTask } = storeToRefs(useFlowStore());
@@ -74,7 +74,7 @@ export default {
     // 获取流程图数据
     await this.getGraphData();
     await this.lf.render(this.graphData);
-    await this.getRunningEdge(this.lf);
+    await this.runningTask(this.lf);
   },
   onUnmounted() {
     clearInterval(this.timer);
@@ -101,12 +101,12 @@ export default {
         process_id: process_id.value,
         process_instance_id: process_instance_id.value
       };
-      let res = await getRunningEdgeRequest(RunningEdgeFilter);
+      let res = await getRunningTaskRequest(RunningEdgeFilter);
       if (res.data.running_task) runningTask.value = res.data.running_task;
       if (res.data.task_progress) taskProgress.value = res.data.task_progress;
       return res.data.running_edge;
     },
-    async getRunningEdge(flow) {
+    async runningTask(flow) {
       this.timer = setInterval(async () => {
         await this.getGraphData();
         await flow.render(this.graphData);

@@ -4,22 +4,17 @@ class GroupNodeView extends GroupNode.view {}
 
 class GroupNodeModel extends GroupNode.model {
   initNodeData(data) {
-    let nodeWidth = data.properties.nodeSize ? data.properties.nodeSize.height - 12 : 88;
-    if (!data.text || typeof data.text === "string") {
-      data.text = {
-        value: data.text || "",
-        x: data.x,
-        y: data.y - nodeWidth
-      };
-    }
     super.initNodeData(data);
     this.text.draggable = true;
     this.text.editable = true;
     this.isRestrict = true;
     this.resizable = true;
+    this.isFolded = true;
     this.width = 320;
     this.height = 200;
     this.radius = 10;
+    this.foldedWidth = 100;
+    this.foldedHeight = 0;
   }
 
   getNodeStyle() {
