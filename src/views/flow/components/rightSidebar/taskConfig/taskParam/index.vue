@@ -17,12 +17,14 @@
               :placeholder="`类型${scope.row.type}，下拉框使用变量`"
               filterable
               allow-create
+              clearable
+              :reserve-keyword="false"
               @change="updateTask(scope.row)"
               @clear="clearFlag = true"
               @focus="clearFlag = false"
               @click="getVariableOption"
               :disabled="isRunning"
-              style="width: 280px"
+              style="width: 95%"
             >
               <el-option v-for="(item, index) in variableOption" :key="index" :label="item.label" :value="item.value" />
             </el-select>

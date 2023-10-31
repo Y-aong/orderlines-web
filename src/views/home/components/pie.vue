@@ -7,13 +7,25 @@
 <script setup lang="ts" name="pie">
 import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
+import { getRunStatus } from "@/api/home/index";
+import { ref, onMounted, defineProps } from "vue";
 
-const pieData = [
-  { value: 205, name: "运行成功" },
-  { value: 123, name: "运行失败" },
-  { value: 27, name: "运行停止" },
-  { value: 31, name: "运行超时" }
-];
+const props = defineProps();
+
+let pieData = ref([
+  { value: 0, name: "运行成功" },
+  { value: 0, name: "运行失败" },
+  { value: 0, name: "运行停止" },
+  { value: 0, name: "运行超时" }
+]);
+
+onMounted(async () => {
+  const res: any = await getRunStatus();
+  if (res.code === 200) {
+    pieData.value = res.data;
+    console.log(pieData);
+  }
+});
 
 const option: ECOption = {
   title: {
@@ -48,12 +60,12 @@ const option: ECOption = {
     },
     formatter: function (name: string) {
       let dataCopy = "";
-      for (let i = 0; i < pieData.length; i++) {
-        if (pieData[i].name == name && pieData[i].value >= 10000) {
-          dataCopy = (pieData[i].value / 10000).toFixed(2);
+      for (let i = 0; i < pieData.value.length; i++) {
+        if (pieData.value[i].name == name && pieData.value[i].value >= 10000) {
+          dataCopy = (pieData.value[i].value / 10000).toFixed(2);
           return name + "      " + dataCopy + "w";
-        } else if (pieData[i].name == name) {
-          dataCopy = pieData[i].value + "";
+        } else if (pieData.value[i].name == name) {
+          dataCopy = pieData.value[i].value + "";
           return name + "      " + dataCopy;
         }
       }
@@ -68,7 +80,7 @@ const option: ECOption = {
       silent: true,
       clockwise: true,
       startAngle: 150,
-      data: pieData,
+      data: pieData.value,
       labelLine: {
         length: 65,
         length2: 30,
