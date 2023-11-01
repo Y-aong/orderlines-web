@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts" name="systemLog">
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import UploadImg from "@/components/Upload/Img.vue";
 import { Edit, View, Delete } from "@element-plus/icons-vue";
 
@@ -87,14 +87,8 @@ const cardLabel = [
   }
 ];
 
-const cardStyle = reactive({
-  width: "460px",
-  height: "300px"
-});
-
 const changeCardStyle = () => {
   isCard.value = !isCard.value;
-  console.log(cardStyle);
 };
 </script>
 <style scoped lang="scss">

@@ -49,7 +49,7 @@
             <div class="item-right">
               <div class="echarts-title">运行状态</div>
               <div class="book-echarts">
-                <Pie ref="pieRef" />
+                <Pie ref="pieRef" :pie-data="pieData" />
               </div>
             </div>
           </el-col>
@@ -59,12 +59,12 @@
     <div class="card bottom-box">
       <div class="bottom-title">运行状态分布</div>
       <div class="bottom-tabs">
-        <el-tabs v-model="tabActive" class="demo-tabs">
-          <el-tab-pane v-for="item in tab" :key="item.name" :label="item.label" :name="item.name"></el-tab-pane>
+        <el-tabs v-model="tabActive" @tab-click="getCurve" class="demo-tabs">
+          <el-tab-pane v-for="item in tab" :key="item.name" :label="item.label" :name="item.name" />
         </el-tabs>
       </div>
       <div class="curve-echarts">
-        <Curve ref="curveRef" />
+        <Curve ref="curveRef" :curve-data="curveData" />
       </div>
     </div>
   </div>
@@ -74,7 +74,9 @@
 import { ref, onMounted } from "vue";
 import Pie from "./components/pie.vue";
 import Curve from "./components/curve.vue";
-import { getRunNumber, getRunStatus } from "@/api/home/index";
+import { getRunNumber, getRunStatus, getCurveData } from "@/api/home/index";
+import { pieType, curveDataType } from "@/api/home/type";
+import type { TabsPaneContext } from "element-plus";
 
 let runNumber = ref({
   failure_total_number: 0,
@@ -84,14 +86,25 @@ let runNumber = ref({
   total_number: 0
 });
 
-let pieData = ref([
+let pieData = ref<pieType[]>([
   { value: 0, name: "运行成功" },
   { value: 0, name: "运行失败" },
   { value: 0, name: "运行停止" },
   { value: 0, name: "运行超时" }
 ]);
 
-const tabActive = ref(1);
+let curveData = ref<curveDataType[]>([
+  { value: 0, spotName: "运行成功" },
+  { value: 0, spotName: "运行失败" },
+  { value: 0, spotName: "运行超时" },
+  { value: 0, spotName: "运行暂停" },
+  { value: 0, spotName: "运行继续" },
+  { value: 0, spotName: "运行停止" },
+  { value: 0, spotName: "运行排队" },
+  { value: 0, spotName: "运行中" }
+]);
+
+const tabActive = ref("month");
 
 onMounted(async () => {
   const runNumberData: any = await getRunNumber();
@@ -103,14 +116,24 @@ onMounted(async () => {
   if (RunStatusData.code === 200) {
     pieData.value = RunStatusData.data;
   }
+
+  const res: any = await getCurveData("month");
+  if (res.code === 200) {
+    curveData.value = res.data;
+  }
 });
+const getCurve = async (tab: TabsPaneContext) => {
+  let paneName = tab.paneName ? tab.paneName : "week";
+  const res: any = await getCurveData(paneName as string);
+  if (res.code === 200) {
+    curveData.value = res.data;
+  }
+};
+
 const tab = [
-  { label: "未来7日", name: 1 },
-  { label: "近七日", name: 2 },
-  { label: "近一月", name: 3 },
-  { label: "近三月", name: 4 },
-  { label: "近半年", name: 5 },
-  { label: "近一年", name: 6 }
+  { label: "昨日", name: "day" },
+  { label: "近七日", name: "week" },
+  { label: "近一月", name: "month" }
 ];
 </script>
 

@@ -7,15 +7,13 @@
 <script setup lang="ts" name="cure">
 import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
+import { defineProps } from "vue";
+import { curveDataType } from "@/api/home/type";
 
-const curveData = [
-  { value: 30, spotName: "运行成功" },
-  { value: 90, spotName: "运行失败" },
-  { value: 10, spotName: "运行超时" },
-  { value: 70, spotName: "运行暂停" },
-  { value: 20, spotName: "运行继续" },
-  { value: 60, spotName: "运行停止" }
-];
+interface Props {
+  curveData: curveDataType[];
+}
+const props = defineProps<Props>();
 
 const option: ECOption = {
   tooltip: {
@@ -28,8 +26,8 @@ const option: ECOption = {
     formatter: (p: any) => {
       let dom = `<div style="width:100%; height: 70px !important; display:flex;flex-direction: column;justify-content: space-between;padding:10px;box-sizing: border-box;
       color:#fff; background: #6B9DFE;border-radius: 4px;font-size:14px; ">
-        <div style="display: flex; align-items: center;"> <div style="width:5px;height:5px;background:#ffffff;border-radius: 50%;margin-right:5px"></div>平台 :  ${p[0].name}</div>
-        <div style="display: flex;align-items: center;"><div style="width:5px;height:5px;background:#ffffff;border-radius: 50%;margin-right:5px"></div>数据量 :  ${p[0].value}</div>
+        <div style="display: flex; align-items: center;"> <div style="width:5px;height:5px;background:#ffffff;border-radius: 50%;margin-right:5px"></div>流程状态 :  ${p[0].name}</div>
+        <div style="display: flex;align-items: center;"><div style="width:5px;height:5px;background:#ffffff;border-radius: 50%;margin-right:5px"></div>流程数量 :  ${p[0].value}</div>
       </div>`;
       return dom;
     }
@@ -67,7 +65,7 @@ const option: ECOption = {
   xAxis: [
     {
       type: "category",
-      data: curveData.map((val: any) => {
+      data: props.curveData.map((val: any) => {
         return {
           value: val.spotName
         };
@@ -126,7 +124,7 @@ const option: ECOption = {
     {
       name: "Direct",
       type: "bar",
-      data: curveData.map((val: any) => {
+      data: props.curveData.map((val: any) => {
         return {
           value: val.value
         };
