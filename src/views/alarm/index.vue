@@ -6,41 +6,80 @@
       :request-api="getTableList"
       :init-param="initParam"
       :data-callback="dataCallback"
+      @darg-sort="sortTable"
     >
-      <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain>新增流程</el-button>
-        <el-button type="primary" :icon="Download" plain>导出数据</el-button>
-        <el-button type="primary" :icon="View" plain>详情页面</el-button>
-        <el-button type="danger" :icon="RemoveFilled" plain :disabled="!scope.isSelected"> 批量删除 </el-button>
-      </template>
-
       <template #expand="scope">
         <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer(scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen">编辑</el-button>
-        <el-button type="primary" link :icon="Delete">删除</el-button>
+        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
+        <el-button type="primary" link :icon="EditPen" @click="updateAlarm(scope.row)">告警确认</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除</el-button>
       </template>
     </ProTable>
+    <alarmDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getPluginRequest } from "@/api/plugin/index";
-import { ProTableInstance } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View, RemoveFilled } from "@element-plus/icons-vue";
+import { getAlarmRequest, updateAlarmRequest, deleteAlarmRequest } from "@/api/alarm/index";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
+import { Delete, EditPen, View } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+import alarmDrawer from "./alarmDrawer.vue";
+import { useHandleData } from "@/hooks/useHandleData";
+import { Alarm } from "@/api/alarm/type";
+import { getCurrentDate } from "@/utils/currentDateTime";
 
 const proTable = ref<ProTableInstance>();
-const openDrawer = (row: any) => {
-  console.log("查看", row);
+
+// 新增，查看，编辑
+const drawerRef = ref<InstanceType<typeof alarmDrawer> | null>(null);
+const openDrawer = (title: string, row: Partial<Alarm.AlarmItem> = {}) => {
+  const params = {
+    title,
+    isView: title === "查看",
+    row: { ...row },
+    api: updateAlarmRequest,
+    getTableList: proTable.value?.getTableList
+  };
+  drawerRef.value?.acceptParams(params);
 };
 
-const dataCallback = (data: any) => {
+const updateAlarm = async (row: any) => {
+  if (row.people_confirm) {
+    ElMessage.warning("告警已经确认");
+    return;
+  }
+  row["update_time"] = getCurrentDate();
+  row["people_confirm"] = true;
+
+  const res: any = await updateAlarmRequest(row);
+  if (res.code == 200) {
+    ElMessage.success("告警确认成功");
+  } else {
+    ElMessage.error("告警确认失败");
+  }
+};
+
+// 删除告警信息
+const deletePlugin = async (params: Alarm.AlarmItem) => {
+  await useHandleData(deleteAlarmRequest, { id: [params.id] }, `删除【${params.task_name}】告警`);
+  proTable.value?.getTableList();
+};
+
+// 表格拖拽排序
+const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: number }) => {
+  console.log(newIndex, oldIndex);
+  console.log(proTable.value?.tableData);
+  ElMessage.success("修改列表排序成功");
+};
+
+const dataCallback = (data: Alarm.AlarmResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -49,24 +88,49 @@ const dataCallback = (data: any) => {
   };
 };
 
-const getTableList = (params: any) => {
+const getTableList = (params: Alarm.AlarmFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  newParams.createTime && (newParams.startTime = newParams.createTime[0]);
-  newParams.createTime && (newParams.endTime = newParams.createTime[1]);
-  delete newParams.createTime;
-  return getPluginRequest(newParams);
+  return getAlarmRequest(newParams);
 };
 
-const columns = reactive<any>([
-  { type: "selection", fixed: "left", width: 70 },
-  { type: "expand", label: "Expand", width: 85 },
-  { prop: "class_name", label: "插件名称", search: { el: "input" } },
-  { prop: "version", label: "插件版本" },
-  { prop: "method_name", label: "插件方法", search: { el: "input" } },
-  { prop: "method_desc", label: "方法描述" },
-  { prop: "node_type", label: "节点类型", search: { el: "input" } },
-  { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },
-  { prop: "updater", label: "修改者", width: 100, search: { el: "input" } },
+const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
+  { type: "selection", fixed: "left", width: 60 },
+  { type: "expand", label: "Expand", width: 100 },
+  {
+    prop: "process_name",
+    label: "流程名称",
+    search: { el: "input" },
+    width: 140
+  },
+  {
+    prop: "process_instance_id",
+    label: "流程实例ID",
+    search: { el: "input" },
+    width: 160
+  },
+  {
+    prop: "task_name",
+    label: "任务名称",
+    search: { el: "input" },
+    width: 140
+  },
+  { prop: "error_info", label: "异常信息", width: 120 },
+  {
+    prop: "people_confirm",
+    label: "是否确认",
+    search: { el: "input" },
+    width: 120,
+    render: (scope: any) => {
+      return (
+        <el-tag type={scope.row.people_confirm ? "success" : "danger"}>
+          {scope.row.people_confirm ? "确认" : "未确认"}
+        </el-tag>
+      );
+    }
+  },
+  { prop: "creator_name", label: "处理人" },
+  { prop: "insert_time", label: "创建时间" },
+  { prop: "update_time", label: "修改时间" },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

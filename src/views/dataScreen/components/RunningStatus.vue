@@ -19,8 +19,8 @@ let data: ChartProp[] = [
   { value: 110, name: "运行失败", percentage: "8%" },
   { value: 150, name: "运行超时", percentage: "12%" },
   { value: 310, name: "运行停止", percentage: "24%" },
-  { value: 250, name: "运行暂停", percentage: "20%" },
-  { value: 260, name: "运行继续", percentage: "20%" }
+  { value: 250, name: "运行中", percentage: "20%" },
+  { value: 260, name: "运行排队", percentage: "20%" }
 ];
 
 const colors = ["#F6C95C", "#EF7D33", "#1F9393", "#184EA1", "#81C8EF", "#9270CA"];
@@ -41,7 +41,7 @@ const option: ECOption = {
     formatter: function (name: string) {
       let text = "";
       data.forEach((val: ChartProp) => {
-        if (val.name === name) text = " " + name + "　 " + val.percentage;
+        if (val.name === name) text = " " + name + "　 " + val.value;
       });
       return text;
     },

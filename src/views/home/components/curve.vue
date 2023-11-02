@@ -7,7 +7,7 @@
 <script setup lang="ts" name="cure">
 import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
-import { defineProps } from "vue";
+import { ref, defineProps, watch } from "vue";
 import { curveDataType } from "@/api/home/type";
 
 interface Props {
@@ -15,133 +15,136 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const option: ECOption = {
-  tooltip: {
-    trigger: "axis",
-    backgroundColor: "transparent",
-    axisPointer: {
-      type: "none"
-    },
-    padding: 0,
-    formatter: (p: any) => {
-      let dom = `<div style="width:100%; height: 70px !important; display:flex;flex-direction: column;justify-content: space-between;padding:10px;box-sizing: border-box;
+const option = ref<ECOption>({});
+watch(props, () => {
+  option.value = {
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: "transparent",
+      axisPointer: {
+        type: "none"
+      },
+      padding: 0,
+      formatter: (p: any) => {
+        let dom = `<div style="width:100%; height: 70px !important; display:flex;flex-direction: column;justify-content: space-between;padding:10px;box-sizing: border-box;
       color:#fff; background: #6B9DFE;border-radius: 4px;font-size:14px; ">
         <div style="display: flex; align-items: center;"> <div style="width:5px;height:5px;background:#ffffff;border-radius: 50%;margin-right:5px"></div>流程状态 :  ${p[0].name}</div>
         <div style="display: flex;align-items: center;"><div style="width:5px;height:5px;background:#ffffff;border-radius: 50%;margin-right:5px"></div>流程数量 :  ${p[0].value}</div>
       </div>`;
-      return dom;
-    }
-  },
-  toolbox: {
-    show: true,
-    orient: "horizontal"
-  },
-  grid: {
-    left: "0",
-    right: "0"
-  },
-  dataZoom: [
-    {
-      show: false,
-      height: 10,
-      xAxisIndex: [0],
-      bottom: 0,
-      startValue: 0,
-      endValue: 9,
-      handleStyle: {
-        color: "#6b9dfe"
-      },
-      textStyle: {
-        color: "transparent"
+        return dom;
       }
     },
-    {
-      type: "inside",
+    toolbox: {
       show: true,
-      height: 0,
-      zoomLock: true
-    }
-  ],
-  xAxis: [
-    {
-      type: "category",
-      data: props.curveData.map((val: any) => {
-        return {
-          value: val.spotName
-        };
-      }),
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        margin: 20,
-        interval: 0,
-        color: "#a1a1a1",
-        fontSize: 14,
-        formatter: function (name: string) {
-          undefined;
-          return name.length > 8 ? name.slice(0, 8) + "..." : name;
+      orient: "horizontal"
+    },
+    grid: {
+      left: "0",
+      right: "0"
+    },
+    dataZoom: [
+      {
+        show: false,
+        height: 10,
+        xAxisIndex: [0],
+        bottom: 0,
+        startValue: 0,
+        endValue: 9,
+        handleStyle: {
+          color: "#6b9dfe"
+        },
+        textStyle: {
+          color: "transparent"
         }
       },
-      axisLine: {
-        lineStyle: {
-          color: "#c0c0c0"
-        }
-      }
-    }
-  ],
-  yAxis: [
-    {
-      min: 0,
-      axisLine: {
-        show: false
-      },
-      axisTick: {
-        show: false
-      },
-      splitLine: {
+      {
+        type: "inside",
         show: true,
-        lineStyle: {
-          color: "#c0c0c0"
-        }
-      },
-      axisLabel: {
-        color: "#a1a1a1",
-        fontSize: 16,
-        fontWeight: 400,
-        formatter: function (value: number) {
-          if (value === 0) {
-            return value + "";
-          } else if (value >= 10000) {
-            return value / 10000 + "w";
+        height: 0,
+        zoomLock: true
+      }
+    ],
+    xAxis: [
+      {
+        type: "category",
+        data: props.curveData.map((val: any) => {
+          return {
+            value: val.spotName
+          };
+        }),
+        axisTick: {
+          show: false
+        },
+        axisLabel: {
+          margin: 20,
+          interval: 0,
+          color: "#a1a1a1",
+          fontSize: 14,
+          formatter: function (name: string) {
+            undefined;
+            return name.length > 8 ? name.slice(0, 8) + "..." : name;
           }
-          return value + "";
+        },
+        axisLine: {
+          lineStyle: {
+            color: "#c0c0c0"
+          }
         }
       }
-    }
-  ],
-  series: [
-    {
-      name: "Direct",
-      type: "bar",
-      data: props.curveData.map((val: any) => {
-        return {
-          value: val.value
-        };
-      }),
-      barWidth: "45px",
-      itemStyle: {
-        color: "#C5D8FF",
-        borderRadius: [12, 12, 0, 0]
-      },
-      emphasis: {
+    ],
+    yAxis: [
+      {
+        min: 0,
+        axisLine: {
+          show: false
+        },
+        axisTick: {
+          show: false
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "#c0c0c0"
+          }
+        },
+        axisLabel: {
+          color: "#a1a1a1",
+          fontSize: 16,
+          fontWeight: 400,
+          formatter: function (value: number) {
+            if (value === 0) {
+              return value + "";
+            } else if (value >= 10000) {
+              return value / 10000 + "w";
+            }
+            return value + "";
+          }
+        }
+      }
+    ],
+    series: [
+      {
+        name: "Direct",
+        type: "bar",
+        data: props.curveData.map((val: any) => {
+          return {
+            value: val.value
+          };
+        }),
+        barWidth: "45px",
         itemStyle: {
-          color: "#6B9DFE"
+          color: "#C5D8FF",
+          borderRadius: [12, 12, 0, 0]
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#6B9DFE"
+          }
         }
       }
-    }
-  ]
-};
+    ]
+  };
+});
 </script>
 
 <style lang="scss" scoped>

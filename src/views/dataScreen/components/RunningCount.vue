@@ -18,23 +18,19 @@ const gradientColors = ["rgba(254, 219, 101,0.1)", "rgba(0, 122, 254,0.1)", "rgb
 const annualData = [
   {
     label: new Date().getFullYear() - 2 + "年",
-    value: ["184", "90", "120", "0", "30", "100", "80", "40", "20", "510", "350", "180"]
+    value: ["184", "90", "120", "0", "30", "100", "80"]
   },
   {
     label: new Date().getFullYear() - 1 + "年",
-    value: ["118", "509", "366", "162", "380", "123", "321", "158", "352", "474", "154", "22"]
-  },
-  {
-    label: new Date().getFullYear() + "年",
-    value: ["548", "259", "113", "90", "69", "512", "23", "49", "28", "420", "313", "156"]
+    value: ["118", "509", "366", "162", "380", "123", "321"]
   }
 ];
 
 const data = {
   data: annualData,
   unit: annualData.map(val => val.label),
-  columns: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
-  colors: ["#FFA600", "#007AFE", "#FF4B7A"]
+  columns: ["1", "2", "3", "4", "5", "6", "7"],
+  colors: ["#007AFE", "#FF4B7A"]
 };
 
 const option: ECOption = {

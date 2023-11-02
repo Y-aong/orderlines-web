@@ -28,8 +28,8 @@ interface ChartProp {
 }
 
 let data: ChartProp = {
-  man: 0.6,
-  woman: 0.4
+  man: 0.7,
+  woman: 0.3
 };
 
 const option: ECOption = {

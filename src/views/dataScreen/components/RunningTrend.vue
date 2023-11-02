@@ -5,30 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from "dayjs";
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
-import { randomNum } from "@/utils";
 
-const initDate = (): string[] => {
-  const dateList: string[] = [];
-  let startDate = dayjs();
-  const endDate = startDate.add(30, "day");
-  while (startDate.isBefore(endDate)) {
-    const month = startDate.format("MM");
-    const day = startDate.format("DD");
-    dateList.push(`${month}/${day}`);
-    startDate = startDate.add(1, "day");
-  }
-  return dateList;
-};
-
-const data = {
-  unit: ["运行数量"],
-  data: new Array(31).fill("").map(val => {
-    val = randomNum(1, 200000);
-    return val;
-  })
+const trendData = {
+  date: ["10-11", "10-22", "10-24", "10-25", "10-26", "10-27", "10-28", "10-30", "10-31", "11-1"],
+  value: [1, 68, 73, 2, 2, 14, 17, 5, 3, 1],
+  unit: ["运行数量"]
 };
 
 const option: ECOption = {
@@ -38,7 +21,7 @@ const option: ECOption = {
     formatter: params => {
       let tipData = (params as { name: string; value: string }[])[0];
       let html = `<div class="line-chart-bg">
-                        <span style="">${tipData.name} 运行总数为<i >${tipData.value}</i> </span>
+                        <span style="">${tipData.name} 运行数量为<i >${tipData.value}</i> </span>
                     </div>`;
       return html;
     },
@@ -77,10 +60,10 @@ const option: ECOption = {
       },
       splitLine: { show: false, lineStyle: { color: "#192a44" } },
       axisTick: { show: false },
-      data: initDate()
+      data: trendData.date
     }
   ],
-  yAxis: data.unit.map((_val: string, index: number) => {
+  yAxis: trendData.unit.map((_val: string, index: number) => {
     return {
       name: "(运行次数)",
       nameTextStyle: {
@@ -117,7 +100,7 @@ const option: ECOption = {
       }
     };
   }),
-  series: data.data.map(() => {
+  series: trendData.value.map(() => {
     return {
       name: "",
       type: "line",
@@ -154,7 +137,7 @@ const option: ECOption = {
         shadowColor: "rgba(255, 199, 37, 0)",
         shadowBlur: 20
       },
-      data: data.data
+      data: trendData.value
     };
   })
 };

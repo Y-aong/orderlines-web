@@ -20,10 +20,10 @@
         <div class="dataScreen-lf">
           <div class="dataScreen-top">
             <div class="dataScreen-main-title">
-              <span>实时运行流程</span>
+              <span>系统基本信息</span>
             </div>
             <div class="dataScreen-main-chart">
-              <RunningProcess />
+              <BaseInfo :data="BaseInfoData" />
             </div>
           </div>
           <div class="dataScreen-center">
@@ -79,7 +79,7 @@
               <span>插件使用统计</span>
             </div>
             <div class="dataScreen-main-chart">
-              <PluginStatus />
+              <PluginStatus :data="plugin" />
             </div>
           </div>
         </div>
@@ -99,20 +99,116 @@ import ProcessAlarm from "./components/ProcessAlarm.vue";
 import StartType from "./components/StartType.vue";
 import RunningTrend from "./components/RunningTrend.vue";
 import PluginStatus from "./components/PluginStatus.vue";
-import RunningProcess from "./components/RunningProcess.vue";
+import BaseInfo from "./components/BaseInfo.vue";
+import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
+import {
+  getBaseInfoRequest,
+  getPluginInfoRequest,
+  getProcessAlarmRequest,
+  getProcessStatusRequest,
+  getRunningCountRequest,
+  getRunningTrendRequest,
+  getTriggerTypeRequest
+} from "@/api/data_screen/index";
+import { BaseInfoType, PluginStatusType } from "@/api/data_screen/type";
 
 const router = useRouter();
 const dataScreenRef = ref<HTMLElement | null>(null);
 
-onMounted(() => {
+const plugin = ref<PluginStatusType[]>([]);
+const Alarm = ref([]);
+const ProcessStatus = ref([]);
+const RunningCountData = ref([]);
+const RunningTrendData = ref([]);
+const BaseInfoData = ref<BaseInfoType>({
+  alarm_count: 0,
+  free_space_mb: "",
+  process_failure_total: 0,
+  process_run_total: 0,
+  process_success_total: 0,
+  process_total: 0,
+  safe_run_day: 0
+});
+
+onMounted(async () => {
   if (dataScreenRef.value) {
     dataScreenRef.value.style.transform = `scale(${getScale()}) translate(-50%, -50%)`;
     dataScreenRef.value.style.width = `1920px`;
     dataScreenRef.value.style.height = `1080px`;
   }
   window.addEventListener("resize", resize);
+  await getPluginInfo();
+  await getAlarmData();
+  await getProcessStatus();
+  await getRunningCount();
+  await getRunningTrend();
+  await getBaseInfo();
+  await getTriggerType();
 });
+
+const getTriggerType = async () => {
+  const res: any = await getTriggerTypeRequest();
+  if (res.code == 200) {
+    BaseInfo.value = res.data;
+  } else {
+    ElMessage.error("流程运行趋势获取异常");
+  }
+};
+
+const getBaseInfo = async () => {
+  const res: any = await getBaseInfoRequest();
+  if (res.code == 200) {
+    BaseInfoData.value = res.data;
+  } else {
+    ElMessage.error("流程运行趋势获取异常");
+  }
+};
+
+const getRunningTrend = async () => {
+  const res: any = await getRunningTrendRequest();
+  if (res.code == 200) {
+    RunningTrendData.value = res.data;
+  } else {
+    ElMessage.error("流程运行趋势获取异常");
+  }
+};
+
+const getRunningCount = async () => {
+  const res: any = await getRunningCountRequest();
+  if (res.code == 200) {
+    RunningCountData.value = res.data;
+  } else {
+    ElMessage.error("流程状态信息获取异常");
+  }
+};
+
+const getProcessStatus = async () => {
+  const res: any = await getProcessStatusRequest();
+  if (res.code == 200) {
+    ProcessStatus.value = res.data;
+  } else {
+    ElMessage.error("流程状态信息获取异常");
+  }
+};
+
+const getPluginInfo = async () => {
+  const pluginRes: any = await getPluginInfoRequest();
+  if (pluginRes.code == 200) {
+    plugin.value = pluginRes.data;
+  } else {
+    ElMessage.error("插件信息获取异常");
+  }
+};
+
+const getAlarmData = async () => {
+  const alarmRes: any = await getProcessAlarmRequest();
+  if (alarmRes.code == 200) {
+    Alarm.value = alarmRes.data;
+  } else {
+    ElMessage.error("告警信息获取异常");
+  }
+};
 
 // 设置响应式
 const resize = () => {
