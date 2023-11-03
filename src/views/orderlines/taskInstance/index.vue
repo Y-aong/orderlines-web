@@ -109,13 +109,9 @@ const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
     prop: "task_result",
     label: "任务结果",
     width: 110,
-    render: scope => {
+    render: () => {
       return (
-        <el-button
-          type="primary"
-          link
-          onClick={() => ElMessage.success(scope.row.task_result ? scope.row.task_result : {})}
-        >
+        <el-button type="primary" link onClick={() => ElMessage.success("查看任务结果请点击Expand")}>
           {"任务结果"}
         </el-button>
       );
@@ -125,9 +121,9 @@ const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
     prop: "task_error_info",
     label: "任务异常",
     width: 110,
-    render: scope => {
+    render: () => {
       return (
-        <el-button type="primary" link onClick={() => ElMessage.error(scope.row.task_error_info)}>
+        <el-button type="primary" link onClick={() => ElMessage.error("查看任务告警请点击Expand")}>
           {"异常信息"}
         </el-button>
       );

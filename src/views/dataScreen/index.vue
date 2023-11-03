@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="header-ri">
-          <span class="header-download">统计报告</span>
+          <span class="header-download" @click="toProcessInstance">流程实例</span>
           <span class="header-time">当前时间：{{ time }}</span>
         </div>
       </div>
@@ -31,7 +31,7 @@
               <span>启动方式比例</span>
             </div>
             <div class="dataScreen-main-chart">
-              <StartType />
+              <Trigger :data="triggerData" />
             </div>
           </div>
           <div class="dataScreen-bottom">
@@ -39,21 +39,21 @@
               <span>流程状态统计</span>
             </div>
             <div class="dataScreen-main-chart">
-              <RunningStatus />
+              <ProcessStatus :data="ProcessStatusData" />
             </div>
           </div>
         </div>
         <div class="dataScreen-ct">
           <div class="dataScreen-map">
             <div class="dataScreen-map-title"></div>
-            <RunningLog />
+            <RunningLog :data="runningInfo" />
           </div>
           <div class="dataScreen-cb">
             <div class="dataScreen-main-title">
               <span>流程运行次数趋势图</span>
             </div>
             <div class="dataScreen-main-chart">
-              <RunningTrend />
+              <RunningTrend :data="RunningTrendData" />
             </div>
           </div>
         </div>
@@ -71,12 +71,12 @@
               <span>流程运行次数对比</span>
             </div>
             <div class="dataScreen-main-chart">
-              <RunningCount />
+              <RunningCount :data="RunningCountData" />
             </div>
           </div>
           <div class="dataScreen-bottom">
             <div class="dataScreen-main-title">
-              <span>插件使用统计</span>
+              <span>插件使用统计—前4</span>
             </div>
             <div class="dataScreen-main-chart">
               <PluginStatus :data="plugin" />
@@ -92,11 +92,11 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { HOME_URL } from "@/config";
 import { useRouter } from "vue-router";
-import RunningStatus from "./components/RunningStatus.vue";
+import ProcessStatus from "./components/ProcessStatus.vue";
 import RunningCount from "./components/RunningCount.vue";
 import RunningLog from "./components/RunningLog.vue";
 import ProcessAlarm from "./components/ProcessAlarm.vue";
-import StartType from "./components/StartType.vue";
+import Trigger from "./components/TriggerType.vue";
 import RunningTrend from "./components/RunningTrend.vue";
 import PluginStatus from "./components/PluginStatus.vue";
 import BaseInfo from "./components/BaseInfo.vue";
@@ -109,18 +109,39 @@ import {
   getProcessStatusRequest,
   getRunningCountRequest,
   getRunningTrendRequest,
-  getTriggerTypeRequest
+  getTriggerTypeRequest,
+  getRunningInfoRequest
 } from "@/api/data_screen/index";
-import { BaseInfoType, PluginStatusType } from "@/api/data_screen/type";
-
+import {
+  BaseInfoType,
+  PluginStatusType,
+  ProcessAlarmType,
+  TrendDataType,
+  TriggerType,
+  RunningInfoType
+} from "@/api/data_screen/type";
 const router = useRouter();
+
+const toProcessInstance = () => {
+  router.push(`/orderlines/taskInstance`);
+};
+
 const dataScreenRef = ref<HTMLElement | null>(null);
 
 const plugin = ref<PluginStatusType[]>([]);
-const Alarm = ref([]);
-const ProcessStatus = ref([]);
-const RunningCountData = ref([]);
-const RunningTrendData = ref([]);
+const Alarm = ref<ProcessAlarmType[]>([]);
+const ProcessStatusData = ref([]);
+const RunningCountData = ref({
+  colors: [],
+  columns: [],
+  data: [{ label: "", value: [] }],
+  unit: []
+});
+const RunningTrendData = ref<TrendDataType>({
+  date: [],
+  value: [],
+  unit: []
+});
 const BaseInfoData = ref<BaseInfoType>({
   alarm_count: 0,
   free_space_mb: "",
@@ -129,6 +150,36 @@ const BaseInfoData = ref<BaseInfoType>({
   process_success_total: 0,
   process_total: 0,
   safe_run_day: 0
+});
+let triggerData = ref<TriggerType>({
+  schedule: 0,
+  trigger: 0
+});
+let runningInfo = ref<RunningInfoType>({
+  process_info: {
+    name: "",
+    process_instance_id: "",
+    progress: 0,
+    status: ""
+  },
+  running_task: {
+    end_time: "",
+    start_time: "",
+    task_error: {},
+    task_name: "",
+    task_result: {
+      status: ""
+    },
+    task_status: ""
+  },
+  task_nodes: [
+    {
+      color: "",
+      icon: "",
+      start_time: "",
+      task_name: ""
+    }
+  ]
 });
 
 onMounted(async () => {
@@ -145,14 +196,24 @@ onMounted(async () => {
   await getRunningTrend();
   await getBaseInfo();
   await getTriggerType();
+  await getRunningInfo();
 });
+
+const getRunningInfo = async () => {
+  const res: any = await getRunningInfoRequest();
+  if (res.code == 200) {
+    runningInfo.value = res.data;
+  } else {
+    ElMessage.error("流程运行信息获取异常");
+  }
+};
 
 const getTriggerType = async () => {
   const res: any = await getTriggerTypeRequest();
   if (res.code == 200) {
-    BaseInfo.value = res.data;
+    triggerData.value = res.data;
   } else {
-    ElMessage.error("流程运行趋势获取异常");
+    ElMessage.error("启动方式获取异常");
   }
 };
 
@@ -161,7 +222,7 @@ const getBaseInfo = async () => {
   if (res.code == 200) {
     BaseInfoData.value = res.data;
   } else {
-    ElMessage.error("流程运行趋势获取异常");
+    ElMessage.error("基础信息获取异常");
   }
 };
 
@@ -179,14 +240,14 @@ const getRunningCount = async () => {
   if (res.code == 200) {
     RunningCountData.value = res.data;
   } else {
-    ElMessage.error("流程状态信息获取异常");
+    ElMessage.error("运行次数趋势获取异常");
   }
 };
 
 const getProcessStatus = async () => {
   const res: any = await getProcessStatusRequest();
   if (res.code == 200) {
-    ProcessStatus.value = res.data;
+    ProcessStatusData.value = res.data;
   } else {
     ElMessage.error("流程状态信息获取异常");
   }
@@ -197,14 +258,14 @@ const getPluginInfo = async () => {
   if (pluginRes.code == 200) {
     plugin.value = pluginRes.data;
   } else {
-    ElMessage.error("插件信息获取异常");
+    ElMessage.error("插件使用信息获取异常");
   }
 };
 
 const getAlarmData = async () => {
-  const alarmRes: any = await getProcessAlarmRequest();
-  if (alarmRes.code == 200) {
-    Alarm.value = alarmRes.data;
+  const res: any = await getProcessAlarmRequest();
+  if (res.code == 200) {
+    Alarm.value = res.data;
   } else {
     ElMessage.error("告警信息获取异常");
   }

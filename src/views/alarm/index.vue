@@ -114,7 +114,18 @@ const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
     search: { el: "input" },
     width: 140
   },
-  { prop: "error_info", label: "异常信息", width: 120 },
+  {
+    prop: "error_info",
+    label: "异常信息",
+    width: 120,
+    render: () => {
+      return (
+        <el-button type="danger" link onClick={() => ElMessage.error("查看告警请点击Expand")}>
+          {"任务异常"}
+        </el-button>
+      );
+    }
+  },
   {
     prop: "people_confirm",
     label: "是否确认",

@@ -20,7 +20,7 @@ let option = ref<ECOption>({});
 watch(props, () => {
   option.value = {
     title: {
-      text: "运行状态",
+      text: "流程告警",
       subtext: "",
       left: "56%",
       top: "45%",

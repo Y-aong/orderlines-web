@@ -47,7 +47,7 @@
           </el-col>
           <el-col class="mb40" :xs="24" :sm="24" :md="24" :lg="10" :xl="10">
             <div class="item-right">
-              <div class="echarts-title">运行状态</div>
+              <div class="echarts-title">流程告警</div>
               <div class="book-echarts">
                 <Pie ref="pieRef" :pie-data="pieData" />
               </div>
@@ -74,7 +74,7 @@
 import { ref, onMounted } from "vue";
 import Pie from "./components/pie.vue";
 import Curve from "./components/curve.vue";
-import { getRunNumber, getRunStatus, getCurveData } from "@/api/home/index";
+import { getRunNumber, getAlarmCount, getCurveData } from "@/api/home/index";
 import { pieType, curveDataType } from "@/api/home/type";
 import type { TabsPaneContext } from "element-plus";
 
@@ -112,7 +112,7 @@ onMounted(async () => {
     runNumber.value = runNumberData.data;
   }
 
-  const RunStatusData: any = await getRunStatus();
+  const RunStatusData: any = await getAlarmCount();
   if (RunStatusData.code === 200) {
     pieData.value = RunStatusData.data;
   }

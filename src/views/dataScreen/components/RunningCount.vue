@@ -1,5 +1,5 @@
 <template>
-  <!-- 年度使用 -->
+  <!-- 运行次数对比 -->
   <div class="echarts">
     <ECharts :option="option" :resize="false" />
   </div>
@@ -8,52 +8,37 @@
 <script setup lang="ts">
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
+import { AnnualDataType, RunningCountData } from "@/api/data_screen/type";
+import { ref, defineProps, watch } from "vue";
+let option = ref<ECOption>({});
+const props = defineProps<Props>();
 
-interface ChartProp {
-  label: string;
-  value: string[];
+interface Props {
+  data: RunningCountData;
 }
 
-const gradientColors = ["rgba(254, 219, 101,0.1)", "rgba(0, 122, 254,0.1)", "rgba(255, 75, 122, 0.1)"];
-const annualData = [
-  {
-    label: new Date().getFullYear() - 2 + "年",
-    value: ["184", "90", "120", "0", "30", "100", "80"]
-  },
-  {
-    label: new Date().getFullYear() - 1 + "年",
-    value: ["118", "509", "366", "162", "380", "123", "321"]
-  }
-];
-
-const data = {
-  data: annualData,
-  unit: annualData.map(val => val.label),
-  columns: ["1", "2", "3", "4", "5", "6", "7"],
-  colors: ["#007AFE", "#FF4B7A"]
-};
-
-const option: ECOption = {
-  tooltip: {
-    trigger: "axis",
-    axisPointer: {
-      type: "none"
-    },
-    borderWidth: 0,
-    padding: 0,
-    backgroundColor: "transparent",
-    formatter: (params: any) => {
-      let str = "";
-      params.forEach((val: { color: string; seriesName: string; data: number }) => {
-        str += `
+watch(props, () => {
+  option.value = {
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "none"
+      },
+      borderWidth: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+      formatter: (params: any) => {
+        let str = "";
+        params.forEach((val: { color: string; seriesName: string; data: number }) => {
+          str += `
           <div class="year-item">
             <span class="year-dot" style="background-color: ${val.color};"></span>
             <span class="year-name">${val.seriesName}</span>
             <span class="year-value">${val.data >= 10000 ? (val.data / 10000).toFixed(2) + "w" : val.data}</span>
           </div>
           `;
-      });
-      const dom = `
+        });
+        const dom = `
                     <div class="annual-tooltip">
                       <span class="annual-month">${params[0].dataIndex + 1}月</span>
                       <div class="annual-list">
@@ -61,32 +46,73 @@ const option: ECOption = {
                       </div>
                     </div>
                   `;
-      return dom;
-    }
-  },
-  legend: {
-    right: "2%",
-    top: "0%",
-    itemWidth: 15,
-    itemHeight: 6,
-    align: "auto",
-    icon: "rect",
-    itemGap: 15,
-    textStyle: {
-      color: "#ebebf0"
-    }
-  },
-  grid: {
-    top: "20%",
-    left: "40",
-    right: "4%",
-    bottom: "15%"
-  },
-  xAxis: [
-    {
-      name: "(月份)",
-      type: "category",
-      boundaryGap: false,
+        return dom;
+      }
+    },
+    legend: {
+      right: "2%",
+      top: "0%",
+      itemWidth: 15,
+      itemHeight: 6,
+      align: "auto",
+      icon: "rect",
+      itemGap: 15,
+      textStyle: {
+        color: "#ebebf0"
+      }
+    },
+    grid: {
+      top: "20%",
+      left: "40",
+      right: "4%",
+      bottom: "15%"
+    },
+    xAxis: [
+      {
+        name: "(月份)",
+        type: "category",
+        boundaryGap: false,
+        axisLine: {
+          show: true,
+          lineStyle: {
+            color: "#233653"
+          }
+        },
+        axisLabel: {
+          color: "#7ec7ff",
+          padding: 0,
+          fontSize: 12,
+          formatter: function (data) {
+            return data;
+          }
+        },
+        splitLine: {
+          show: false,
+          lineStyle: {
+            color: "#192a44"
+          }
+        },
+        axisTick: {
+          show: false
+        },
+        data: props.data.columns
+      }
+    ],
+    yAxis: {
+      name: "(运行总量)",
+      nameTextStyle: {
+        color: "#D6DFEA",
+        fontSize: 12,
+        padding: [0, 30, 0, 0]
+      },
+      minInterval: 1,
+      splitNumber: 5,
+      splitLine: {
+        show: false,
+        lineStyle: {
+          color: "#192a44"
+        }
+      },
       axisLine: {
         show: true,
         lineStyle: {
@@ -94,101 +120,63 @@ const option: ECOption = {
         }
       },
       axisLabel: {
-        color: "#7ec7ff",
-        padding: 0,
-        fontSize: 12,
-        formatter: function (data) {
-          return data;
-        }
-      },
-      splitLine: {
-        show: false,
-        lineStyle: {
-          color: "#192a44"
-        }
+        show: true,
+        color: "#B9D6D6",
+        padding: 0
       },
       axisTick: {
         show: false
-      },
-      data: data.columns
-    }
-  ],
-  yAxis: {
-    name: "(运行总量)",
-    nameTextStyle: {
-      color: "#D6DFEA",
-      fontSize: 12,
-      padding: [0, 30, 0, 0]
-    },
-    minInterval: 1,
-    splitNumber: 5,
-    splitLine: {
-      show: false,
-      lineStyle: {
-        color: "#192a44"
       }
     },
-    axisLine: {
-      show: true,
-      lineStyle: {
-        color: "#233653"
-      }
-    },
-    axisLabel: {
-      show: true,
-      color: "#B9D6D6",
-      padding: 0
-    },
-    axisTick: {
-      show: false
-    }
-  },
-  series: data.data.map((val: ChartProp, index: number) => {
-    return {
-      name: val.label,
-      type: "line",
-      symbol: "circle",
-      showSymbol: false,
-      smooth: true,
-      lineStyle: {
-        width: 1,
-        color: data.colors[index],
-        borderColor: data.colors[index]
-      },
-      itemStyle: {
-        color: data.colors[index],
-        borderColor: "#646ace",
-        borderWidth: 2
-      },
-      tooltip: {
-        show: true
-      },
-      areaStyle: {
-        color: {
-          type: "linear",
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            {
-              offset: 0,
-              color: data.colors[index]
-            },
-            {
-              offset: 1,
-              color: gradientColors[index]
-            }
-          ],
-          global: false
+    series: props.data.data.map((val: AnnualDataType, index: number) => {
+      return {
+        name: val.label,
+        type: "line",
+        symbol: "circle",
+        showSymbol: false,
+        smooth: true,
+        lineStyle: {
+          width: 1,
+          color: props.data.colors[index],
+          borderColor: props.data.colors[index]
         },
-        shadowColor: "rgba(25,163,223, 0.3)",
-        shadowBlur: 20
-      },
-      data: val.value
-    };
-  })
-};
+        itemStyle: {
+          color: props.data.colors[index],
+          borderColor: "#646ace",
+          borderWidth: 2
+        },
+        tooltip: {
+          show: true
+        },
+        areaStyle: {
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: props.data.colors[index]
+              },
+              {
+                offset: 1,
+                color: gradientColors[index]
+              }
+            ],
+            global: false
+          },
+          shadowColor: "rgba(25,163,223, 0.3)",
+          shadowBlur: 20
+        },
+        data: val.value
+      };
+    })
+  };
+});
+
+const gradientColors = ["rgba(254, 219, 101,0.1)", "rgba(0, 122, 254,0.1)", "rgba(255, 75, 122, 0.1)"];
 </script>
 <style lang="scss" scoped>
 .echarts {

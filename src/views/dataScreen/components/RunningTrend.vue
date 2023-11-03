@@ -7,140 +7,144 @@
 <script setup lang="ts">
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
+import { ref, defineProps, watch } from "vue";
+import { TrendDataType } from "@/api/data_screen/type";
 
-const trendData = {
-  date: ["10-11", "10-22", "10-24", "10-25", "10-26", "10-27", "10-28", "10-30", "10-31", "11-1"],
-  value: [1, 68, 73, 2, 2, 14, 17, 5, 3, 1],
-  unit: ["运行数量"]
-};
+let option = ref<ECOption>({});
+interface Props {
+  data: TrendDataType;
+}
+const props = defineProps<Props>();
 
-const option: ECOption = {
-  tooltip: {
-    trigger: "axis",
-    confine: true,
-    formatter: params => {
-      let tipData = (params as { name: string; value: string }[])[0];
-      let html = `<div class="line-chart-bg">
+watch(props, () => {
+  option.value = {
+    tooltip: {
+      trigger: "axis",
+      confine: true,
+      formatter: params => {
+        let tipData = (params as { name: string; value: string }[])[0];
+        let html = `<div class="line-chart-bg">
                         <span style="">${tipData.name} 运行数量为<i >${tipData.value}</i> </span>
                     </div>`;
-      return html;
+        return html;
+      },
+      backgroundColor: "transparent",
+      borderColor: "transparent",
+      axisPointer: { lineStyle: { type: "dashed" }, snap: true },
+      extraCssText: "box-shadow: none;padding:0"
     },
-    backgroundColor: "transparent",
-    borderColor: "transparent",
-    axisPointer: { lineStyle: { type: "dashed" }, snap: true },
-    extraCssText: "box-shadow: none;padding:0"
-  },
-  grid: {
-    top: "15%",
-    left: "5%",
-    right: "5%",
-    bottom: "15%"
-  },
-  xAxis: [
-    {
-      type: "category",
-      boundaryGap: false,
-      axisLine: {
-        show: true,
-        symbol: ["none", "arrow"],
-        symbolOffset: [0, 30],
-        lineStyle: {
-          color: "#233653",
-          shadowOffsetX: 20,
-          shadowColor: "#233653"
-        }
-      },
-      axisLabel: {
-        color: "#7ec7ff",
-        padding: 0,
-        fontSize: 12,
-        formatter: function (data) {
-          return data;
-        }
-      },
-      splitLine: { show: false, lineStyle: { color: "#192a44" } },
-      axisTick: { show: false },
-      data: trendData.date
-    }
-  ],
-  yAxis: trendData.unit.map((_val: string, index: number) => {
-    return {
-      name: "(运行次数)",
-      nameTextStyle: {
-        color: "#7ec7ff",
-        fontSize: 12,
-        padding: [0, 30, -4, 0]
-      },
-      minInterval: 1,
-      splitLine: {
-        show: false,
-        lineStyle: {
-          color: "#192a44"
-        }
-      },
-      axisLine: {
-        show: index === 0 ? true : false,
-        lineStyle: {
-          color: "#233653"
-        }
-      },
-      axisLabel: {
-        show: true,
-        color: "#7ec7ff",
-        padding: 0,
-        formatter: function (value: string) {
-          if (Number(value) >= 10000) {
-            value = Number(value) / 10000 + "w";
+    grid: {
+      top: "15%",
+      left: "5%",
+      right: "5%",
+      bottom: "15%"
+    },
+    xAxis: [
+      {
+        type: "category",
+        boundaryGap: false,
+        axisLine: {
+          show: true,
+          symbol: ["none", "arrow"],
+          symbolOffset: [0, 30],
+          lineStyle: {
+            color: "#233653",
+            shadowOffsetX: 20,
+            shadowColor: "#233653"
           }
-          return value;
-        }
-      },
-      axisTick: {
-        show: false
-      }
-    };
-  }),
-  series: trendData.value.map(() => {
-    return {
-      name: "",
-      type: "line",
-      symbol: "circle",
-      showSymbol: false,
-      smooth: true,
-      lineStyle: {
-        width: 1,
-        color: "#707070",
-        borderColor: "#707070"
-      },
-      itemStyle: {
-        color: "#F5B348",
-        shadowColor: "rgba(245, 179, 72, 0.3)",
-        shadowBlur: 3
-      },
-      emphasis: {
-        scale: true
-      },
-      areaStyle: {
-        color: {
-          type: "linear",
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            { offset: 0, color: "#846B38" },
-            { offset: 0.5, color: "#403E47" },
-            { offset: 1, color: "#11144E" }
-          ],
-          global: false
         },
-        shadowColor: "rgba(255, 199, 37, 0)",
-        shadowBlur: 20
-      },
-      data: trendData.value
-    };
-  })
-};
+        axisLabel: {
+          color: "#7ec7ff",
+          padding: 0,
+          fontSize: 12,
+          formatter: function (data) {
+            return data;
+          }
+        },
+        splitLine: { show: false, lineStyle: { color: "#192a44" } },
+        axisTick: { show: false },
+        data: props.data.date
+      }
+    ],
+    yAxis: props.data.unit.map((_val: string, index: number) => {
+      return {
+        name: "(运行次数)",
+        nameTextStyle: {
+          color: "#7ec7ff",
+          fontSize: 12,
+          padding: [0, 30, -4, 0]
+        },
+        minInterval: 1,
+        splitLine: {
+          show: false,
+          lineStyle: {
+            color: "#192a44"
+          }
+        },
+        axisLine: {
+          show: index === 0 ? true : false,
+          lineStyle: {
+            color: "#233653"
+          }
+        },
+        axisLabel: {
+          show: true,
+          color: "#7ec7ff",
+          padding: 0,
+          formatter: function (value: string) {
+            if (Number(value) >= 10000) {
+              value = Number(value) / 10000 + "w";
+            }
+            return value;
+          }
+        },
+        axisTick: {
+          show: false
+        }
+      };
+    }),
+    series: props.data.value.map(() => {
+      return {
+        name: "",
+        type: "line",
+        symbol: "circle",
+        showSymbol: false,
+        smooth: true,
+        lineStyle: {
+          width: 1,
+          color: "#707070",
+          borderColor: "#707070"
+        },
+        itemStyle: {
+          color: "#F5B348",
+          shadowColor: "rgba(245, 179, 72, 0.3)",
+          shadowBlur: 3
+        },
+        emphasis: {
+          scale: true
+        },
+        areaStyle: {
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: "#846B38" },
+              { offset: 0.5, color: "#403E47" },
+              { offset: 1, color: "#11144E" }
+            ],
+            global: false
+          },
+          shadowColor: "rgba(255, 199, 37, 0)",
+          shadowBlur: 20
+        },
+        data: props.data.value
+      };
+    })
+  };
+});
 </script>
 
 <style lang="scss" scoped>
