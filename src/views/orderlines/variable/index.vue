@@ -11,9 +11,8 @@
         <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增变量</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增变量</el-button>
         <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
-        <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
       </template>
 
       <template #operation="scope">
@@ -41,17 +40,15 @@ import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableDrawer from "./variableDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
 import { Variable } from "@/api/orderlines/variable/type";
 
-const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof variableDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<Variable.VariableItem> = {}) => {
+const openDrawer = (title: string, row: any = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -72,14 +69,6 @@ const deleteTaskInstance = async (params: Variable.VariableItem) => {
   await useHandleData(deleteVariableRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
   proTable.value?.getTableList();
 };
-// 跳转详情页
-const toDetail = (row: any) => {
-  if (!row.selectedList[0]) {
-    ElMessage.error("请勾选行选择框后，点击详情按钮");
-  } else {
-    router.push(`/orderlines/taskInstance/detail/${row.selectedList[0].id}`);
-  }
-};
 
 const dataCallback = (data: Variable.VariableResponse) => {
   return {
@@ -96,7 +85,6 @@ const getTableList = (params: Variable.VariableFilter) => {
 };
 
 const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
-  { type: "selection", fixed: "left", width: 70 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },

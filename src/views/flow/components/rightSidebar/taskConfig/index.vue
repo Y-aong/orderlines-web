@@ -34,7 +34,7 @@
           <TaskResultParam v-if="!isRunning" />
           <TaskRunningConfig v-if="!isRunning" />
           <clickCheckTask v-if="isRunning" />
-          <RunningImage v-if="isRunning" />
+          <!-- <RunningImage v-if="isRunning" /> -->
           <!-- <RunningLog v-if="isRunning" /> -->
         </el-collapse>
       </div>
@@ -47,7 +47,7 @@ import TaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
 // import RunningLog from "./runningLog/index.vue";
-import RunningImage from "./runningImage/index.vue";
+// import RunningImage from "./runningImage/index.vue";
 import clickCheckTask from "./clickCheck/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";

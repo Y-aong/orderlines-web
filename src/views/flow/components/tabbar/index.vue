@@ -49,6 +49,7 @@
         <el-button size="small" type="primary" @click="saveProcess"> {{ isSave ? "编辑" : "保存" }}</el-button>
         <el-button v-if="isRedirect" size="small" type="success" @click="runningStatus"> 状态 </el-button>
         <el-select
+          v-if="!isRunning && !isSave"
           v-model="process_version"
           placeholder="选择版本"
           style="width: 120px; margin-left: 15px"
@@ -123,7 +124,7 @@ onMounted(async () => {
 });
 
 const getProcessVersionOption = async () => {
-  const res = await getProcessVersionOptionRequest(process_id.value);
+  const res = await getProcessVersionOptionRequest(process_name.value);
   options.value = res.data;
 };
 
@@ -136,9 +137,7 @@ const getProcessVersion = async () => {
 
 //创建流程版本
 const createProcessVersion = async () => {
-  console.log("版本创建成功");
   versionVisible.value = false;
-
   let res: any = await createProcessVersionRequest(versionForm.value);
   if (res.code == 200) {
     process_id.value = process_version.value;

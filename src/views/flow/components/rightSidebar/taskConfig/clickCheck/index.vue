@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>任务运行</h3>
+    <h3>任务运行日志</h3>
     <div class="task-progress">
       <el-progress
         :percentage="taskProgress"

@@ -44,8 +44,8 @@ export const getTaskInstanceItem = (process_instance_id: string, task_id: string
   http.get(`${API.TASK_INSTANCE_DETAIL}?process_instance_id=${process_instance_id}&task_id=${task_id}`);
 
 // 获取流程版本
-export const getProcessVersionOptionRequest = (process_id: string) =>
-  http.get<ProcessVersionOptionType[]>(`${API.PROCESS_VERSION_OPTION}?process_id=${process_id}`);
+export const getProcessVersionOptionRequest = (process_name: string) =>
+  http.get<ProcessVersionOptionType[]>(`${API.PROCESS_VERSION_OPTION}?process_name=${process_name}`);
 
 // 创建流程版本
 export const createProcessVersionRequest = (data: any) => http.post(API.PROCESS_VERSION, data, { loading: true });

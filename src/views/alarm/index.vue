@@ -94,8 +94,13 @@ const getTableList = (params: Alarm.AlarmFilter) => {
 };
 
 const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
-  { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
+  {
+    prop: "id",
+    label: "序号",
+    search: { el: "input" },
+    width: 80
+  },
   {
     prop: "process_name",
     label: "流程名称",

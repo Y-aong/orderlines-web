@@ -11,9 +11,8 @@
         <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增任务</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">新增任务</el-button>
         <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
-        <el-button type="primary" :icon="View" plain @click="toDetail(scope)">详情页面</el-button>
       </template>
 
       <template #operation="scope">
@@ -41,17 +40,15 @@ import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import TaskDrawer from "./taskDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
 import { Task } from "@/api/orderlines/task/type";
 
-const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof TaskDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<Task.TaskItem> = {}) => {
+const openDrawer = (title: string, row: any = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -74,14 +71,6 @@ const deleteTask = async (params: Task.TaskItem) => {
   await useHandleData(deleteTaskRequest, { id: [params.id] }, `删除【${params.task_name}】任务`);
   proTable.value?.getTableList();
 };
-// 跳转详情页
-const toDetail = (row: any) => {
-  if (!row.selectedList[0]) {
-    ElMessage.error("请勾选行选择框后，点击详情按钮");
-  } else {
-    router.push(`/orderlines/task/detail/${row.selectedList[0].id}`);
-  }
-};
 
 const dataCallback = (data: Task.TaskResponse) => {
   return {
@@ -98,7 +87,6 @@ const getTableList = (params: Task.TaskFilter) => {
 };
 
 const columns = reactive<ColumnProps<Task.TaskItem>[]>([
-  { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "task_name", label: "任务名称", search: { el: "input" } },

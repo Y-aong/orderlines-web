@@ -115,7 +115,6 @@ const getTableList = (params: Process.ProcessFilter) => {
   return getProcessRequest(newParams);
 };
 const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
-  { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },

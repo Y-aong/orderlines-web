@@ -103,7 +103,15 @@ const toDetail = (row: any) => {
   if (!row.selectedList[0]) {
     ElMessage.error("请勾选行选择框后，点击详情按钮");
   } else {
-    router.push(`/orderlines/processInstance/detail/${row.selectedList[0].id}`);
+    process_id.value = row.selectedList[0].process_id;
+    process_name.value = row.selectedList[0].process_name;
+    process_instance_id.value = row.selectedList[0].process_instance_id;
+    setStorage(row.process_id, "PROCESS_ID");
+    setStorage(row.process_name, "PROCESS_NAME");
+    isSave.value = false;
+    isRunning.value = false;
+    isRedirect.value = true;
+    router.push(`/flow/index`);
   }
 };
 

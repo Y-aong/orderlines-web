@@ -17,17 +17,14 @@
 
   <el-dialog v-model="dialogFormVisible" title="流程配置创建">
     <el-form style="width: 80%" :model="ProcessItem" ref="formRef">
-      <el-form-item label="流程名称" prop="process_name">
+      <el-form-item label="流程名称" prop="process_name" required label-width="120px">
         <el-input placeholder="请输入流程名称" v-model="ProcessItem.process_name"> </el-input>
       </el-form-item>
-      <el-form-item label="流程描述" prop="desc">
+      <el-form-item label="流程版本" prop="version" label-width="120px">
+        <el-input placeholder="请输入流程版本" v-model="ProcessItem.version"> </el-input>
+      </el-form-item>
+      <el-form-item label="流程描述" prop="desc" label-width="120px">
         <el-input placeholder="请输入流程描述" v-model="ProcessItem.desc"> </el-input>
-      </el-form-item>
-      <el-form-item label="流程配置" prop="process_config">
-        <el-input placeholder="请输入流程配置" v-model="ProcessItem.process_config"> </el-input>
-      </el-form-item>
-      <el-form-item label="流程参数" prop="process_params">
-        <el-input placeholder="请输入流程参数" v-model="ProcessItem.process_params"> </el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -48,7 +45,6 @@ import FLOW from "@/components/Flow/index.vue";
 import FlowRunning from "@/components/FlowRunning/index.vue";
 import FlowTabbar from "./tabbar/index.vue";
 import FlowRightSidebar from "./rightSidebar/index.vue";
-// import RunningLog from "./runningLog/index.vue";
 import { onMounted, reactive, ref } from "vue";
 import { v4 as uuid4 } from "uuid";
 
@@ -58,12 +54,13 @@ import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
 import { setStorage } from "@/utils/storage";
 import { Process } from "@/api/orderlines/process/type";
-let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
+let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
 let dialogFormVisible = ref<boolean>(false);
 
 onMounted(async () => {
   isRunning.value = false;
   if (!process_name.value) {
+    process_version.value = "";
     dialogFormVisible.value = true;
   }
 });
@@ -71,6 +68,7 @@ onMounted(async () => {
 let ProcessItem = reactive<Process.ProcessItem>({
   process_id: "",
   process_name: "",
+  version: "",
   creator: "",
   desc: "",
   process_config: "",
@@ -92,19 +90,16 @@ const confirm = async () => {
   let res: any = await createProcessRequest(requestData);
   if (res.code == 200) {
     dialogFormVisible.value = false;
-    ElMessage({
-      type: "success",
-      message: "添加流程配置成功"
-    });
+    ElMessage.success("添加流程配置成功");
     process_name.value = requestData.process_name;
+    if (requestData.version) {
+      process_version.value = requestData.version;
+    }
     process_id.value = requestData.process_id;
     localStorage.setItem("PROCESS_ID", requestData.process_id as string);
     localStorage.setItem("PROCESS_NAME", requestData.process_name as string);
   } else {
-    ElMessage({
-      type: "error",
-      message: res.message
-    });
+    ElMessage.error(res.message);
   }
 };
 

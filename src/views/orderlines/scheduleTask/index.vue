@@ -11,17 +11,8 @@
         <json-viewer :value="scope.row" copyable boxed sort expanded />
       </template>
       <template #tableHeader="scope">
-        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">创建定时任务</el-button>
+        <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增', scope)">创建定时任务</el-button>
         <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
-        <el-button
-          type="danger"
-          :icon="Delete"
-          plain
-          :disabled="!scope.isSelected"
-          @click="batchDelete(scope.selectedListIds)"
-        >
-          批量删除
-        </el-button>
       </template>
 
       <template #operation="scope">
@@ -57,7 +48,7 @@ const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ScheduleTaskDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<ScheduleTask.ScheduleTaskItem> = {}) => {
+const openDrawer = (title: string, row: any = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -73,13 +64,6 @@ const downloadFile = async () => {
   ElMessageBox.confirm("确认导出定时任务数据?", "温馨提示", { type: "warning" }).then(() => {
     useDownload(downloadScheduleTaskRequest, "定时任务", proTable.value?.searchParam);
   });
-};
-
-// 批量删除
-const batchDelete = async (id: string[]) => {
-  await useHandleData(deleteScheduleTaskRequest, { id }, "删除所选定时任务");
-  proTable.value?.clearSelection();
-  proTable.value?.getTableList();
 };
 
 // 删除流程信息

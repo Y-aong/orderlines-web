@@ -103,7 +103,15 @@ watch(props, () => {
           position: "insideLeft",
           offset: [0, -20],
           fontSize: 12,
-          formatter: "手动启动" + props.data.trigger.toString().split(".")[1] + "%"
+          formatter: () => {
+            if (props.data.trigger == 1) {
+              return "手动启动" + 100 + "%";
+            } else if (props.data.trigger == 1) {
+              return "手动启动" + 0 + "%";
+            } else {
+              return "手动启动" + props.data.trigger.toString().split(".")[1] + "%";
+            }
+          }
         }
       },
       {
@@ -122,7 +130,13 @@ watch(props, () => {
           offset: [0, -20],
           fontSize: 12,
           formatter: () => {
-            return "定时启动" + props.data.schedule.toString().split(".")[1] + "%";
+            if (props.data.schedule == 1) {
+              return "定时启动" + 100 + "%";
+            } else if (props.data.schedule == 1) {
+              return "定时启动" + 0 + "%";
+            } else {
+              return "定时启动" + props.data.schedule.toString().split(".")[1] + "%";
+            }
           }
         }
       }
