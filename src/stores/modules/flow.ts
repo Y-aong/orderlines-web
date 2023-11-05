@@ -12,6 +12,9 @@ const useFlowStore = defineStore("FlowStore", {
       process_name: getStorage("PROCESS_NAME", "str") as string,
       // 流程id
       process_id: getStorage("PROCESS_ID", "str") as string,
+      // 流程版本
+      process_version: getStorage("PROCESS_VERSION", "str") as string,
+      // 流程实例id
       process_instance_id: "",
       // 是否运行
       isRunning: false,

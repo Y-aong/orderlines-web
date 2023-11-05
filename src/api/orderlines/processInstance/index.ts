@@ -5,7 +5,7 @@ import { PInstance } from "./type";
 //项目用户相关的请求地址
 enum API {
   PROCESS_INSTANCE_URL = "/process_instance",
-  PROCESS_OPTION_URL = "/process_option",
+  PROCESS_OPTION_URL = "/option/process",
   EXPORT_URL = "/process_instance/html/export",
   INSTANCE_EXPORT_URL = "/process_instance/export"
 }

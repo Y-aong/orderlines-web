@@ -7,6 +7,10 @@
       <div class="process_info">
         <span style="font-size: 15px; font-weight: bold"> 流程名称：</span>
         <el-tag>{{ process_name }}</el-tag>
+        &nbsp;
+        <el-button v-if="!isRunning && !isSave" size="small" type="primary" @click="getProcessVersion">
+          创建版本
+        </el-button>
       </div>
 
       <div class="process_operate">
@@ -44,12 +48,34 @@
         </template>
         <el-button size="small" type="primary" @click="saveProcess"> {{ isSave ? "编辑" : "保存" }}</el-button>
         <el-button v-if="isRedirect" size="small" type="success" @click="runningStatus"> 状态 </el-button>
-        <el-select v-model="value" clearable placeholder="选择版本" style="width: 100px; margin-left: 15px">
+        <el-select
+          v-model="process_version"
+          placeholder="选择版本"
+          style="width: 120px; margin-left: 15px"
+          @change="changeProcessVersion"
+        >
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
     </div>
   </div>
+  <el-dialog title="创建流程版本" width="50%" v-model="versionVisible" append-to-body>
+    <el-form :model="versionForm" label-width="120px">
+      <el-form-item label="流程版本">
+        <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
+      </el-form-item>
+      <el-form-item label="版本描述">
+        <el-input v-model="versionForm.version_desc" placeholder="请输入版本描述" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="versionVisible = false">取消</el-button>
+        <el-button type="primary" @click="createProcessVersion"> 确认 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -60,7 +86,7 @@ export default {
 
 <script setup lang="ts">
 import LOGO from "./logo/index.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { InfoFilled } from "@element-plus/icons-vue";
@@ -70,38 +96,69 @@ import {
   startProcessRequest,
   stopProcessRequest
 } from "@/api/flow/operate";
-import { getRunningTaskRequest, saveFlowRequest } from "@/api/flow/taskNode/index";
-
+import {
+  getRunningTaskRequest,
+  saveFlowRequest,
+  getProcessVersionOptionRequest,
+  createProcessVersionRequest,
+  getProcessVersionRequest
+} from "@/api/flow/taskNode/index";
+import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
 
-let { process_id, process_instance_id, process_name, isSave, isRunning, runningTask, isRedirect } = storeToRefs(
-  useFlowStore()
-);
+let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, runningTask, isRedirect } =
+  storeToRefs(useFlowStore());
 
-const value = ref("Option1");
-const options = [
-  {
-    value: "Option1",
-    label: "版本1"
-  },
-  {
-    value: "Option2",
-    label: "版本2"
-  },
-  {
-    value: "Option3",
-    label: "版本3"
-  },
-  {
-    value: "Option4",
-    label: "版本4"
-  },
-  {
-    value: "Option5",
-    label: "版本5"
+let options = ref<ProcessVersionOptionType[]>([]);
+let versionVisible = ref<boolean>(false);
+let versionForm = ref<ProcessVersionType>({
+  process_id: process_id.value as string,
+  version: "",
+  version_desc: ""
+});
+
+onMounted(async () => {
+  await getProcessVersionOption();
+});
+
+const getProcessVersionOption = async () => {
+  const res = await getProcessVersionOptionRequest(process_id.value);
+  options.value = res.data;
+};
+
+//获取版本描述
+const getProcessVersion = async () => {
+  versionVisible.value = true;
+  let res: any = await getProcessVersionRequest(process_id.value);
+  versionForm.value = res.data;
+};
+
+//创建流程版本
+const createProcessVersion = async () => {
+  console.log("版本创建成功");
+  versionVisible.value = false;
+
+  let res: any = await createProcessVersionRequest(versionForm.value);
+  if (res.code == 200) {
+    process_id.value = process_version.value;
+    process_version.value = process_version.value;
+    setStorage(res.data.process_id, "PROCESS_ID");
+    setStorage(res.data.process_id, "PROCESS_VERSION");
+    await getProcessVersionOption();
+    window.location.reload();
   }
-];
+};
+
+const changeProcessVersion = async () => {
+  console.log(process_version.value);
+  process_id.value = process_version.value;
+  process_version.value = process_version.value;
+  setStorage(process_version.value, "PROCESS_ID");
+  setStorage(process_version.value, "PROCESS_VERSION");
+  isRunning.value = false;
+  window.location.reload();
+};
 
 const runningStatus = () => {
   isRunning.value = true;

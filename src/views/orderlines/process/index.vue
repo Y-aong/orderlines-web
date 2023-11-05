@@ -47,7 +47,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { Process } from "@/api/orderlines/process/type";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
+let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
 import { setStorage } from "@/utils/storage";
 
 const isCard = ref<boolean>(true);
@@ -58,8 +58,10 @@ const proTable = ref<ProTableInstance>();
 const toProcessConfig = (row: Process.ProcessItem) => {
   process_id.value = row.process_id;
   process_name.value = row.process_name;
+  process_version.value = row.version;
   setStorage(row.process_id, "PROCESS_ID");
   setStorage(row.process_name, "PROCESS_NAME");
+  setStorage(row.version, "PROCESS_VERSION");
 
   isRunning.value = false;
   router.push(`/flow/index`);
@@ -117,6 +119,7 @@ const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
+  { prop: "version", label: "流程版本", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
   { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },

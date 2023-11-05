@@ -13,6 +13,7 @@ export namespace Process {
     update_time?: any;
     updater?: any;
     updater_id?: any;
+    version?: any;
   }
   export interface ProcessFilter extends ReqPage {
     id?: number;

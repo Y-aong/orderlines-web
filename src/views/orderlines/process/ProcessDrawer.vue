@@ -20,6 +20,9 @@
       <el-form-item label="流程名称" prop="process_name">
         <el-input v-model="drawerProps.row!.process_name" placeholder="请填写流程名称" clearable></el-input>
       </el-form-item>
+      <el-form-item label="流程版本" prop="version">
+        <el-input v-model="drawerProps.row!.version" placeholder="请填写流程版本" clearable></el-input>
+      </el-form-item>
       <el-form-item label="流程描述" prop="desc" clearable>
         <el-input v-model="drawerProps.row!.desc" placeholder="请填写流程描述" clearable></el-input>
       </el-form-item>
@@ -40,7 +43,7 @@ import { storeToRefs } from "pinia";
 
 import { Process } from "@/api/orderlines/process/type";
 import useFlowStore from "@/stores/modules/flow";
-let { isRunning, process_name, process_id } = storeToRefs(useFlowStore());
+let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
 import { setStorage } from "@/utils/storage";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -49,14 +52,17 @@ const router = useRouter();
 const toProcessConfig = async (row: Process.ProcessItem) => {
   process_id.value = row.process_id;
   process_name.value = row.process_name;
+  process_version.value = row.process_id;
   setStorage(row.process_id, "PROCESS_ID");
   setStorage(row.process_name, "PROCESS_NAME");
+  setStorage(row.process_id, "PROCESS_VERSION");
   isRunning.value = false;
   router.push(`/flow/index`);
 };
 
 const rules = reactive({
   process_name: [{ required: true, message: "请填写流程名称" }],
+  version: [{ required: false, message: "请填写流程版本" }],
   desc: [{ required: false, message: "请填写流程描述" }]
 });
 
@@ -87,7 +93,9 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      if (drawerProps.value.title === "新增") drawerProps.value.row["process_id"] = uuid4();
+      if (drawerProps.value.title === "新增") {
+        drawerProps.value.row["process_id"] = uuid4();
+      }
 
       if (drawerProps.value.title === "编辑") {
         let process: { id?: number; process_name?: string; desc?: string; update_time?: string } = {};

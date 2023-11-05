@@ -30,6 +30,17 @@ export default {
     const count = ref(0);
     const currentNode = ref(null);
     const graphData = ref(null);
+    // watch(process_id, async newVal => {
+    //   console.log("数据监听", newVal);
+    //   const result = await getFlowDataRequest({ process_id: newVal });
+    //   console.log("数据监听", result.data.graphData);
+    //   graphData.value = result.data.graphData;
+    //   const nodes = result.data.graphData.nodes;
+    //   nodes.forEach(item => {
+    //     const task_id = item.id;
+    //     getFlowTaskData(newVal, task_id);
+    //   });
+    // });
     return {
       count,
       currentNode,

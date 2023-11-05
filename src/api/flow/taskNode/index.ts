@@ -1,5 +1,5 @@
 import http from "@/api";
-import { NodeMenu, TaskNodeNS } from "./type";
+import { NodeMenu, TaskNodeNS, ProcessVersionOptionType } from "./type";
 
 enum API {
   PLUGIN_NODE = "/node_menu",
@@ -8,7 +8,9 @@ enum API {
   FLOW_DATA = "/flow_data",
   FLOW_SAVE = "/flow_save",
   RunningTask = "/running_task",
-  TASK_INSTANCE_DETAIL = "/task_instance_detail"
+  TASK_INSTANCE_DETAIL = "/task_instance_detail",
+  PROCESS_VERSION_OPTION = "/option/process_version",
+  PROCESS_VERSION = "/process_version"
 }
 
 // 获取正在运行的节点线
@@ -40,3 +42,13 @@ export const saveFlowRequest = (data: any) => http.post(API.FLOW_SAVE, data);
 // 获取任务实例根据流程实例id和任务id
 export const getTaskInstanceItem = (process_instance_id: string, task_id: string) =>
   http.get(`${API.TASK_INSTANCE_DETAIL}?process_instance_id=${process_instance_id}&task_id=${task_id}`);
+
+// 获取流程版本
+export const getProcessVersionOptionRequest = (process_id: string) =>
+  http.get<ProcessVersionOptionType[]>(`${API.PROCESS_VERSION_OPTION}?process_id=${process_id}`);
+
+// 创建流程版本
+export const createProcessVersionRequest = (data: any) => http.post(API.PROCESS_VERSION, data, { loading: true });
+
+export const getProcessVersionRequest = (process_id: string) =>
+  http.get(`${API.PROCESS_VERSION}?process_id=${process_id}`);

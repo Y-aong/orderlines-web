@@ -74,3 +74,14 @@ export namespace TaskNodeNS {
     process_instance_id: string;
   }
 }
+
+export interface ProcessVersionType {
+  process_id: string;
+  version: string;
+  version_desc: string;
+}
+
+export interface ProcessVersionOptionType {
+  label: string;
+  value: string;
+}

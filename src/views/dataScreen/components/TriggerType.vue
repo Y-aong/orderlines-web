@@ -75,7 +75,7 @@ watch(props, () => {
           fontSize: 12,
           lineHeight: 60,
           color: "rgba(255, 255, 255, 0.9)",
-          formatter: "{value}" + props.data.schedule * 100 + "%",
+          formatter: "{value}" + props.data.schedule + "%",
           rich: {
             a: {
               color: "transparent",
@@ -103,9 +103,7 @@ watch(props, () => {
           position: "insideLeft",
           offset: [0, -20],
           fontSize: 12,
-          formatter: () => {
-            return `手动启动 ${props.data.trigger * 100}%`;
-          }
+          formatter: "手动启动" + props.data.trigger.toString().split(".")[1] + "%"
         }
       },
       {
@@ -124,7 +122,7 @@ watch(props, () => {
           offset: [0, -20],
           fontSize: 12,
           formatter: () => {
-            return `定时启动 ${props.data.schedule * 100}%`;
+            return "定时启动" + props.data.schedule.toString().split(".")[1] + "%";
           }
         }
       }

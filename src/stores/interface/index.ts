@@ -145,6 +145,7 @@ export interface runningTask {
 export interface FlowStoreType {
   process_name: string;
   process_id: string;
+  process_version: string;
   process_instance_id: string;
   isRunning: boolean;
   isSave: boolean;

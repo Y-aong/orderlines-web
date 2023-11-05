@@ -8,6 +8,7 @@ export interface BaseUpdate {
 }
 
 export interface BaseCreate extends BaseUpdate {}
+export interface BaseDelete extends BaseUpdate {}
 
 // 请求响应参数（包含data）
 export interface ResultData<T = any> extends Result {
