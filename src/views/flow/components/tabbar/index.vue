@@ -62,7 +62,7 @@
   </div>
   <el-dialog title="创建流程版本" width="50%" v-model="versionVisible" append-to-body>
     <el-form :model="versionForm" label-width="120px">
-      <el-form-item label="流程版本">
+      <el-form-item label="流程版本" required>
         <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
       </el-form-item>
       <el-form-item label="版本描述">

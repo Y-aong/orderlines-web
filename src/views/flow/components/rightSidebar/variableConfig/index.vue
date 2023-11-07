@@ -49,6 +49,7 @@
     <el-table :data="variableDetail" style="width: 100%" height="240" border>
       <el-table-column fixed prop="variable_key" label="变量名" min-width="100" align="center" />
       <el-table-column prop="variable_value" label="变量值" min-width="240" align="center" />
+      <el-table-column prop="variable_type" label="变量类型" min-width="120" align="center" />
       <el-table-column prop="variable_desc" label="变量描述" min-width="120" align="center" />
     </el-table>
   </el-dialog>
@@ -175,7 +176,7 @@ const confirm = async () => {
       process_name: process_name.value,
       variable_key: VariableItem.variable_key,
       variable_value: VariableItem.variable_value,
-      variable_type: "str",
+      variable_type: VariableItem.variable_type,
       variable_desc: VariableItem.variable_desc
     };
     let result: any = await updateVariableRequest(variableItem as Variable.VariableItem);
