@@ -109,7 +109,9 @@ watch(props, () => {
             } else if (props.data.trigger == 1) {
               return "手动启动" + 0 + "%";
             } else {
-              return "手动启动" + props.data.trigger.toString().split(".")[1] + "%";
+              let item = props.data.trigger.toString().split(".")[1];
+              let value = item === undefined ? "0" : item;
+              return "手动启动" + value + "%";
             }
           }
         }
@@ -135,7 +137,9 @@ watch(props, () => {
             } else if (props.data.schedule == 1) {
               return "定时启动" + 0 + "%";
             } else {
-              return "定时启动" + props.data.schedule.toString().split(".")[1] + "%";
+              let item = props.data.schedule.toString().split(".")[1];
+              let value = item === undefined ? "0" : item;
+              return "定时启动" + value + "%";
             }
           }
         }

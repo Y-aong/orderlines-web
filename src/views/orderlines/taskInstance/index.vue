@@ -19,6 +19,9 @@
         :request-api="getTaskInstanceRequest"
         :init-param="Object.assign(treeFilterValues, selectFilterValues)"
       >
+        <template #expand="scope">
+          <json-viewer :value="scope.row" copyable boxed sort expanded />
+        </template>
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
           <el-button type="primary" :icon="Download" plain @click="downloadFile">导出数据</el-button>
@@ -92,6 +95,7 @@ const downloadFile = async () => {
 
 // 表格配置项
 const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
+  { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70 },
   { prop: "task_name", label: "任务名称", width: 120 },
   { prop: "method_name", label: "插件方法", width: 140 },
@@ -129,7 +133,6 @@ const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
       );
     }
   },
-  { prop: "runner", label: "运行者", width: 100 },
   { prop: "operation", label: "操作", width: 240, fixed: "right" }
 ]);
 
