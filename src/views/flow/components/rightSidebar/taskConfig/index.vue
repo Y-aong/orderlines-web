@@ -2,30 +2,30 @@
   <el-card class="right_config_sidebar">
     <div class="task_config">
       <div class="task_running_config">
-        <el-form :inline="true" v-if="!isRunning">
+        <el-form :inline="true" v-if="!isRunning" :label-position="labelPosition">
           <h3>任务配置</h3>
-          <el-form-item label="任务序号" style="width: 95%">
+          <el-form-item label="任务序号" style="width: 95%" required>
             <el-input v-model="nodeConfig.task_id" disabled />
           </el-form-item>
-          <el-form-item label="任务名称" style="width: 95%">
+          <el-form-item label="任务名称" style="width: 95%" required>
             <el-input v-model="nodeConfig.task_name" disabled />
           </el-form-item>
-          <el-form-item label="任务描述" style="width: 95%">
-            <el-input
-              placeholder="请输入任务描述"
-              clearable
-              v-model="nodeConfig.desc"
-              @blur="updateTask"
-              :disabled="isRunning ? true : false"
-            />
-          </el-form-item>
-          <el-form-item label="插件版本" style="width: 95%">
+          <el-form-item label="插件版本" style="width: 95%" required>
             <el-input
               placeholder="请输入插件版本"
               clearable
               :model-value="nodeConfig.version"
               @blur="updateTask"
-              :disabled="isRunning ? true : false"
+              :disabled="isRunning ? true : false || nodeConfig.id === 0"
+            />
+          </el-form-item>
+          <el-form-item label="任务描述" style="width: 95%" required>
+            <el-input
+              placeholder="请输入任务描述"
+              clearable
+              v-model="nodeConfig.desc"
+              @blur="updateTask"
+              :disabled="isRunning ? true : false || nodeConfig.id === 0"
             />
           </el-form-item>
         </el-form>
@@ -34,8 +34,6 @@
           <TaskResultParam v-if="!isRunning" />
           <TaskRunningConfig v-if="!isRunning" />
           <clickCheckTask v-if="isRunning" />
-          <!-- <RunningImage v-if="isRunning" /> -->
-          <!-- <RunningLog v-if="isRunning" /> -->
         </el-collapse>
       </div>
     </div>
@@ -46,13 +44,15 @@
 import TaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
-// import RunningLog from "./runningLog/index.vue";
-// import RunningImage from "./runningImage/index.vue";
 import clickCheckTask from "./clickCheck/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
+import type { FormProps } from "element-plus";
+import { ref } from "vue";
+
+const labelPosition = ref<FormProps["labelPosition"]>("right");
 
 let { nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
 

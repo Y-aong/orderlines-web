@@ -12,22 +12,32 @@
         <el-table-column fixed prop="desc" label="参数名" min-width="80" />
         <el-table-column prop="desc" label="参数值" min-width="240">
           <template #default="scope">
-            <el-select
+            <el-input
               v-model="scope.row.value"
-              :placeholder="`类型${scope.row.type}，下拉框使用变量`"
-              filterable
-              allow-create
-              clearable
-              :reserve-keyword="false"
-              @change="updateTask(scope.row)"
-              @clear="clearFlag = true"
-              @focus="clearFlag = false"
-              @click="getVariableOption"
+              :placeholder="`类型${scope.row.type}`"
               :disabled="isRunning"
-              style="width: 95%"
+              @change="updateTask(scope.row)"
             >
-              <el-option v-for="(item, index) in variableOption" :key="index" :label="item.label" :value="item.value" />
-            </el-select>
+              <template #prepend v-if="!showVariable">
+                <el-button :icon="Search" @click="useVariable" size="small" circle v-if="!showVariable" />
+              </template>
+              <template #append v-if="showVariable">
+                <el-select
+                  v-model="scope.row.value"
+                  placeholder="使用变量"
+                  style="width: 100px"
+                  @click="getVariableOption"
+                  @change="showVariable = !showVariable"
+                >
+                  <el-option
+                    v-for="(item, index) in variableOption"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-input>
           </template>
         </el-table-column>
       </el-table>
@@ -59,11 +69,17 @@ import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
 import { Task } from "@/api/orderlines/task/type";
 import { FlowVariable } from "@/api/flow/variable/type";
+import { Search } from "@element-plus/icons-vue";
 
 const { nodeParam, nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
 let dialogTableVisible = ref<boolean>(false);
 let variableOption = ref<FlowVariable.VariableOption[]>([{ label: "", value: "" }]);
 let clearFlag = ref<boolean>(false);
+let showVariable = ref<boolean>(false);
+
+const useVariable = () => {
+  showVariable.value = !showVariable.value;
+};
 
 interface ParamItem {
   default: undefined | string;
@@ -81,7 +97,6 @@ const cancel = () => {
 
 const getVariableOption = async () => {
   const result: any = await getVariableOptionRequest(process_id.value);
-  console.log("获取变量选项:", result);
   variableOption.value = result.data;
 };
 // 修改流程图数据
@@ -96,7 +111,6 @@ const updateFlowData = async () => {
 
 // 修改任务参数
 const updateTask = async (row: ParamItem) => {
-  console.log("修改任务参数", clearFlag.value, row, row.value, row.name);
   if (clearFlag.value) return;
   if (row.value) {
     let param_name = row.name;
@@ -112,6 +126,7 @@ const updateTask = async (row: ParamItem) => {
       let result: any = await updateTaskRequest(taskNode);
       if (result.code !== 200) ElMessage.error("任务配置修改失败");
       await updateFlowData();
+      showVariable.value = false;
     }
   } else {
     ElMessage.error("修改任务参数失败参数值为空");

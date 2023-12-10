@@ -9,13 +9,14 @@
         <el-tag>{{ process_name }}</el-tag>
         &nbsp;
         <el-button v-if="!isRunning && !isSave" size="small" type="primary" @click="getProcessVersion">
-          创建版本
+          版本操作
         </el-button>
       </div>
 
       <div class="process_operate">
         <template v-if="isSave">
           <el-popconfirm
+            v-if="!isRunning && isSave"
             width="220"
             confirm-button-text="启动"
             cancel-button-text="不启动"
@@ -25,11 +26,12 @@
             @confirm="startProcess"
           >
             <template #reference>
-              <el-button v-if="!isRunning && isSave" size="small" type="success"> 启动 </el-button>
+              <el-button size="small" type="success"> 启动 </el-button>
             </template>
           </el-popconfirm>
 
           <el-popconfirm
+            v-if="isRunning"
             width="220"
             confirm-button-text="重启"
             cancel-button-text="不重启"
@@ -39,12 +41,12 @@
             @confirm="startProcess"
           >
             <template #reference>
-              <el-button v-if="isRunning" size="small" type="success"> 重启 </el-button>
+              <el-button size="small" type="success"> 重启 </el-button>
             </template>
           </el-popconfirm>
-          <el-button v-if="isRunning" size="small" type="danger" @click="stopProcess">停止 </el-button>
-          <el-button v-if="isRunning" size="small" type="warning" @click="pausedProcess">暂停 </el-button>
-          <el-button v-if="isRunning" size="small" type="primary" @click="recoverProcess">继续 </el-button>
+          <el-button size="small" type="danger" @click="stopProcess">停止 </el-button>
+          <el-button size="small" type="warning" @click="pausedProcess">暂停 </el-button>
+          <el-button size="small" type="primary" @click="recoverProcess">继续 </el-button>
         </template>
         <el-button size="small" type="primary" @click="saveProcess"> {{ isSave ? "编辑" : "保存" }}</el-button>
         <el-button v-if="isRedirect" size="small" type="success" @click="runningStatus"> 状态 </el-button>
@@ -60,15 +62,33 @@
       </div>
     </div>
   </div>
-  <el-dialog title="创建流程版本" width="50%" v-model="versionVisible" append-to-body>
-    <el-form :model="versionForm" label-width="120px">
-      <el-form-item label="流程版本" required>
-        <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
-      </el-form-item>
-      <el-form-item label="版本描述">
-        <el-input v-model="versionForm.version_desc" placeholder="请输入版本描述" />
-      </el-form-item>
-    </el-form>
+
+  <el-dialog title="版本操作" width="50%" v-model="versionVisible" append-to-body lock-scroll>
+    <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
+      <el-tab-pane label="创建版本" name="create">
+        <el-form :model="versionForm" label-width="120px" style="height: 400px">
+          <el-form-item label="流程版本" required>
+            <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
+          </el-form-item>
+          <el-form-item label="版本描述">
+            <el-input v-model="versionForm.version_desc" placeholder="请输入版本描述" />
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+      <el-tab-pane label="删除版本" name="delete">
+        <el-table :data="versionData" style="width: 100%" max-height="400">
+          <el-table-column fixed prop="id" label="ID" min-width="100" />
+          <el-table-column fixed prop="process_name" label="流程名称" min-width="100" />
+          <el-table-column fixed prop="version" label="版本名称" min-width="100" />
+          <el-table-column prop="version_desc" label="版本描述" min-width="120" />
+          <el-table-column fixed="right" label="操作" min-width="120" align="center">
+            <template #default="scope">
+              <el-button type="danger" size="small" @click="deleteProcessVersion(scope.row.id)"> 删除版本 </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
 
     <template #footer>
       <span class="dialog-footer">
@@ -102,14 +122,17 @@ import {
   saveFlowRequest,
   getProcessVersionOptionRequest,
   createProcessVersionRequest,
-  getProcessVersionRequest
+  getProcessVersionRequest,
+  getProcessVersionByNameRequest
 } from "@/api/flow/taskNode/index";
 import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
+import { deleteProcessRequest } from "@/api/orderlines/process/index";
 
 let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, runningTask, isRedirect } =
   storeToRefs(useFlowStore());
+let activeName = "create";
 
 let options = ref<ProcessVersionOptionType[]>([]);
 let versionVisible = ref<boolean>(false);
@@ -118,21 +141,40 @@ let versionForm = ref<ProcessVersionType>({
   version: "",
   version_desc: ""
 });
+let versionData = ref<ProcessVersionType[]>([]);
 
 onMounted(async () => {
   await getProcessVersionOption();
+  await getProcessVersionByName();
 });
 
 const getProcessVersionOption = async () => {
   const res = await getProcessVersionOptionRequest(process_name.value);
   options.value = res.data;
 };
-
+// 删除版本
+const deleteProcessVersion = async (id: number) => {
+  let data: any = { id: id };
+  let res: any = await deleteProcessRequest(data);
+  if (res.code === 200) {
+    ElMessage.success("版本删除成功");
+    await getProcessVersionByName();
+  }
+};
 //获取版本描述
 const getProcessVersion = async () => {
   versionVisible.value = true;
   let res: any = await getProcessVersionRequest(process_id.value);
   versionForm.value = res.data;
+};
+// 根据流程名称获取流程
+const getProcessVersionByName = async () => {
+  let res: any = await getProcessVersionByNameRequest(process_name.value);
+  if (res.code == 200) {
+    versionData.value = res.data;
+  } else {
+    ElMessage.error("获取流程流程版本失败");
+  }
 };
 
 //创建流程版本

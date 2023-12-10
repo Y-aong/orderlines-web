@@ -30,17 +30,6 @@ export default {
     const count = ref(0);
     const currentNode = ref(null);
     const graphData = ref(null);
-    // watch(process_id, async newVal => {
-    //   console.log("数据监听", newVal);
-    //   const result = await getFlowDataRequest({ process_id: newVal });
-    //   console.log("数据监听", result.data.graphData);
-    //   graphData.value = result.data.graphData;
-    //   const nodes = result.data.graphData.nodes;
-    //   nodes.forEach(item => {
-    //     const task_id = item.id;
-    //     getFlowTaskData(newVal, task_id);
-    //   });
-    // });
     return {
       count,
       currentNode,
@@ -68,9 +57,21 @@ export default {
           {
             keys: ["backspace", "Del"],
             callback: () => {
-              const r = window.confirm("确定要删除吗？");
+              const elements = this.lf.getSelectElements(true);
+              let r = null;
+              if ((elements.edges.length !== 0) & (elements.nodes.length == 0)) {
+                r = window.confirm("确定要删除连线吗？");
+              } else if ((elements.nodes !== 0) & (elements.edges.length == 0)) {
+                let nodes = [];
+                elements.nodes.forEach(node => {
+                  nodes.push(node.text.value);
+                });
+                r = window.confirm(`确定要删除节点——${nodes.toString()}吗？`);
+              } else {
+                r = window.confirm("确定要删除所选元素吗？");
+              }
+
               if (r) {
-                const elements = this.lf.getSelectElements(true);
                 this.lf.clearSelectElements();
                 elements.edges.forEach(edge => this.lf.deleteEdge(edge.id));
                 elements.nodes.forEach(async node => {
@@ -122,6 +123,15 @@ export default {
         await updateTaskRequest(taskNode);
       }
     });
+    // 自定义规则监听
+    this.lf.on("connection:not-allowed", msg => {
+      ElMessage.error(msg.msg);
+    });
+
+    // group节点提示信息
+    this.lf.on("group:not-allowed", data => {
+      ElMessage.error("任务组只允许加入普通任务节点,请手动删除新加入的" + data.node.text.value);
+    });
     // 节点更新监听
     this.lf.on("node:click", async ({ data }) => {
       this.currentNode = data;
@@ -152,7 +162,6 @@ export default {
       }
       // 获取流程控制节点的后续节点
       if (data.type === "process-control-node") {
-        console.log("流程控制");
         let pcResponse = await getProcessControlRequest(data.id, process_id.value);
         if (pcResponse.code === 200) {
           processControlOptions.value = pcResponse.data;

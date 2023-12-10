@@ -157,8 +157,13 @@ watch(props, () => {
 .timeline {
   height: 400px;
 }
-.el-timeline-item__content {
+::v-deep .el-timeline-item__content {
   font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+}
+::v-deep .el-timeline-item__timestamp {
+  font-size: 14px;
   color: #ffffff;
 }
 .timeline-box::-webkit-scrollbar {

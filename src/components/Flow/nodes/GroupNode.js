@@ -15,6 +15,22 @@ class GroupNodeModel extends GroupNode.model {
     this.radius = 10;
     this.foldedWidth = 100;
     this.foldedHeight = 0;
+
+    const edgeOutRule = {
+      message: "任务组节点为起点的连线只能有一条",
+      validate: sourceNode => {
+        return sourceNode.outgoing.edges.length === 0;
+      }
+    };
+    const edgeInRule = {
+      message: "任务组节点为终点的连线只能有一条",
+      validate: (sourceNode, targetNode) => {
+        return targetNode.incoming.edges.length === 0;
+      }
+    };
+
+    this.sourceRules.push(edgeOutRule);
+    this.targetRules.push(edgeInRule);
   }
 
   getNodeStyle() {
@@ -33,7 +49,7 @@ class GroupNodeModel extends GroupNode.model {
 
   //限制流程控制被添加到此分组中
   isAllowAppendIn(nodeData) {
-    return nodeData.type !== "process-control_node";
+    return nodeData.type === "function-node";
   }
 
   updateText(val) {

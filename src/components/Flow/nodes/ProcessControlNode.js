@@ -8,6 +8,56 @@ class processControlModel extends DiamondNodeModel {
     this.rx = 70;
     this.ry = 45;
     this.text.x = this.x;
+
+    // 设置节点的校验规则
+    const processControlRule1 = {
+      message: "流程控制节点下个节点只能为普通节点或流程控制节点",
+      validate: (sourceNode, targetNode) => {
+        return (
+          (sourceNode.type === "function-node" || sourceNode.type === "process-control-node") &&
+          targetNode.type !== "start-node"
+        );
+      }
+    };
+
+    const processControlRule2 = {
+      message: "流程控制节点上个节点不能为开始节点",
+      validate: targetNode => {
+        return targetNode.type !== "start-node";
+      }
+    };
+    const processControlRule3 = {
+      message: "流程控制节点上个节点不能为结束节点",
+      validate: targetNode => {
+        return targetNode.type !== "end-node";
+      }
+    };
+
+    const processControlRule4 = {
+      message: "流程控制节点上个节点不能为任务组节点",
+      validate: targetNode => {
+        return targetNode.type !== "group-node";
+      }
+    };
+    const processControlRule5 = {
+      message: "流程控制节点上个节点不能为并行节点",
+      validate: targetNode => {
+        return targetNode.type !== "parallel-node";
+      }
+    };
+    const edgeInRule = {
+      message: "流程控制节点为终点的连线只能有一条",
+      validate: (sourceNode, targetNode) => {
+        return targetNode.incoming.edges.length === 0;
+      }
+    };
+
+    this.targetRules.push(edgeInRule);
+    this.sourceRules.push(processControlRule1);
+    this.targetRules.push(processControlRule2);
+    this.targetRules.push(processControlRule3);
+    this.targetRules.push(processControlRule4);
+    this.targetRules.push(processControlRule5);
   }
 
   getData() {

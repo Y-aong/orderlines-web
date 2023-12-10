@@ -52,3 +52,6 @@ export const createProcessVersionRequest = (data: any) => http.post(API.PROCESS_
 
 export const getProcessVersionRequest = (process_id: string) =>
   http.get(`${API.PROCESS_VERSION}?process_id=${process_id}`);
+
+export const getProcessVersionByNameRequest = (process_name: string) =>
+  http.get(`${API.PROCESS_VERSION}?process_name=${process_name}`);

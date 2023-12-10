@@ -6,6 +6,15 @@ class EndNodeModel extends CircleNodeModel {
   initNodeData(data) {
     super.initNodeData(data);
     this.r = 36;
+
+    const endNodeRule = {
+      message: "结束节点后续没有节点",
+      validate: targetNode => {
+        return !targetNode.type;
+      }
+    };
+
+    this.sourceRules.push(endNodeRule);
   }
 
   getNodeStyle() {
