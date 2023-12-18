@@ -30,6 +30,20 @@
       }
     },
     {
+      "path": "/web/index",
+      "name": "web",
+      "component": "/web/index",
+      "meta": {
+        "icon": "ChromeFilled",
+        "title": "web自动化",
+        "isLink": "",
+        "isHide": false,
+        "isFull": true,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
       "path": "/dataScreen",
       "name": "dataScreen",
       "component": "/dataScreen/index",

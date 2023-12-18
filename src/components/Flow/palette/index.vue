@@ -1,13 +1,11 @@
 <template>
   <div class="flow_menu">
-    <div class="demo-collapse">
+    <div class="node-collapse">
       <el-menu class="el-menu" mode="vertical">
         <template v-for="node in nodeMenu" :key="node.title">
           <el-sub-menu v-if="node.title" :index="node.title">
             <template #title>
-              <el-icon>
-                <location />
-              </el-icon>
+              <el-icon><location /></el-icon>
               <span>{{ node.title }}</span>
             </template>
             <div
@@ -15,9 +13,10 @@
               v-for="(item, index) in node.nodes"
               :key="index"
               @mousedown="startDrag(item)"
-              :style="{ backgroundColor: item.background }"
             >
-              <el-menu-item :index="item.text">{{ item.text }}</el-menu-item>
+              <el-menu-item :index="item.text">
+                <el-button class="title" plain>{{ item.text }}</el-button>
+              </el-menu-item>
             </div>
           </el-sub-menu>
         </template>
@@ -154,7 +153,7 @@ export default {
 
 <style scoped>
 .el-menu {
-  font-size: 30px;
+  font-size: 16;
   font-weight: bold;
   border-right: none;
 }
@@ -165,15 +164,20 @@ export default {
   height: 100vh;
   background-color: #ffffff;
 }
-.demo-collapse {
+.node-collapse {
   width: 210px;
   height: 100vh;
 }
 .el-menu-item {
-  width: 130px;
+  width: 100%;
+  height: 60%;
+  margin: 8px auto;
+}
+.title {
+  width: 100px;
   height: 24px;
-  margin: 10px auto;
-  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
   border: 1px solid #999999;
   border-radius: 5px;
 }

@@ -44,9 +44,9 @@
               <el-button size="small" type="success"> 重启 </el-button>
             </template>
           </el-popconfirm>
-          <el-button size="small" type="danger" @click="stopProcess">停止 </el-button>
-          <el-button size="small" type="warning" @click="pausedProcess">暂停 </el-button>
-          <el-button size="small" type="primary" @click="recoverProcess">继续 </el-button>
+          <el-button size="small" type="danger" @click="stopProcess" v-if="isRunning">停止 </el-button>
+          <el-button size="small" type="warning" @click="pausedProcess" v-if="isRunning">暂停 </el-button>
+          <el-button size="small" type="primary" @click="recoverProcess" v-if="isRunning">继续 </el-button>
         </template>
         <el-button size="small" type="primary" @click="saveProcess"> {{ isSave ? "编辑" : "保存" }}</el-button>
         <el-button v-if="isRedirect" size="small" type="success" @click="runningStatus"> 状态 </el-button>
@@ -77,7 +77,7 @@
       </el-tab-pane>
       <el-tab-pane label="删除版本" name="delete">
         <el-table :data="versionData" style="width: 100%" max-height="400">
-          <el-table-column fixed prop="id" label="ID" min-width="100" />
+          <el-table-column fixed prop="id" label="ID" min-width="30" />
           <el-table-column fixed prop="process_name" label="流程名称" min-width="100" />
           <el-table-column fixed prop="version" label="版本名称" min-width="100" />
           <el-table-column prop="version_desc" label="版本描述" min-width="120" />

@@ -34,13 +34,7 @@
   </el-dialog>
 </template>
 
-<script lang="ts">
-export default {
-  name: "FlowPanel"
-};
-</script>
-
-<script setup lang="ts">
+<script setup lang="ts" name="FlowPanel">
 import FLOW from "@/components/Flow/index.vue";
 import FlowRunning from "@/components/FlowRunning/index.vue";
 import FlowTabbar from "./tabbar/index.vue";

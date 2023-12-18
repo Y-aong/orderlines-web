@@ -1,7 +1,7 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.stylelint": true
+    "source.fixAll.stylelint": "explicit"
   },
   "stylelint.enable": true,
   "stylelint.validate": ["css", "less", "postcss", "scss", "vue", "sass", "html"],
@@ -70,6 +70,7 @@
     "persistedstate",
     "pinia",
     "pjpeg",
+    "popconfirm",
     "Prefixs",
     "screenfull",
     "sortablejs",

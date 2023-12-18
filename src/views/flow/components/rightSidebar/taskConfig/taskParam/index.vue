@@ -8,11 +8,14 @@
     </template>
 
     <template v-if="nodeConfig.task_type === 'common'">
+      {{ nodeParam }}
       <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
         <el-table-column fixed prop="desc" label="参数名" min-width="80" />
-        <el-table-column prop="desc" label="参数值" min-width="240">
+        <el-table-column prop="desc" label="参数值" min-width="240" required>
           <template #default="scope">
+            <!-- 参数类型为input的 -->
             <el-input
+              v-if="scope.row.param_type === 'input' || !scope.row.param_type"
               v-model="scope.row.value"
               :placeholder="`类型${scope.row.type}`"
               :disabled="isRunning"
@@ -38,6 +41,42 @@
                 </el-select>
               </template>
             </el-input>
+            <!--参数类型为code的 -->
+            <el-button
+              v-if="scope.row.param_type === 'code'"
+              type="primary"
+              plain
+              size="small"
+              :disabled="isRunning"
+              @click="showPythonEdit"
+            >
+              点击输入代码
+            </el-button>
+            <!-- 参数类型为upload -->
+            <el-input
+              v-if="scope.row.param_type === 'upload'"
+              v-model="scope.row.value"
+              :placeholder="`类型${scope.row.type}`"
+              :disabled="true"
+              @change="updateTask(scope.row)"
+            >
+              <template #prepend>
+                <el-upload
+                  v-model="scope.row.value"
+                  action=""
+                  :limit="1"
+                  :on-change="handleChange"
+                  :auto-upload="false"
+                  :show-file-list="false"
+                >
+                  <template #trigger>
+                    <el-tooltip class="box-item" effect="dark" content="点击上传文件" placement="top-start">
+                      <el-button :icon="UploadFilled" />
+                    </el-tooltip>
+                  </template>
+                </el-upload>
+              </template>
+            </el-input>
           </template>
         </el-table-column>
       </el-table>
@@ -54,6 +93,10 @@
       <el-table-column prop="type" label="参数类型" min-width="150" />
     </el-table>
   </el-dialog>
+
+  <el-dialog v-model="pythonCodeVisible" title="输入python代码" style="height: 60vh" @close="updatePythonCodeParam">
+    <Code :get-code="getCode" />
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -69,17 +112,16 @@ import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
 import { Task } from "@/api/orderlines/task/type";
 import { FlowVariable } from "@/api/flow/variable/type";
-import { Search } from "@element-plus/icons-vue";
+import { Search, UploadFilled } from "@element-plus/icons-vue";
+import Code from "@/components/EDA/index.vue";
+import type { UploadProps } from "element-plus";
 
 const { nodeParam, nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
 let dialogTableVisible = ref<boolean>(false);
+let pythonCodeVisible = ref<boolean>(false);
 let variableOption = ref<FlowVariable.VariableOption[]>([{ label: "", value: "" }]);
 let clearFlag = ref<boolean>(false);
 let showVariable = ref<boolean>(false);
-
-const useVariable = () => {
-  showVariable.value = !showVariable.value;
-};
 
 interface ParamItem {
   default: undefined | string;
@@ -90,6 +132,37 @@ interface ParamItem {
   type: string;
   value?: string;
 }
+
+// 获取子组件中的代码
+const getCode = (code: string) => {
+  nodeParam.value.forEach((item: any) => {
+    if (item.param_type === "code") item.value = code;
+  });
+};
+
+// 变量选择器
+const useVariable = () => {
+  showVariable.value = !showVariable.value;
+};
+
+// 显示python代码编辑器
+const showPythonEdit = () => {
+  pythonCodeVisible.value = !pythonCodeVisible.value;
+};
+
+// 上传文件
+const handleChange: UploadProps["onChange"] = uploadFile => {
+  nodeParam.value.forEach((item: any) => {
+    if (item.param_type === "upload") item.value = uploadFile.name;
+  });
+};
+
+// 运行python代码修改参数
+const updatePythonCodeParam = () => {
+  nodeParam.value.forEach((item: any) => {
+    if (item.param_type === "code") updateTask(item);
+  });
+};
 
 const cancel = () => {
   dialogTableVisible.value = true;
@@ -146,41 +219,25 @@ const checkParam = (row: any) => {
     if (!isNaN(parseInt(param_value))) {
       return parseInt(param_value);
     } else {
-      ElNotification({
-        type: "error",
-        title: "参数类型异常",
-        message: `参数类型规定为${param_type}`
-      });
+      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else if (param_type.search("dict") !== -1 && param_type.search("class") !== -1) {
     try {
       return JSON.parse(param_value);
     } catch (e) {
-      ElNotification({
-        type: "error",
-        title: "参数类型异常",
-        message: `参数类型规定为${param_type}`
-      });
+      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else if (param_type.search("list") !== -1 && param_type.search("class") !== -1) {
     try {
       return JSON.parse(param_value);
     } catch (e) {
-      ElNotification({
-        type: "error",
-        title: "参数类型异常",
-        message: `参数类型规定为${param_type}`
-      });
+      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else if (param_type.search("float") !== -1 && param_type.search("class") !== -1) {
     if (!isNaN(parseFloat(param_value))) {
       return parseFloat(param_value);
     } else {
-      ElNotification({
-        type: "error",
-        title: "参数类型异常",
-        message: `参数类型规定为${param_type}`
-      });
+      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else {
     return param_value;
@@ -193,4 +250,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.tooltip-base-box .center {
+  justify-content: center;
+}
+</style>
