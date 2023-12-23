@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import FlowPanel from "./components/index.vue";
+import FlowPanel from "../components/index.vue";
 </script>
 
 <style scoped>

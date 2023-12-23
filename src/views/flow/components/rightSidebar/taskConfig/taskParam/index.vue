@@ -8,7 +8,6 @@
     </template>
 
     <template v-if="nodeConfig.task_type === 'common'">
-      {{ nodeParam }}
       <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
         <el-table-column fixed prop="desc" label="参数名" min-width="80" />
         <el-table-column prop="desc" label="参数值" min-width="240" required>

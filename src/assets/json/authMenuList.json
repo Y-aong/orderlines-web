@@ -16,32 +16,62 @@
       }
     },
     {
-      "path": "/flow/index",
+      "path": "/flow",
       "name": "flow",
-      "component": "/flow/index",
+      "redirect": "/flow/general",
       "meta": {
         "icon": "MessageBox",
         "title": "配置流程",
         "isLink": "",
         "isHide": false,
-        "isFull": true,
+        "isFull": false,
         "isAffix": false,
         "isKeepAlive": true
-      }
-    },
-    {
-      "path": "/web/index",
-      "name": "web",
-      "component": "/web/index",
-      "meta": {
-        "icon": "ChromeFilled",
-        "title": "web自动化",
-        "isLink": "",
-        "isHide": false,
-        "isFull": true,
-        "isAffix": false,
-        "isKeepAlive": true
-      }
+      },
+      "children": [
+        {
+          "path": "/flow/general",
+          "name": "general",
+          "component": "/flow/general/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "通用流程",
+            "isLink": "",
+            "isHide": false,
+            "isFull": true,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/flow/web",
+          "name": "web",
+          "component": "/flow/web/index",
+          "meta": {
+            "icon": "ChromeFilled",
+            "title": "页面自动化",
+            "isLink": "",
+            "isHide": false,
+            "isFull": true,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/flow/api",
+          "name": "api",
+          "component": "/flow/api/index",
+          "meta": {
+            "icon": "Promotion",
+            "title": "接口自动化",
+            "isLink": "",
+            "isHide": false,
+            "isFull": true,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     },
     {
       "path": "/dataScreen",
