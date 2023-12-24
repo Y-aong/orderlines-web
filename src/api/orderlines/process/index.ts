@@ -5,6 +5,7 @@ import { Process } from "@/api/orderlines/process/type";
 //项目用户相关的请求地址
 enum API {
   PROCESS_URL = "/process",
+  PROCESS_PARAM_URL = "/process_param",
   PROCESS_EXPORT_URL = "/export/process"
 }
 
@@ -16,3 +17,5 @@ export const updateProcessRequest = (data: Process.ProcessItem) =>
   http.put<ResultData<BaseUpdate>>(API.PROCESS_URL, data);
 export const deleteProcessRequest = (data: Process.ProcessItem) =>
   http.delete<ResultData<BaseUpdate>>(`${API.PROCESS_URL}?id=${data.id}`);
+export const updateProcessParamRequest = (data: Process.ProcessParamType) =>
+  http.put<ResultData<BaseUpdate>>(API.PROCESS_PARAM_URL, data);

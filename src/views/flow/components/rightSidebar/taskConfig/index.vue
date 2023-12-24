@@ -40,7 +40,7 @@
   </el-card>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="TaskConfig">
 import TaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
 import TaskRunningConfig from "./taskRunning/index.vue";
@@ -66,12 +66,6 @@ const updateTask = async () => {
   };
   let result: any = await updateTaskRequest(taskNode);
   if (result.code != 200) ElMessage.error("任务配置修改失败");
-};
-</script>
-
-<script lang="ts">
-export default {
-  name: "TaskConfig"
 };
 </script>
 

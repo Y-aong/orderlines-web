@@ -55,7 +55,7 @@
   </el-dialog>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="VariableConfig">
 import { reactive, ref, onMounted } from "vue";
 import {
   createVariableRequest,
@@ -204,12 +204,6 @@ const confirm = async () => {
   VariableItem.variable_desc = "";
   dialogFormVisible.value = false;
   await getVariable();
-};
-</script>
-
-<script lang="ts">
-export default {
-  name: "VariableConfig"
 };
 </script>
 

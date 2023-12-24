@@ -98,7 +98,7 @@
   </el-dialog>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="TaskParam">
 import ProcessControl from "./processControl/index.vue";
 import TaskGroup from "./taskGroup/index.vue";
 import { ref } from "vue";
@@ -241,11 +241,6 @@ const checkParam = (row: any) => {
   } else {
     return param_value;
   }
-};
-</script>
-<script lang="ts">
-export default {
-  name: "TaskParam"
 };
 </script>
 

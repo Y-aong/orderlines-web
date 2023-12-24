@@ -6,16 +6,11 @@
   </el-collapse-item>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="TaskResultParam">
 import { ref } from "vue";
 import ImgCheck from "@/components/Upload/ImgCheck.vue";
 
 const img_url = ref("https://cdn.pixabay.com/photo/2023/10/06/07/14/plant-8297610_1280.jpg");
-</script>
-<script lang="ts">
-export default {
-  name: "TaskResultParam"
-};
 </script>
 
 <style scoped>

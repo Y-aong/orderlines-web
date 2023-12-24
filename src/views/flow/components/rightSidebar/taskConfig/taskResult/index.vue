@@ -37,7 +37,7 @@
   </el-dialog>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="TaskResultParam">
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
@@ -87,11 +87,6 @@ const updateTask = async (result_name: string, result_value: string) => {
   } else {
     ElMessage.error("任务配置修改失败");
   }
-};
-</script>
-<script lang="ts">
-export default {
-  name: "TaskResultParam"
 };
 </script>
 

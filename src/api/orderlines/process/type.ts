@@ -25,5 +25,12 @@ export namespace Process {
     update_time?: string;
   }
 
+  export interface ProcessParamType {
+    timeout: number;
+    notice_type: string;
+    is_send: boolean;
+    process_id: string;
+  }
+
   export interface ProcessResponse extends ResPage<ProcessItem> {}
 }
