@@ -64,7 +64,7 @@ const toProcessConfig = (row: Process.ProcessItem) => {
   setStorage(row.version, "PROCESS_VERSION");
 
   isRunning.value = false;
-  router.push(`/flow/index`);
+  router.push(`/flow/general`);
 };
 
 // 新增，查看，编辑

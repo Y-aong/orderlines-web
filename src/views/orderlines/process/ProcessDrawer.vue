@@ -57,7 +57,7 @@ const toProcessConfig = async (row: Process.ProcessItem) => {
   setStorage(row.process_name, "PROCESS_NAME");
   setStorage(row.process_id, "PROCESS_VERSION");
   isRunning.value = false;
-  router.push(`/flow/index`);
+  router.push(`/flow/general`);
 };
 
 const rules = reactive({
@@ -98,12 +98,13 @@ const handleSubmit = () => {
       }
 
       if (drawerProps.value.title === "编辑") {
-        let process: { id?: number; process_name?: string; desc?: string; update_time?: string } = {};
+        let process: any = {};
         process.id = drawerProps.value.row.id;
         process.process_name = drawerProps.value.row.process_name;
         process.desc = drawerProps.value.row.desc;
         process.update_time = getCurrentDate();
-        drawerProps.value.row = process;
+        process.process_params = { timeout: 7200, notice_type: "FAILURE", is_send: true };
+        process.drawerProps.value.row = process;
       }
       console.log(drawerProps.value.row);
 

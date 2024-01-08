@@ -77,7 +77,7 @@ const toProcessRunning = (row: PInstance.ProcessInstanceItem) => {
   isSave.value = false;
   isRunning.value = false;
   isRedirect.value = true;
-  router.push(`/flow/index`);
+  router.push(`/flow/general`);
 };
 
 // 新增，查看，编辑
@@ -111,7 +111,7 @@ const toDetail = (row: any) => {
     isSave.value = false;
     isRunning.value = false;
     isRedirect.value = true;
-    router.push(`/flow/index`);
+    router.push(`/flow/general`);
   }
 };
 

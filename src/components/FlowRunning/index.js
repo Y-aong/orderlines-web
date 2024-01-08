@@ -13,6 +13,7 @@ import FlowLink from "./FlowLink.js";
 import Palette from "./palette/index.vue";
 import VueHtmlNode from "./nodes/VueHtmlNode.js";
 import pinia from "../../stores";
+import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 
 class OrderlinesNodeExtension {
   static pluginName = "OrderlinesNodeExtension";
@@ -37,6 +38,9 @@ class OrderlinesNodeExtension {
   }
 
   render(lf, domOverlay) {
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      this.app.component(key, component);
+    }
     const node = document.createElement("div");
     node.className = "task-node";
     domOverlay.appendChild(node);

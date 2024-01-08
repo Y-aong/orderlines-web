@@ -68,11 +68,15 @@ export interface Node {
   type: string;
   version: string;
 }
+export interface CategoryNode {
+  nodes: Node[];
+}
 
 export interface NodeMenuType {
-  nodes: Node[];
+  nodes: any;
   nodesType: string;
   title: string;
+  icon: string;
 }
 
 export interface CommonParamType {

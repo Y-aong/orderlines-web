@@ -1,23 +1,41 @@
 <template>
   <div class="flow_menu">
     <div class="node-collapse">
-      <el-menu class="el-menu" mode="vertical">
+      <el-menu class="el-menu" mode="vertical" unique-opened>
         <template v-for="node in nodeMenu" :key="node.title">
           <el-sub-menu v-if="node.title" :index="node.title">
             <template #title>
-              <el-icon><location /></el-icon>
-              <span>{{ node.title }}</span>
+              <el-icon>
+                <component :is="node.icon"></component>
+              </el-icon>
+              <span class="sle">{{ node.title }}</span>
             </template>
-            <div
-              class="node-form draggable draggable-handle"
-              v-for="(item, index) in node.nodes"
-              :key="index"
-              @mousedown="startDrag(item)"
-            >
-              <el-menu-item :index="item.text">
-                <el-button class="title" plain>{{ item.text }}</el-button>
-              </el-menu-item>
-            </div>
+            <!-- common -->
+            <template v-if="!node.nodes[0].nodes">
+              <div class="node-form draggable draggable-handle" v-for="(item, index) in node.nodes" :key="index">
+                <el-menu-item :index="item.text" @mousedown="startDrag(item)" v-if="!node.nodes[0].nodes">
+                  <el-button class="title" plain>{{ item.text }}</el-button>
+                </el-menu-item>
+              </div>
+            </template>
+            <!-- category -->
+            <template v-if="node.nodes[0].nodes">
+              <template v-for="item in node.nodes" :key="item.title">
+                <el-sub-menu :index="item.title">
+                  <template #title>{{ item.title }}</template>
+                  <div
+                    class="node-form draggable draggable-handle"
+                    v-for="temp in item.nodes"
+                    :key="temp.text"
+                    @mousedown="startDrag(temp)"
+                  >
+                    <el-menu-item :index="temp.text">
+                      <el-button class="title" plain>{{ temp.text }}</el-button>
+                    </el-menu-item>
+                  </div>
+                </el-sub-menu>
+              </template>
+            </template>
           </el-sub-menu>
         </template>
       </el-menu>
@@ -34,7 +52,6 @@ import { v4 as uuid4 } from "uuid";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { createTaskRequest } from "@/api/orderlines/task/index";
 
-import { Location } from "@element-plus/icons-vue";
 import { processControlStatusItem } from "@/utils/variable";
 import { ElMessage } from "element-plus";
 
