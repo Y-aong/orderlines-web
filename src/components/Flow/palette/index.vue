@@ -113,7 +113,8 @@ const startDrag = async (item: any) => {
       process_id: process_id.value,
       task_type: taskType,
       method_name: item.method_name,
-      task_module: item.class_name
+      task_module: item.class_name,
+      task_config: defaultTaskConfig.value
     };
     let flow_data: any = {
       process_id: process_id.value,

@@ -77,6 +77,7 @@ export default {
                 elements.nodes.forEach(async node => {
                   // 数据库删除节点
                   if (node.type !== "select-node") {
+                    console.log(node, node.id);
                     let result = await deleteTaskRequest(node.id);
                     if (result.code !== 200) {
                       ElMessage.error("删除节点失败！");

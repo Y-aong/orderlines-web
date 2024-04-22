@@ -1,7 +1,7 @@
 <template>
   <el-collapse-item title="任务运行配置" name="taskRunning">
     <el-table :data="defaultTaskConfig" style="width: 100%" max-height="65vh" stripe>
-      <el-table-column prop="config_name" label="运行参数名" min-width="100" />
+      <el-table-column prop="config_label" label="运行参数名" min-width="100" />
       <el-table-column prop="config_value" label="运行参数值" min-width="150">
         <template #default="scope">
           <el-select v-if="scope.row.config_name === 'notice_type'" v-model="defaultNoticeType" :disabled="isRunning">
@@ -27,9 +27,26 @@
               @change="updateTask(scope.row.config_name, item.value)"
             />
           </el-select>
+          <el-switch
+            v-if="scope.row.config_name === 'is_corner'"
+            v-model="scope.row.config_value"
+            width="40"
+            @click="updateTask(scope.row.config_name, scope.row.config_value)"
+          />
+          <el-switch
+            v-if="scope.row.config_name === 'is_state'"
+            v-model="scope.row.config_value"
+            width="40"
+            @click="updateTask(scope.row.config_name, scope.row.config_value)"
+          />
           <el-input
             v-model="scope.row.config_value"
-            v-if="scope.row.config_name !== 'task_strategy' && scope.row.config_name !== 'notice_type'"
+            v-if="
+              scope.row.config_name !== 'task_strategy' &&
+              scope.row.config_name !== 'notice_type' &&
+              scope.row.config_name !== 'is_corner' &&
+              scope.row.config_name !== 'is_state'
+            "
             @blur="updateTask(scope.row.config_name, scope.row.config_value)"
             :disabled="isRunning"
           />
@@ -78,10 +95,9 @@ import { ElMessage } from "element-plus";
 const flowStore = useFlowStore();
 const defaultTaskStrategy = ref("报错");
 const defaultNoticeType = ref("失败");
-const { nodeConfig, defaultTaskConfig, process_id, isRunning } = storeToRefs(flowStore);
+const { nodeConfig, process_id, isRunning, defaultTaskConfig } = storeToRefs(flowStore);
 let dialogTableVisible = ref<boolean>(false);
-
-const getTaskConfig = () => {
+const getTaskConfig = async () => {
   dialogTableVisible.value = true;
 };
 
@@ -100,7 +116,7 @@ const updateTask = async (config_name: string, config_value: string) => {
   // 修改流程图节点
   await updateFlowData();
   // 修改数据库节点数据
-  let task_config: any = {};
+  let task_config: any = defaultTaskConfig.value;
   task_config[config_name] = config_value;
   let taskNode: any = {
     id: nodeConfig.value.id,

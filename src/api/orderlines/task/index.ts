@@ -15,4 +15,4 @@ export const createTaskRequest = (data: Task.TaskItem) => http.post(API.TASK_URL
 
 export const updateTaskRequest = (data: Task.TaskItem) => http.put<ResultData<BaseUpdate>>(API.TASK_URL, data);
 
-export const deleteTaskRequest = (data: Task.TaskItem) => http.delete(`${API.TASK_URL}?id=${data.id}`);
+export const deleteTaskRequest = (task_id: string) => http.delete(`${API.TASK_URL}?task_id=${task_id}`);

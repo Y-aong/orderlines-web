@@ -116,6 +116,7 @@ export interface SelectOption {
 
 export interface DefaultTaskConfigType {
   config_name: string;
+  config_label: string;
   config_value: string | SelectOption[];
   desc: string;
 }
