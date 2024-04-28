@@ -37,10 +37,9 @@
 <script setup lang="ts" name="ProcessDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import { v4 as uuid4 } from "uuid";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { storeToRefs } from "pinia";
-
+import { SnowTaskId } from "@/api/orderlines/task/index";
 import { Process } from "@/api/orderlines/process/type";
 import useFlowStore from "@/stores/modules/flow";
 let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
@@ -93,8 +92,9 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
+      const taskIDResponse: any = await SnowTaskId();
       if (drawerProps.value.title === "新增") {
-        drawerProps.value.row["process_id"] = uuid4();
+        drawerProps.value.row["process_id"] = taskIDResponse.data.task_id;
       }
 
       if (drawerProps.value.title === "编辑") {

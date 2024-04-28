@@ -48,9 +48,8 @@ import LogicFlow from "@logicflow/core";
 import { onMounted } from "vue";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { v4 as uuid4 } from "uuid";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
-import { createTaskRequest } from "@/api/orderlines/task/index";
+import { createTaskRequest, SnowTaskId } from "@/api/orderlines/task/index";
 
 import { processControlStatusItem } from "@/utils/variable";
 import { ElMessage } from "element-plus";
@@ -85,7 +84,8 @@ const startDrag = async (item: any) => {
   let graphData = lf.getGraphData();
   let flag = await checkStartNode(item.type, graphData);
   if (flag) {
-    const task_id = uuid4();
+    const taskIDResponse: any = await SnowTaskId();
+    const task_id = taskIDResponse.data.task_id;
     lf.dnd.startDrag({
       id: task_id,
       type: item.type,
