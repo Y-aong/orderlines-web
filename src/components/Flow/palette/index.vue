@@ -85,8 +85,7 @@ const startDrag = async (item: any) => {
   let graphData = lf.getGraphData();
   let flag = await checkStartNode(item.type, graphData);
   if (flag) {
-    const taskIDResponse: any = uuid();
-    const task_id = taskIDResponse.data.task_id;
+    const task_id = uuid();
     lf.dnd.startDrag({
       id: task_id,
       type: item.type,

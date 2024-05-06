@@ -92,9 +92,8 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      const taskIDResponse: any = uuid();
       if (drawerProps.value.title === "新增") {
-        drawerProps.value.row["process_id"] = taskIDResponse.data.task_id;
+        drawerProps.value.row["process_id"] = uuid();
       }
 
       if (drawerProps.value.title === "编辑") {
