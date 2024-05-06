@@ -6,7 +6,7 @@
         <template #default="scope">
           <el-select
             v-if="scope.row.config_name === 'notice_type'"
-            v-model="defaultNoticeType"
+            v-model="scope.row.config_value"
             :disabled="isRunning"
             placeholder="请选择通知方式"
             @change="updateTaskNoticeType"
@@ -15,7 +15,7 @@
           </el-select>
           <el-select
             v-if="scope.row.config_name === 'task_strategy'"
-            v-model="defaultTaskStrategy"
+            v-model="scope.row.config_value"
             :disabled="isRunning"
             placeholder="请选择通知方式"
             @change="updateTaskStrategy"
@@ -57,7 +57,7 @@
       <el-table-column prop="config_name" label="任务配置名称" min-width="150" />
       <el-table-column prop="config_value" label="任务运行配置" min-width="150">
         <template #default="scope">
-          <el-select v-if="scope.row.config_name === 'notice_type'" v-model="defaultNoticeType">
+          <el-select v-if="scope.row.config_name === 'notice_type'" v-model="scope.row.config_value">
             <el-option
               v-for="item in scope.row.config_value"
               :key="item.value"
@@ -65,7 +65,7 @@
               :value="item.value"
             />
           </el-select>
-          <el-select v-if="scope.row.config_name === 'task_strategy'" v-model="defaultTaskStrategy">
+          <el-select v-if="scope.row.config_name === 'task_strategy'" v-model="scope.row.config_value">
             <el-option
               v-for="item in scope.row.config_value"
               :key="item.value"
@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { createFlowDataRequest } from "@/api/flow/taskNode/index";
@@ -89,14 +89,9 @@ import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
 
 const flowStore = useFlowStore();
-const defaultTaskStrategy = ref("");
-const defaultNoticeType = ref("");
+
 const { nodeConfig, process_id, isRunning, defaultTaskConfig } = storeToRefs(flowStore);
 let dialogTableVisible = ref<boolean>(false);
-
-onMounted(async () => {
-  console.log(defaultTaskConfig);
-});
 
 const getTaskConfig = async () => {
   dialogTableVisible.value = true;
@@ -128,7 +123,6 @@ const updateTask = async (config_name: string, config_value: string) => {
   // 修改流程图节点
   await updateFlowData();
   // 修改数据库节点数据
-  // let task_config: any = defaultTaskConfig.value;
   defaultTaskConfig.value.forEach(function (ele: any) {
     if (ele.config_name === config_name) {
       ele.config_value = config_value;
@@ -144,13 +138,13 @@ const updateTask = async (config_name: string, config_value: string) => {
   await updateFlowData();
   if (result.code != 200) ElMessage.error("任务配置修改失败");
 };
+// 修改消息通知
 const updateTaskNoticeType = async (value: string) => {
   let task_config: any = defaultTaskConfig.value;
 
   task_config.forEach(function (ele: any) {
     if (ele.config_name === "notice_type") {
       ele.config_value = value;
-      defaultNoticeType.value = value;
     }
   });
   let taskNode: any = {
@@ -160,19 +154,15 @@ const updateTaskNoticeType = async (value: string) => {
     task_config: task_config
   };
 
-  console.log(taskNode);
-
+  await updateFlowData();
   let result: any = await updateTaskRequest(taskNode);
   if (result.code != 200) ElMessage.error("任务配置修改失败");
 };
-
+// 修改任务异常处理策略
 const updateTaskStrategy = async (value: string) => {
-  // let task_config: any = defaultTaskConfig.value;
-
   defaultTaskConfig.value.forEach(function (ele: any) {
     if (ele.config_name === "task_strategy") {
       ele.config_value = value;
-      defaultTaskStrategy.value = value;
     }
   });
   let taskNode: any = {
