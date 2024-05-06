@@ -40,7 +40,7 @@ import FlowRunning from "@/components/FlowRunning/index.vue";
 import FlowTabbar from "./tabbar/index.vue";
 import FlowRightSidebar from "./rightSidebar/index.vue";
 import { onMounted, reactive, ref } from "vue";
-import { SnowTaskId } from "@/api/orderlines/task/index";
+import { v4 as uuid } from "uuid";
 
 import { createProcessRequest } from "@/api/orderlines/process/index";
 import { ElMessage } from "element-plus";
@@ -72,7 +72,7 @@ let ProcessItem = reactive<Process.ProcessItem>({
 });
 
 const confirm = async () => {
-  const taskIDResponse: any = await SnowTaskId();
+  const taskIDResponse: any = uuid();
   let requestData: Process.ProcessItem = {
     process_id: taskIDResponse.data.task_id,
     process_name: ProcessItem.process_name,

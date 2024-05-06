@@ -4,12 +4,10 @@ import { ResultData, BaseUpdate } from "@/api/interface";
 
 enum API {
   TASK_URL = "/task",
-  TASK_EXPORT_URL = "/export/task",
-  SNOW_TASK_ID_URL = "/snow_task_id"
+  TASK_EXPORT_URL = "/export/task"
 }
 
 export const taskExport = (data: Task.TaskFilter) => http.download(API.TASK_EXPORT_URL, data);
-export const SnowTaskId = () => http.get(API.SNOW_TASK_ID_URL);
 
 export const getTaskRequest = (data: Task.TaskFilter) => http.get<Task.TaskItem>(API.TASK_URL, data);
 

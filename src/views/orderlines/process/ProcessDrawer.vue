@@ -39,7 +39,7 @@ import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { storeToRefs } from "pinia";
-import { SnowTaskId } from "@/api/orderlines/task/index";
+import { v4 as uuid } from "uuid";
 import { Process } from "@/api/orderlines/process/type";
 import useFlowStore from "@/stores/modules/flow";
 let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
@@ -92,7 +92,7 @@ const handleSubmit = () => {
   ruleFormRef.value!.validate(async valid => {
     if (!valid) return;
     try {
-      const taskIDResponse: any = await SnowTaskId();
+      const taskIDResponse: any = uuid();
       if (drawerProps.value.title === "新增") {
         drawerProps.value.row["process_id"] = taskIDResponse.data.task_id;
       }
