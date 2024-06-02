@@ -4,16 +4,17 @@ export namespace Process {
     id?: number;
     creator?: any;
     creator_id?: any;
-    desc: string;
+    desc?: string;
     insert_time?: string;
-    process_config: string;
+    process_config?: string;
     process_id: string;
     process_name: string;
-    process_params: string;
+    process_params?: string;
     update_time?: any;
     updater?: any;
     updater_id?: any;
     version?: any;
+    mode?: string;
   }
   export interface ProcessFilter extends ReqPage {
     id?: number;

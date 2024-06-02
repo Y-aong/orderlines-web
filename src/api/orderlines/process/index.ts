@@ -11,6 +11,8 @@ enum API {
 
 export const processExport = (data: Process.ProcessFilter) => http.download(API.PROCESS_EXPORT_URL, data);
 export const getProcessRequest = (data: Process.ProcessFilter) => http.get<Process.ProcessItem>(API.PROCESS_URL, data);
+export const getSingleProcessRequest = (process_id: string) =>
+  http.get<Process.ProcessItem>(`${API.PROCESS_URL}?process_id=${process_id}`);
 export const createProcessRequest = (data: Process.ProcessItem) =>
   http.post<ResultData<BaseUpdate>>(API.PROCESS_URL, data);
 export const updateProcessRequest = (data: Process.ProcessItem) =>

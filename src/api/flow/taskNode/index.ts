@@ -55,3 +55,6 @@ export const getProcessVersionRequest = (process_id: string) =>
 
 export const getProcessVersionByNameRequest = (process_name: string) =>
   http.get(`${API.PROCESS_VERSION}?process_name=${process_name}`);
+
+export const updateProcessModeRequest = (process_name: string) =>
+  http.get(`${API.PROCESS_VERSION}?process_name=${process_name}`);

@@ -21,7 +21,7 @@
             @change="updateTaskStrategy"
           >
             >
-            <el-option v-for="item in TaskStrategys" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in TaskStrategy" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
           <el-switch
             v-if="scope.row.config_name === 'is_corner'"
@@ -96,7 +96,7 @@ let dialogTableVisible = ref<boolean>(false);
 const getTaskConfig = async () => {
   dialogTableVisible.value = true;
 };
-const TaskStrategys = [
+const TaskStrategy = [
   { label: "报错", value: "RAISE" },
   { label: "重试", value: "RETRY" },
   { label: "忽略", value: "SKIP" }

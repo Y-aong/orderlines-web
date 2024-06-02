@@ -11,6 +11,16 @@
         <el-button v-if="!isRunning && !isSave" size="small" type="primary" @click="getProcessVersion">
           版本操作
         </el-button>
+        &nbsp;
+        <el-switch
+          v-if="!isRunning && !isSave"
+          v-model="debugMode"
+          type="primary"
+          inline-prompt
+          active-text="DEBUG"
+          inactive-text="RUN"
+          @click="changeProcessMode"
+        />
       </div>
 
       <div class="process_operate">
@@ -107,10 +117,11 @@ export default {
 
 <script setup lang="ts">
 import LOGO from "./logo/index.vue";
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { InfoFilled } from "@element-plus/icons-vue";
+import { Process } from "@/api/orderlines/process/type";
 import {
   pausedProcessRequest,
   recoverProcessRequest,
@@ -128,7 +139,7 @@ import {
 import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
-import { deleteProcessRequest } from "@/api/orderlines/process/index";
+import { deleteProcessRequest, updateProcessRequest, getSingleProcessRequest } from "@/api/orderlines/process/index";
 
 let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, runningTask, isRedirect } =
   storeToRefs(useFlowStore());
@@ -142,11 +153,21 @@ let versionForm = ref<ProcessVersionType>({
   version_desc: ""
 });
 let versionData = ref<ProcessVersionType[]>([]);
+let debugMode = ref(false);
+let processInfo = reactive<Process.ProcessItem>({ process_id: process_id.value, process_name: process_name.value });
 
 onMounted(async () => {
   await getProcessVersionOption();
   await getProcessVersionByName();
+  await getProcessInfo();
 });
+
+const getProcessInfo = async () => {
+  const response: any = await getSingleProcessRequest(process_id.value);
+  processInfo = response.data;
+  debugMode.value = response.data.mode == "debug";
+  console.log("初始化", debugMode.value);
+};
 
 const getProcessVersionOption = async () => {
   const res = await getProcessVersionOptionRequest(process_name.value);
@@ -176,6 +197,17 @@ const getProcessVersionByName = async () => {
     ElMessage.error("获取流程流程版本失败");
   }
 };
+// 修改流程运行模式
+const changeProcessMode = async () => {
+  processInfo["mode"] = debugMode.value ? "debug" : "run";
+  const response: any = await updateProcessRequest(processInfo);
+  if (response.code == 200) {
+    ElMessage.success("修改成功");
+    console.log("修改后", debugMode.value);
+  } else {
+    ElMessage.error("修改失败");
+  }
+};
 
 //创建流程版本
 const createProcessVersion = async () => {
@@ -191,6 +223,7 @@ const createProcessVersion = async () => {
   }
 };
 
+//修改流程版本
 const changeProcessVersion = async () => {
   console.log(process_version.value);
   process_id.value = process_version.value;
@@ -206,7 +239,7 @@ const runningStatus = () => {
   isRedirect.value = false;
   isSave.value = true;
 };
-
+// 启动流程
 const startProcess = async () => {
   const result: any = await startProcessRequest(process_id.value);
   process_instance_id.value = result.data;
@@ -219,7 +252,7 @@ const startProcess = async () => {
     ElMessage.error("流程启动失败");
   }
 };
-
+// 获取运行中的任务
 const getRunningTask = async () => {
   const RunningTaskFilter = {
     process_id: process_id.value,
@@ -231,7 +264,7 @@ const getRunningTask = async () => {
   }
   return res.code === 200 ? res.data.running_edge : [];
 };
-
+// 停止流程
 const stopProcess = async () => {
   let result: any = await stopProcessRequest(process_id.value);
   if (result.code == 200) {
@@ -306,5 +339,9 @@ const saveProcess = async () => {
 .process_operate {
   display: flex;
   align-items: center;
+}
+.el-switch__core {
+  --el-switch-on-color: #ff4949;
+  --el-switch-off-color: #13ce66;
 }
 </style>
