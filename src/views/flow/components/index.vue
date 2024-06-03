@@ -72,15 +72,15 @@ let ProcessItem = reactive<Process.ProcessItem>({
 });
 
 const confirm = async () => {
-  const taskIDResponse: any = uuid();
+  const processUUID: any = uuid();
   let requestData: Process.ProcessItem = {
-    process_id: taskIDResponse.data.task_id,
+    process_id: processUUID,
     process_name: ProcessItem.process_name,
     desc: ProcessItem.desc,
     process_params: ProcessItem.process_params,
     process_config: ProcessItem.process_config
   };
-  setStorage(requestData.process_id, "PROCESS_ID");
+  setStorage(processUUID, "PROCESS_ID");
   setStorage(ProcessItem.process_name, "PROCESS_NAME");
   let res: any = await createProcessRequest(requestData);
   if (res.code == 200) {
