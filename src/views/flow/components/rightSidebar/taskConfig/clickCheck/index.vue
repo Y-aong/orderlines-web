@@ -58,6 +58,13 @@
         </div>
       </el-card>
     </el-collapse-item>
+    <el-collapse-item title="运行日志下载" name="runningLog">
+      <el-card class="box-card">
+        <el-button type="primary" :icon="Download" @click="downloadFile" :disabled="taskProgress !== 100" plain>
+          下载报告
+        </el-button>
+      </el-card>
+    </el-collapse-item>
     <el-dialog :title="title" width="80%" v-model="dialogVisible">
       <json-viewer :value="taskResultError" copyable boxed sort expanded :expand-depth="depth" />
     </el-dialog>
@@ -69,8 +76,12 @@ import { ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import "vue3-json-viewer/dist/index.css";
+import { Download } from "@element-plus/icons-vue";
+import { ElMessageBox } from "element-plus";
+import { useDownload } from "@/hooks/useDownload";
+import { processHtmlExport } from "@/api/orderlines/process/index";
 
-const { clickCheckTask, taskProgress } = storeToRefs(useFlowStore());
+const { clickCheckTask, taskProgress, process_instance_id, process_name } = storeToRefs(useFlowStore());
 const depth = ref<number>(5);
 const dialogVisible = ref<boolean>(false);
 let title = ref<string>("查看任务结果");
@@ -83,6 +94,19 @@ const check = (type: string, row: any) => {
     row = JSON.parse(row);
   }
   taskResultError = row;
+};
+
+// 导出数据
+const downloadFile = async () => {
+  ElMessageBox.confirm("确认下载流程报告?", "温馨提示", { type: "warning" }).then(() => {
+    useDownload(
+      processHtmlExport,
+      `${process_name.value}——流程报告`,
+      { process_instance_id: process_instance_id.value },
+      true,
+      ".html"
+    );
+  });
 };
 </script>
 

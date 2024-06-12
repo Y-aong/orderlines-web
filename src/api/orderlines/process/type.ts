@@ -25,6 +25,9 @@ export namespace Process {
     insert_time?: string;
     update_time?: string;
   }
+  export interface ProcessHtmlFilter extends ReqPage {
+    process_instance_id: string;
+  }
 
   export interface ProcessParamType {
     timeout: number;

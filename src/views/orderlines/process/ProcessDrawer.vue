@@ -56,7 +56,7 @@ const toProcessConfig = async (row: Process.ProcessItem) => {
   setStorage(row.process_name, "PROCESS_NAME");
   setStorage(row.process_id, "PROCESS_VERSION");
   isRunning.value = false;
-  router.push(`/flow/general`);
+  router.push(`/flow/general/index`);
 };
 
 const rules = reactive({
