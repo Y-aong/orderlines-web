@@ -6,6 +6,7 @@ import { ElMessage } from "element-plus";
  * @return void
  */
 export const checkStatus = (status: number, message: string) => {
+  console.log("status", status, message);
   switch (status) {
     case 400:
       ElMessage.error(message);

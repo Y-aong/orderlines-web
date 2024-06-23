@@ -39,7 +39,7 @@ class RequestHttp {
         config.loading ?? (config.loading = false);
         config.loading && showFullScreenLoading();
         if (config.headers && typeof config.headers.set === "function") {
-          config.headers.set("x-access-token", userStore.token);
+          config.headers.set("Authorization", `Bearer ${userStore.token}`);
         }
         return config;
       },
@@ -79,6 +79,8 @@ class RequestHttp {
       },
       async (error: AxiosError) => {
         const { response } = error;
+        console.log(error.message);
+
         tryHideFullScreenLoading();
         // 请求超时 && 网络错误单独判断，没有 response
         if (error.message.indexOf("timeout") !== -1) ElMessage.error("请求超时！请您稍后重试");

@@ -38,7 +38,7 @@
     "build/**/*.ts",
     "build/**/*.d.ts",
     "vite.config.ts",
-    "src/utils/websocket/websocket.js"
+    "src/utils/websocket.ts"
   ],
   "exclude": ["node_modules", "dist", "**/*.js"]
 }

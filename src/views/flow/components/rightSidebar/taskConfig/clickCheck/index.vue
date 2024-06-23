@@ -58,7 +58,7 @@
         </div>
       </el-card>
     </el-collapse-item>
-    <el-collapse-item title="运行日志下载" name="runningLog">
+    <el-collapse-item title="运行报告下载" name="runningLog">
       <el-card class="box-card">
         <el-button type="primary" :icon="Download" @click="downloadFile" :disabled="taskProgress !== 100" plain>
           下载报告
@@ -98,10 +98,10 @@ const check = (type: string, row: any) => {
 
 // 导出数据
 const downloadFile = async () => {
-  ElMessageBox.confirm("确认下载流程报告?", "温馨提示", { type: "warning" }).then(() => {
+  ElMessageBox.confirm("确认下载流程运行报告?", "温馨提示", { type: "warning" }).then(() => {
     useDownload(
       processHtmlExport,
-      `${process_name.value}——流程报告`,
+      `${process_name.value}——运行报告`,
       { process_instance_id: process_instance_id.value },
       true,
       ".html"

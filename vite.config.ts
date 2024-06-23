@@ -38,9 +38,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       }
     },
     server: {
-      host: "0.0.0.0",
+      host: "127.0.0.1",
       port: viteEnv.VITE_PORT,
-      open: viteEnv.VITE_OPEN,
+      open: true,
       cors: true,
       // Load proxy configuration from .env.development
       // proxy: createProxy(viteEnv.VITE_PROXY)
@@ -51,7 +51,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           rewrite: path => path.replace(/^\/api/, "")
         },
         "/socket.io": {
-          target: "ws://127.0.0.1:8765",
+          target: "ws://127.0.0.1:18765",
           ws: true
         }
       }
