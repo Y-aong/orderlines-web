@@ -14,12 +14,14 @@ export function useWebSocket(
     // 监听连接事件
     socket.addEventListener("open", () => {
       if (socket && socket.readyState === WebSocket.OPEN) {
+        console.log(`topic：${topic}连接成功`);
         socket.send(JSON.stringify({ action: "subscribe", topic: topic }));
       }
     });
 
     // 监听接受信息
     socket.addEventListener("message", (event: MessageEvent) => {
+      console.log("消息接收", event.data);
       try {
         const data = JSON.parse(event.data);
         console.log("消息处理完成", data);
@@ -46,6 +48,7 @@ export function useWebSocket(
   };
 
   const send = (data: any) => {
+    console.log(`topic：${topic}发送消息, ${data}`);
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(data));
     }
