@@ -1,8 +1,8 @@
 import http from "@/api";
 
 enum API {
-  PROCESS_NAME_OPTION = "/option/process_name",
-  PROCESS_VERSION_OPTION = "/option/process_version",
+  PROCESS_NAME_OPTION = "/option/process_name_opt",
+  PROCESS_VERSION_OPTION = "/option/process_version_opt",
   GROUP_OWNER_OPTION = "/option/group_owner_opt",
   PROCESS_NAMESPACE_OPTION = "/option/namespace_process_opt",
   PROCESS_OPTION = "/option/process_opt",

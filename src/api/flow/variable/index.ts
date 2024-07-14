@@ -3,8 +3,8 @@ import http from "@/api";
 import { FlowVariable } from "./type";
 
 enum API {
-  VARIABLE = "/variable",
-  PROCESS_VARIABLE = "/orderlines/process_variable"
+  VARIABLE = "/orderlines/variable",
+  PROCESS_VARIABLE = "/flow/process_variable"
 }
 
 // 获取任务变量

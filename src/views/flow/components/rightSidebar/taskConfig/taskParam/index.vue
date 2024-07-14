@@ -105,7 +105,7 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateTaskRequest } from "@/api/orderlines/task/index";
-import { getVariableOptionRequest } from "@/api/flow/variable/index";
+import { getProcessVariableOptionRequest } from "@/api/option/index";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
@@ -168,7 +168,7 @@ const cancel = () => {
 };
 
 const getVariableOption = async () => {
-  const result: any = await getVariableOptionRequest(process_id.value);
+  const result: any = await getProcessVariableOptionRequest(process_id.value);
   variableOption.value = result.data;
 };
 // 修改流程图数据

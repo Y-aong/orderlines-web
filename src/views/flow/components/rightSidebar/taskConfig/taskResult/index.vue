@@ -41,7 +41,7 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { getVariableOptionRequest } from "@/api/flow/variable/index";
+import { getProcessVariableOptionRequest } from "@/api/option/index";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { updateTaskRequest } from "@/api/orderlines/task/index";
 import { ElMessage } from "element-plus";
@@ -54,7 +54,7 @@ const { nodeConfig, nodeResult, process_id, isRunning } = storeToRefs(useFlowSto
 const height = ref(isRunning ? "30vh" : "65vh");
 
 const getVariableOption = async () => {
-  const result = await getVariableOptionRequest(process_id.value);
+  const result = await getProcessVariableOptionRequest(process_id.value);
   variableOption.value = result.data;
 };
 

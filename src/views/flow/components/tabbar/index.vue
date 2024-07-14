@@ -131,7 +131,6 @@ import {
 import {
   getRunningTaskRequest,
   saveFlowRequest,
-  getProcessVersionOptionRequest,
   createProcessVersionRequest,
   getProcessVersionRequest,
   getProcessVersionByNameRequest
@@ -139,7 +138,8 @@ import {
 import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
-import { deleteProcessRequest, updateProcessRequest, getSingleProcessRequest } from "@/api/orderlines/process/index";
+import { deleteProcessRequest, updateProcessRequest, getProcessDetailRequest } from "@/api/orderlines/process/index";
+import { getProcessVersionOptionRequest } from "@/api/option/index";
 
 let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, runningTask, isRedirect } =
   storeToRefs(useFlowStore());
@@ -163,14 +163,14 @@ onMounted(async () => {
 });
 
 const getProcessInfo = async () => {
-  const response: any = await getSingleProcessRequest(process_id.value);
+  const response: any = await getProcessDetailRequest(process_id.value);
   processInfo = response.data;
   debugMode.value = response.data.mode == "debug";
   console.log("初始化", debugMode.value);
 };
 
 const getProcessVersionOption = async () => {
-  const res = await getProcessVersionOptionRequest(process_name.value);
+  const res: any = await getProcessVersionOptionRequest(process_name.value);
   options.value = res.data;
 };
 // 删除版本

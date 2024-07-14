@@ -32,7 +32,7 @@
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { getCurrentDate } from "@/utils/currentDateTime";
-import { getGroupOwner } from "@/api/auth/group/index";
+import { getGroupOwnerOptionRequest } from "@/api/option/index";
 
 let groupOwner = reactive<any>([]);
 const rules = reactive({
@@ -42,7 +42,7 @@ const rules = reactive({
 });
 
 onMounted(async () => {
-  const data = await getGroupOwner();
+  const data = await getGroupOwnerOptionRequest();
   groupOwner = data.data;
 });
 
