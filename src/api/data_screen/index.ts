@@ -2,14 +2,14 @@ import http from "@/api";
 
 //项目用户相关的请求地址
 enum API {
-  BASE_INFO_URL = "/base_info",
-  PLUGIN_INFO_URL = "/plugin_use",
-  PROCESS_ALARM_URL = "/process_alarm",
-  PROCESS_STATUS_URL = "/process_status",
-  RUNNING_COUNT_URL = "/running_count",
-  RUNNING_TREND_URL = "/run_trend",
-  TRIGGER_TYPE_URL = "/trigger_type",
-  RUNNING_INFO_URL = "/running_info"
+  BASE_INFO_URL = "/data_screen/base_info",
+  PLUGIN_INFO_URL = "/data_screen/plugin_use",
+  PROCESS_ALARM_URL = "/data_screen/process_alarm",
+  PROCESS_STATUS_URL = "/data_screen/process_status",
+  RUNNING_COUNT_URL = "/data_screen/running_count",
+  RUNNING_TREND_URL = "/data_screen/run_trend",
+  TRIGGER_TYPE_URL = "/data_screen/trigger_type",
+  RUNNING_INFO_URL = "/data_screen/running_info"
 }
 
 export const getBaseInfoRequest = () => http.get(API.BASE_INFO_URL);

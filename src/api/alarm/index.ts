@@ -3,9 +3,11 @@ import { Alarm } from "./type";
 
 //项目用户相关的请求地址
 enum API {
-  ALARM_URL = "/alarm"
+  ALARM_URL = "/alarm/",
+  ALARM_DETAIL_URL = "/alarm/detail"
 }
 
 export const getAlarmRequest = (data: Alarm.AlarmFilter) => http.get<Alarm.AlarmResponse>(API.ALARM_URL, data);
+export const getAlarmDetailRequest = (id: number) => http.get<Alarm.AlarmItem>(`${API.ALARM_URL}?id=${id}`);
 export const updateAlarmRequest = (data: Alarm.AlarmItem) => http.put(API.ALARM_URL, data);
-export const deleteAlarmRequest = (data: Alarm.AlarmItem) => http.delete(`${API.ALARM_URL}?id=${data.id}`);
+export const deleteAlarmRequest = (id: number) => http.delete(`${API.ALARM_URL}?id=${id}`);

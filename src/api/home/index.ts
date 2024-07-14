@@ -2,9 +2,9 @@ import http from "@/api";
 
 //项目用户相关的请求地址
 enum API {
-  RUN_NUMBER = "/run_number",
-  ALARM_COUNT = "/alarm_count",
-  CURVE_DATA = "/curve_data"
+  RUN_NUMBER = "/home/run_number",
+  ALARM_COUNT = "/home/alarm_count",
+  CURVE_DATA = "/home/curve_data"
 }
 
 export const getRunNumber = () => http.get(API.RUN_NUMBER);

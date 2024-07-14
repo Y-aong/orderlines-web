@@ -1,16 +1,19 @@
 import http from "@/api";
 import { NodeMenu, TaskNodeNS, ProcessVersionOptionType } from "./type";
+import { ResultData, BaseUpdate } from "@/api/interface";
+import { Process } from "@/api/orderlines/process/type";
 
 enum API {
-  PLUGIN_NODE = "/node_menu",
-  TASK_NODE = "/task_node",
-  FLOW_TASK_CONFIG = "/flow_task_config",
-  FLOW_DATA = "/flow_data",
-  FLOW_SAVE = "/flow_save",
-  RunningTask = "/running_task",
-  TASK_INSTANCE_DETAIL = "/task_instance_detail",
+  PLUGIN_NODE = "/orderlines/node_menu",
+  TASK_NODE = "/orderlines/task_node",
+  FLOW_TASK_CONFIG = "/orderlines/flow_task_config",
+  FLOW_DATA = "/orderlines/flow_data",
+  FLOW_SAVE = "/orderlines/flow_save",
+  RunningTask = "/orderlines/running_task",
+  TASK_INSTANCE_DETAIL = "/orderlines/task_instance_detail",
   PROCESS_VERSION_OPTION = "/option/process_version",
-  PROCESS_VERSION = "/process_version"
+  PROCESS_VERSION = "/orderlines/process_version",
+  PROCESS_PARAM_URL = "/process_param"
 }
 
 // 获取正在运行的节点线
@@ -19,6 +22,7 @@ export const getRunningTaskRequest = (RunningTaskFilter: TaskNodeNS.FlowDataFilt
 
 // 获取节点菜单
 export const getNodeMenuRequest = () => http.get<NodeMenu>(`${API.PLUGIN_NODE}`);
+
 // 获取节点参数
 export const getTaskNodeRequest = (taskNode: TaskNodeNS.TaskNodeParam) =>
   http.get<TaskNodeNS.TaskNode>(API.TASK_NODE, taskNode);
@@ -58,3 +62,7 @@ export const getProcessVersionByNameRequest = (process_name: string) =>
 
 export const updateProcessModeRequest = (process_name: string) =>
   http.get(`${API.PROCESS_VERSION}?process_name=${process_name}`);
+
+// 修改流程参数
+export const updateProcessParamRequest = (data: Process.ProcessParamType) =>
+  http.put<ResultData<BaseUpdate>>(API.PROCESS_PARAM_URL, data);
