@@ -1,13 +1,14 @@
 <template>
   <el-collapse-item title="任务参数配置" name="taskParams">
+    {{ nodeConfig.task_type }}
     <template v-if="nodeConfig.task_type === 'process_control'">
       <ProcessControl />
     </template>
     <template v-if="nodeConfig.task_type === 'group'">
       <TaskGroup />
     </template>
-
     <template v-if="nodeConfig.task_type === 'common'">
+      common
       <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
         <el-table-column fixed prop="desc" label="参数名" min-width="80" />
         <el-table-column prop="desc" label="参数值" min-width="240" required>
@@ -104,12 +105,12 @@ import TaskGroup from "./taskGroup/index.vue";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { updateTaskRequest } from "@/api/orderlines/task/index";
+import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { getProcessVariableOptionRequest } from "@/api/option/index";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElNotification } from "element-plus";
 import { ElMessage } from "element-plus";
-import { Task } from "@/api/orderlines/task/type";
+import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 import { FlowVariable } from "@/api/flow/variable/type";
 import { Search, UploadFilled } from "@element-plus/icons-vue";
 import Code from "@/components/EDA/index.vue";

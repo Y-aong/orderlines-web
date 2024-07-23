@@ -40,14 +40,14 @@ import {
   deleteProcessInstanceRequest,
   processInstanceExport,
   downExport
-} from "@/api/orderlines/processInstance/index";
+} from "@/api/orderlines/orderlinesManager/processInstance/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import ProcessInstanceDrawer from "./ProcessInstanceDrawer.vue";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { PInstance } from "@/api/orderlines/processInstance/type";
+import { PInstance } from "@/api/orderlines/orderlinesManager/processInstance/type";
 import { setStorage } from "@/utils/storage";
 import { useDownload } from "@/hooks/useDownload";
 let { process_id, process_instance_id, process_name, isSave, isRedirect, isRunning } = storeToRefs(useFlowStore());
@@ -95,7 +95,7 @@ const openDrawer = (title: string, row: Partial<PInstance.ProcessInstanceItem> =
 
 // 删除流程信息
 const deleteProcess = async (params: PInstance.ProcessInstanceItem) => {
-  await useHandleData(deleteProcessInstanceRequest, { id: [params.id] }, `删除【${params.process_name}】流程`);
+  await useHandleData(deleteProcessInstanceRequest, params.id, `删除【${params.process_name}】流程`);
   proTable.value?.getTableList();
 };
 // 跳转详情页

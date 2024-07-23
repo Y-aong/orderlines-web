@@ -16,7 +16,11 @@ import useFlowStore from "@/stores/modules/flow";
 import useTaskGroupStore from "@/stores/modules/taskGroup";
 import { storeToRefs } from "pinia";
 import { getProcessControlRequest } from "@/api/flow/processControl/index.ts";
-import { getTaskRequest, updateTaskRequest, deleteTaskRequest } from "@/api/orderlines/task/index";
+import {
+  getTaskDetailRequest,
+  updateTaskRequest,
+  deleteTaskRequest
+} from "@/api/orderlines/orderlinesManager/task/index";
 import { getFlowDataRequest, getFlowTaskDataRequest, createFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
 const { getFlowTaskData } = useFlowStore();
@@ -141,9 +145,8 @@ export default {
       nodeParam.value = [];
       nodeResult.value = [];
       defaultTaskConfig.value = [];
-
       // 获取接口中的数据
-      const taskResponse = await getTaskRequest({ task_id: data.id });
+      const taskResponse = await getTaskDetailRequest(data.id);
       if (taskResponse.code === 200) {
         // 重新设置接口数据
         let task_node = taskResponse.data;

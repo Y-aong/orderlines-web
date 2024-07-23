@@ -80,7 +80,7 @@ const batchDelete = async (id: string[]) => {
 };
 
 const deleteUser = async (params: User.UserItem) => {
-  await useHandleData(deleteUserRequest, { id: [params.id] }, `删除【${params.username}】用户`);
+  await useHandleData(deleteUserRequest, params.id, `删除【${params.username}】用户`);
   proTable.value?.getTableList();
 };
 

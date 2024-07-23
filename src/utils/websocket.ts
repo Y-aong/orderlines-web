@@ -1,3 +1,8 @@
+import useRunningTaskStore from "@/stores/modules/runningTask";
+import { storeToRefs } from "pinia";
+
+let { running_edge, taskProgress } = storeToRefs(useRunningTaskStore());
+
 export function useWebSocket(
   url: string,
   topic: string
@@ -24,7 +29,11 @@ export function useWebSocket(
       console.log("消息接收", event.data);
       try {
         const data = JSON.parse(event.data);
-        console.log("消息处理完成", data);
+        if (topic === "running_logger") {
+          running_edge.value = data.msg.running_edge;
+          taskProgress.value = data.msg.taskProgress;
+        }
+        console.log("running_logger处理完成" + data);
       } catch (error) {
         console.error("处理消息时出错:", error);
       }

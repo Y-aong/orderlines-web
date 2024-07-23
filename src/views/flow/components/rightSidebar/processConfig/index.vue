@@ -37,7 +37,7 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateProcessParamRequest } from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
-
+import { BaseUpdateResponse } from "@/api/interface/index";
 let { isRunning, process_id } = storeToRefs(useFlowStore());
 
 const options = [
@@ -80,7 +80,7 @@ let processParam = ref<ProcessParamType>({
 // 修改流程参数
 const updateProcessParam = async () => {
   processParam.value.timeout = Number(processParam.value.timeout);
-  let res: any = await updateProcessParamRequest(processParam.value);
+  const res: BaseUpdateResponse = await updateProcessParamRequest(processParam.value);
   if (res.code === 200) {
     ElMessage.success(res.message);
   }

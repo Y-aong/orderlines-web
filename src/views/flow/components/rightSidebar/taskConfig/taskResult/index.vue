@@ -43,9 +43,9 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { getProcessVariableOptionRequest } from "@/api/option/index";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
-import { updateTaskRequest } from "@/api/orderlines/task/index";
+import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
-import { Task } from "@/api/orderlines/task/type";
+import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 
 let dialogTableVisible = ref<boolean>(false);
 let variableOption = ref<any>([]);

@@ -75,13 +75,15 @@
 import { ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
+import useRunningTaskStore from "@/stores/modules/runningTask";
 import "vue3-json-viewer/dist/index.css";
 import { Download } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
-import { processHtmlExport } from "@/api/orderlines/process/index";
+import { processHtmlExport } from "@/api/orderlines/orderlinesManager/process/index";
 
-const { clickCheckTask, taskProgress, process_instance_id, process_name } = storeToRefs(useFlowStore());
+const { process_instance_id, process_name } = storeToRefs(useFlowStore());
+const { clickCheckTask, taskProgress } = storeToRefs(useRunningTaskStore());
 const depth = ref<number>(5);
 const dialogVisible = ref<boolean>(false);
 let title = ref<string>("查看任务结果");

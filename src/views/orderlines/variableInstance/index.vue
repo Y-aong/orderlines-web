@@ -35,7 +35,7 @@ import {
   updateVariableInstanceRequest,
   deleteVariableInstanceRequest,
   VariableInstanceExport
-} from "@/api/orderlines/variableInstance/index";
+} from "@/api/orderlines/orderlinesManager/variableInstance/index";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableInstanceDrawer from "./variableInstanceDrawer.vue";
@@ -43,7 +43,7 @@ import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
-import { VariableInstance } from "@/api/orderlines/variableInstance/type";
+import { VariableInstance } from "@/api/orderlines/orderlinesManager/variableInstance/type";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
@@ -71,7 +71,7 @@ const downloadFile = async () => {
 
 // 删除流程信息
 const deleteVariableInstance = async (params: VariableInstance.VariableInstanceItem) => {
-  await useHandleData(deleteVariableInstanceRequest, { id: [params.id] }, `删除【${params.variable_key}】变量实例`);
+  await useHandleData(deleteVariableInstanceRequest, params.id, `删除【${params.variable_key}】变量实例`);
   proTable.value?.getTableList();
 };
 // 跳转详情页
@@ -121,4 +121,3 @@ const initParam = reactive({ pageNum: 1, pageSize: 10 });
 </script>
 
 <style lang="scss" scoped></style>
-@/api/orderlines/process/index

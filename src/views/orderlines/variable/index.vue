@@ -35,14 +35,14 @@ import {
   updateVariableRequest,
   deleteVariableRequest,
   variableExport
-} from "@/api/orderlines/variable/index";
+} from "@/api/orderlines/orderlinesManager/variable/index";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import variableDrawer from "./variableDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
-import { Variable } from "@/api/orderlines/variable/type";
+import { Variable } from "@/api/orderlines/orderlinesManager/variable/type";
 
 const proTable = ref<ProTableInstance>();
 
@@ -66,7 +66,7 @@ const downloadFile = async () => {
 };
 // 删除流程信息
 const deleteTaskInstance = async (params: Variable.VariableItem) => {
-  await useHandleData(deleteVariableRequest, { id: [params.id] }, `删除【${params.variable_key}】变量`);
+  await useHandleData(deleteVariableRequest, params.id, `删除【${params.variable_key}】变量`);
   proTable.value?.getTableList();
 };
 

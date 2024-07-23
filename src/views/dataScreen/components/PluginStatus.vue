@@ -10,7 +10,7 @@ import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
 
 import { ref, defineProps, watch } from "vue";
-import { PluginStatusType } from "@/api/data_screen/type";
+import { PluginStatusType } from "@/api/dataScreen/type";
 
 interface Props {
   data: PluginStatusType[];

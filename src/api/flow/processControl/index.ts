@@ -7,7 +7,7 @@ enum API {
 
 // 获取流程控制的后续节点
 export const getProcessControlRequest = (task_id: string, process_id: string) =>
-  http.post(`${API.PROCESS_CONTROL}?task_id=${task_id}&process_id=${process_id}`);
+  http.get(`${API.PROCESS_CONTROL}?task_id=${task_id}&process_id=${process_id}`);
 
 // 获取前一个流程节点的结果
 export const getPrevNodeResultRequest = (task_id: string, process_id: string) =>

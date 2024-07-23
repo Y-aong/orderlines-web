@@ -3,12 +3,20 @@ import authMenuList from "@/assets/json/authMenuList.json";
 import authButtonList from "@/assets/json/authButtonList.json";
 import http from "@/api";
 
+enum API {
+  LOGIN_URL = "/token/",
+  LOGOUT_URL = "/token/logout",
+  TOKEN_REFRESH_URL = "/token/refresh",
+  TOKEN_REGISTER_URL = "/token/register",
+  TOKEN_USER_INFO_URL = "/token/user_info"
+}
+
 /**
  * @name 登录模块
  */
 // 用户登录
 export const loginApi = (params: Login.ReqLoginForm) => {
-  return http.post<Login.ResLogin>("/token/", params, { loading: false }); // 正常 post json 请求  ==>  application/json
+  return http.post<Login.ResLogin>(API.LOGIN_URL, params, { loading: false }); // 正常 post json 请求  ==>  application/json
   // return http.post<Login.ResLogin>(`/login`, params, { loading: false }); // 控制当前请求不显示 loading
   // return http.post<Login.ResLogin>(`/login`, {}, { params }); // post 请求携带 query 参数  ==>  ?username=admin&password=123456
   // return http.post<Login.ResLogin>(`/login`, qs.stringify(params)); // post 请求携带表单参数  ==>  application/x-www-form-urlencoded
@@ -27,5 +35,5 @@ export const getAuthButtonListApi = () => {
 
 // 用户退出登录
 export const logoutApi = () => {
-  return http.post(`/logout`);
+  return http.post(API.LOGOUT_URL, {}, { loading: false });
 };

@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
-import { AnnualDataType, RunningCountData } from "@/api/data_screen/type";
+import { AnnualDataType, RunningCountData } from "@/api/dataScreen/type";
 import { ref, defineProps, watch } from "vue";
 let option = ref<ECOption>({});
 const props = defineProps<Props>();

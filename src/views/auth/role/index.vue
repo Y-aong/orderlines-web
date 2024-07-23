@@ -68,7 +68,7 @@ const batchDelete = async (id: string[]) => {
 };
 
 const deleteRole = async (params: Role.RoleItem) => {
-  await useHandleData(deleteRoleRequest, { id: [params.id] }, `删除【${params.role_name}】角色`);
+  await useHandleData(deleteRoleRequest, params.id, `删除【${params.role_name}】角色`);
   proTable.value?.getTableList();
 };
 

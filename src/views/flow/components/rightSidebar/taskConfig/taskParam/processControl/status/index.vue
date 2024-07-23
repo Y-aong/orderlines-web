@@ -60,13 +60,15 @@ import { taskStatusOptions } from "@/utils/variable";
 import { ref } from "vue";
 import { createTaskFlowDataRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
 import { getPrevNodeResultRequest } from "@/api/flow/processControl/index";
-import { updateTaskRequest } from "@/api/orderlines/task/index";
+import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
+import { OptionItemType } from "@/api/interface/index";
 import "vue3-json-viewer/dist/index.css";
+import { BaseResponse } from "@/api/interface/index";
 
 let { nodeParam, process_id, nodeConfig, processControlOptions, isRunning } = storeToRefs(useFlowStore());
-let taskIdOption = ref<any>([]);
+let taskIdOption = ref<OptionItemType[]>([{ label: "", value: "" }]);
 let visible = ref(false);
 let depth = ref(5);
 let theme = ref("vs-code");
@@ -83,7 +85,7 @@ const checkParam = () => {
 };
 
 const getProcessControlParam = async () => {
-  const result: any = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
+  const result: BaseResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
   nodeParam.value = result.data.nodeParam;
   setStorage(result.data.nodeParam, "NODE_PARAM");
 };
@@ -100,7 +102,7 @@ const updateFlowData = async () => {
 
 // 修改流程控制参数
 const updateProcessControlParam = async () => {
-  let taskNode: any = {
+  let taskNode = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
     method_kwargs: nodeParam.value

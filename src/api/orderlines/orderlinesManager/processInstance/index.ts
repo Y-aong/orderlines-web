@@ -6,7 +6,6 @@ import { PInstance } from "./type";
 enum API {
   PROCESS_INSTANCE_URL = "/orderlines/process_instance",
   PROCESS_INSTANCE_DETAIL_URL = "/orderlines/process_instance/detail",
-  PROCESS_OPTION_URL = "/orderlines/option/process",
   EXPORT_URL = "/orderlines/process_instance/html/export",
   INSTANCE_EXPORT_URL = "/orderlines/process_instance/export"
 }
@@ -14,8 +13,6 @@ enum API {
 export const downExport = (id: number) => http.download(API.EXPORT_URL, { id: id });
 // 导出流程实例
 export const processInstanceExport = () => http.download(API.INSTANCE_EXPORT_URL);
-// 获取流程选项
-export const getProcessOptionRequest = () => http.get<PInstance.ProcessOption>(`${API.PROCESS_OPTION_URL}`);
 // 获取流程实例详情
 export const getProcessInstanceDetailRequest = (id: string) =>
   http.get<PInstance.ProcessInstanceItem>(`${API.PROCESS_INSTANCE_DETAIL_URL}?id=${id}`);

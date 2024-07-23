@@ -41,22 +41,7 @@ const useFlowStore = defineStore("FlowStore", {
       // 节点任务配置文件
       defaultTaskConfig: [],
       // 流程控制任务id options
-      processControlOptions: [],
-      // 正在运行的任务
-      runningTask: [],
-      // 流程运行进度
-      taskProgress: 0,
-      // 点击查看的任务
-      clickCheckTask: {
-        task_name: "",
-        method_kwargs: "",
-        task_config: {},
-        task_status: "",
-        start_time: "",
-        end_time: "",
-        task_result: {},
-        task_error_info: {}
-      }
+      processControlOptions: []
     };
   },
   actions: {

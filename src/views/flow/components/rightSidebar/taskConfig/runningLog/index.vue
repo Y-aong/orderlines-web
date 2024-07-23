@@ -56,11 +56,11 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
-import useFlowStore from "@/stores/modules/flow";
+import useRunningTaskStore from "@/stores/modules/runningTask";
 
 import "vue3-json-viewer/dist/index.css";
 
-const { runningTask } = storeToRefs(useFlowStore());
+const { runningTask } = storeToRefs(useRunningTaskStore());
 const depth = ref<number>(5);
 const dialogVisible = ref<boolean>(false);
 let title = ref<string>("查看任务结果");

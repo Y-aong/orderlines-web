@@ -120,29 +120,37 @@ import LOGO from "./logo/index.vue";
 import { ref, reactive, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
+import useRunningTaskStore from "@/stores/modules/runningTask";
 import { InfoFilled } from "@element-plus/icons-vue";
-import { Process } from "@/api/orderlines/process/type";
+import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import {
   pausedProcessRequest,
   recoverProcessRequest,
   startProcessRequest,
   stopProcessRequest
-} from "@/api/flow/operate";
+} from "@/api/orderlines/orderlinesOperate";
 import {
-  getRunningTaskRequest,
   saveFlowRequest,
   createProcessVersionRequest,
   getProcessVersionRequest,
   getProcessVersionByNameRequest
 } from "@/api/flow/taskNode/index";
+import { getRunningTaskRequest } from "@/api/flow/runningTask/index";
 import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
-import { deleteProcessRequest, updateProcessRequest, getProcessDetailRequest } from "@/api/orderlines/process/index";
+import {
+  deleteProcessRequest,
+  updateProcessRequest,
+  getProcessDetailRequest
+} from "@/api/orderlines/orderlinesManager/process/index";
 import { getProcessVersionOptionRequest } from "@/api/option/index";
 
-let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, runningTask, isRedirect } =
-  storeToRefs(useFlowStore());
+let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, isRedirect } = storeToRefs(
+  useFlowStore()
+);
+let { runningTask } = storeToRefs(useRunningTaskStore());
+
 let activeName = "create";
 
 let options = ref<ProcessVersionOptionType[]>([]);
@@ -166,12 +174,16 @@ const getProcessInfo = async () => {
   const response: any = await getProcessDetailRequest(process_id.value);
   processInfo = response.data;
   debugMode.value = response.data.mode == "debug";
-  console.log("初始化", debugMode.value);
 };
 
 const getProcessVersionOption = async () => {
   const res: any = await getProcessVersionOptionRequest(process_name.value);
-  options.value = res.data;
+  if (res.code == 200) {
+    console.log(res.data, process_name.value);
+    options.value = res.data;
+  } else {
+    ElMessage.error("获取流程流程版本失败");
+  }
 };
 // 删除版本
 const deleteProcessVersion = async (id: number) => {
@@ -202,7 +214,7 @@ const changeProcessMode = async () => {
   processInfo["mode"] = debugMode.value ? "debug" : "run";
   const response: any = await updateProcessRequest(processInfo);
   if (response.code == 200) {
-    ElMessage.success("修改成功");
+    ElMessage.success(response.message);
     console.log("修改后", debugMode.value);
   } else {
     ElMessage.error("修改失败");
@@ -212,12 +224,12 @@ const changeProcessMode = async () => {
 //创建流程版本
 const createProcessVersion = async () => {
   versionVisible.value = false;
-  let res: any = await createProcessVersionRequest(versionForm.value);
-  if (res.code == 200) {
+  let response: any = await createProcessVersionRequest(versionForm.value);
+  if (response.code == 200) {
     process_id.value = process_version.value;
     process_version.value = process_version.value;
-    setStorage(res.data.process_id, "PROCESS_ID");
-    setStorage(res.data.process_id, "PROCESS_VERSION");
+    setStorage(response.data.process_id, "PROCESS_ID");
+    setStorage(response.data.process_id, "PROCESS_VERSION");
     await getProcessVersionOption();
     window.location.reload();
   }
@@ -225,7 +237,6 @@ const createProcessVersion = async () => {
 
 //修改流程版本
 const changeProcessVersion = async () => {
-  console.log(process_version.value);
   process_id.value = process_version.value;
   process_version.value = process_version.value;
   setStorage(process_version.value, "PROCESS_ID");
@@ -241,15 +252,15 @@ const runningStatus = () => {
 };
 // 启动流程
 const startProcess = async () => {
-  const result: any = await startProcessRequest(process_id.value);
-  process_instance_id.value = result.data;
-  if (result.code == 200) {
-    ElMessage.success("流程启动成功");
+  const response: any = await startProcessRequest(process_id.value);
+  process_instance_id.value = response.data.process_instance_id;
+  if (response.code == 200) {
+    ElMessage.success(response.message);
     isRunning.value = true;
     setStorage(true, "IS_RUNNING");
     await getRunningTask();
   } else {
-    ElMessage.error("流程启动失败");
+    ElMessage.error("流程启动失败" + response.message);
   }
 };
 // 获取运行中的任务
@@ -258,37 +269,37 @@ const getRunningTask = async () => {
     process_id: process_id.value,
     process_instance_id: process_instance_id.value
   };
-  let res: any = await getRunningTaskRequest(RunningTaskFilter);
-  if (res.code === 200 && res.data.running_task != null) {
-    runningTask.value = res.data.running_task;
+  let response: any = await getRunningTaskRequest(RunningTaskFilter);
+  if (response.code === 200 && response.data.running_task != null) {
+    runningTask.value = response.data.running_task;
   }
-  return res.code === 200 ? res.data.running_edge : [];
+  return response.code === 200 ? response.data.running_edge : [];
 };
 // 停止流程
 const stopProcess = async () => {
-  let result: any = await stopProcessRequest(process_id.value);
-  if (result.code == 200) {
-    ElMessage.success("流程停止成功");
+  let response: any = await stopProcessRequest(process_id.value);
+  if (response.code == 200) {
+    ElMessage.success(response.message);
   } else {
-    ElMessage.error("流程停止失败" + result.message);
+    ElMessage.error("流程停止失败" + response.message);
   }
 };
 
 const pausedProcess = async () => {
-  let result: any = await pausedProcessRequest(process_id.value);
-  if (result.code === 200) {
-    ElMessage.success("流程暂停成功");
+  let response: any = await pausedProcessRequest(process_id.value);
+  if (response.code === 200) {
+    ElMessage.success(response.message);
   } else {
-    ElMessage.error("流程暂停失败" + result.message);
+    ElMessage.error("流程暂停失败" + response.message);
   }
 };
 
 const recoverProcess = async () => {
-  let result: any = await recoverProcessRequest(process_id.value);
-  if (result.code == 200) {
+  let response: any = await recoverProcessRequest(process_id.value);
+  if (response.code == 200) {
     ElMessage.success("流程恢复成功");
   } else {
-    ElMessage.error("流程恢复失败" + result.message);
+    ElMessage.error("流程恢复失败" + response.message);
   }
 };
 
@@ -302,7 +313,7 @@ const saveProcess = async () => {
     if (response.code === 200) {
       isSave.value = true;
       setStorage(true, "IS_SAVE");
-      ElMessage.success("流程保存成功！");
+      ElMessage.success(response.message);
       isRunning.value = false;
       isSave.value = true;
     } else {

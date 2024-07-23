@@ -35,13 +35,13 @@ import {
   updateScheduleTaskRequest,
   deleteScheduleTaskRequest,
   downloadScheduleTaskRequest
-} from "@/api/orderlines/scheduleTask/index";
+} from "@/api/orderlines/orderlinesSchedule/index";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View, Download } from "@element-plus/icons-vue";
 import ScheduleTaskDrawer from "./ScheduleTaskDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { ElMessageBox } from "element-plus";
-import { ScheduleTask } from "@/api/orderlines/scheduleTask/type";
+import { ScheduleTask } from "@/api/orderlines/orderlinesSchedule/type";
 import { useDownload } from "@/hooks/useDownload";
 
 const proTable = ref<ProTableInstance>();

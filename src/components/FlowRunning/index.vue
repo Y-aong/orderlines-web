@@ -13,11 +13,14 @@ import { Control, Group, MiniMap, InsertNodeInPolyline, Menu } from "@logicflow/
 import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "../../stores/modules/flow";
+import useRunningTaskStore from "../../stores/modules/runningTask";
 import { storeToRefs } from "pinia";
-import { getFlowDataRequest, getRunningTaskRequest, getTaskInstanceItem } from "@/api/flow/taskNode/index.ts";
+import { getFlowDataRequest } from "@/api/flow/taskNode/index.ts";
+import { getTaskInstanceItem } from "@/api/flow/runningTask/index.ts";
 import { ElMessage } from "element-plus";
 
-let { process_id, process_instance_id, runningTask, taskProgress, clickCheckTask } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id } = storeToRefs(useFlowStore());
+let { clickCheckTask, running_edge } = storeToRefs(useRunningTaskStore());
 
 export default {
   name: "FlowRunning",
@@ -96,25 +99,15 @@ export default {
         ElMessage.error("获取流程图失败");
       }
     },
-    async getRunningTask() {
-      const RunningEdgeFilter = {
-        process_id: process_id.value,
-        process_instance_id: process_instance_id.value
-      };
-      let res = await getRunningTaskRequest(RunningEdgeFilter);
-      if (res.data.running_task) runningTask.value = res.data.running_task;
-      if (res.data.task_progress) taskProgress.value = res.data.task_progress;
-      return res.data.running_edge;
-    },
     async runningTask(flow) {
       this.timer = setInterval(async () => {
         await this.getGraphData();
         await flow.render(this.graphData);
-        let edgeIds = await this.getRunningTask();
+        let edgeIds = running_edge.value;
         edgeIds.forEach(item => {
           flow.openEdgeAnimation(item);
         });
-      }, 3000);
+      }, 1000);
     }
   }
 };

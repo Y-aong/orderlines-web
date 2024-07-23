@@ -6,7 +6,6 @@
       :request-api="getTableList"
       :init-param="initParam"
       :data-callback="dataCallback"
-      @darg-sort="sortTable"
     >
       <template #tableHeader="scope">
         <el-button type="primary" :icon="CirclePlus" plain @click="openDrawer('新增')">新增群组</el-button>
@@ -42,7 +41,6 @@ import ImportExcel from "@/components/ImportExcel/index.vue";
 import { getGroupRequest, createGroupRequest, updateGroupRequest, deleteGroupRequest } from "@/api/auth/group/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
 import GroupDrawer from "./groupDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { Group } from "@/api/auth/group/type";
@@ -68,20 +66,13 @@ const openDrawer = (title: string, row: Partial<Group.GroupItem> = {}) => {
   drawerRef.value?.acceptParams(params);
 };
 
-// 删除权限
+// 删除群组
 const deleteGroup = async (params: Group.GroupItem) => {
-  await useHandleData(deleteGroupRequest, { id: [params.id] }, `删除【${params.group_name}】群组`);
+  await useHandleData(deleteGroupRequest, params.id, `删除【${params.group_name}】群组`);
   proTable.value?.getTableList();
 };
 
 const proTable = ref<ProTableInstance>();
-
-// 表格拖拽排序
-const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: number }) => {
-  console.log(newIndex, oldIndex);
-  console.log(proTable.value?.tableData);
-  ElMessage.success("修改列表排序成功");
-};
 
 const dataCallback = (data: Group.GroupResponse) => {
   return {
@@ -92,14 +83,14 @@ const dataCallback = (data: Group.GroupResponse) => {
   };
 };
 
-const getTableList = (params: any) => {
+// 获取群组列表
+const getTableList = (params: Group.GroupFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getGroupRequest(newParams);
 };
 
 const columns = reactive<ColumnProps<Group.GroupItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
-  { type: "sort", label: "Sort", width: 80 },
   { type: "expand", label: "Expand", width: 100 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "group_name", label: "群组名称", search: { el: "input" } },

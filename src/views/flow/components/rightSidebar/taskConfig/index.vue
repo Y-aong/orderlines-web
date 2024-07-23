@@ -47,7 +47,7 @@ import TaskRunningConfig from "./taskRunning/index.vue";
 import clickCheckTask from "./clickCheck/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { updateTaskRequest } from "@/api/orderlines/task/index";
+import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import type { FormProps } from "element-plus";
 import { ref } from "vue";

@@ -63,12 +63,12 @@ import {
   getVariableDetailRequest,
   updateVariableRequest,
   getVariableInstanceDetailRequest
-} from "@/api/orderlines/variable/index";
+} from "@/api/orderlines/orderlinesManager/variable/index";
 import { getVariableRequest } from "@/api/flow/variable/index";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { Variable } from "@/api/orderlines/variable/type";
+import { Variable } from "@/api/orderlines/orderlinesManager/variable/type";
 
 let { process_id, process_name, process_instance_id, isRunning } = storeToRefs(useFlowStore());
 

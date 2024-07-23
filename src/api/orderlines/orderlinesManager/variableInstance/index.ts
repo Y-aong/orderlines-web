@@ -2,8 +2,8 @@ import http from "@/api";
 import { VariableInstance } from "./type";
 
 enum API {
-  VARIABLE_INSTANCE_URL = "/variable_instance",
-  VARIABLE_EXPORT_URL = "/export/variable_instance"
+  VARIABLE_INSTANCE_URL = "/orderlines/variable_instance",
+  VARIABLE_EXPORT_URL = "/orderlines/variable_instance/export"
 }
 
 export const VariableInstanceExport = (data: VariableInstance.VariableInstanceFilter) =>

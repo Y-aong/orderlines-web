@@ -76,7 +76,7 @@ const batchDelete = async (id: string[]) => {
 
 // 删除权限
 const deletePermission = async (params: Permission.PermissionItem) => {
-  await useHandleData(deletePermissionRequest, { id: [params.id] }, `删除【${params.name}】权限`);
+  await useHandleData(deletePermissionRequest, params.id, `删除【${params.name}】权限`);
   proTable.value?.getTableList();
 };
 
@@ -130,7 +130,7 @@ const columns = reactive<ColumnProps<Permission.PermissionItem>[]>([
     ],
     fieldNames: { label: "label", value: "value" },
 
-    render: (scope: any) => {
+    render: scope => {
       return <el-tag type={reqMethodTag[scope.row.method]}>{reqMethods[scope.row.method]}</el-tag>;
     }
   },

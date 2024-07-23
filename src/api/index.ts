@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig, InternalAxiosRequ
 import { showFullScreenLoading, tryHideFullScreenLoading } from "@/components/Loading/fullScreen";
 import { LOGIN_URL } from "@/config";
 import { ElMessage } from "element-plus";
-import { ResultData } from "@/api/interface";
+import { BaseResponse } from "@/api/interface";
 import { ResultEnum } from "@/enums/httpEnum";
 import { checkStatus } from "./helper/checkStatus";
 import { useUserStore } from "@/stores/modules/user";
@@ -98,16 +98,16 @@ class RequestHttp {
   /**
    * @description 常用请求方法封装
    */
-  get<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
+  get<T>(url: string, params?: object, _object = {}): Promise<BaseResponse<T>> {
     return this.service.get(url, { params, ..._object });
   }
-  post<T>(url: string, params?: object | string, _object = {}): Promise<ResultData<T>> {
+  post<T>(url: string, params?: object | string, _object = {}): Promise<BaseResponse<T>> {
     return this.service.post(url, params, _object);
   }
-  put<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
+  put<T>(url: string, params?: object, _object = {}): Promise<BaseResponse<T>> {
     return this.service.put(url, params, _object);
   }
-  delete<T>(url: string, params?: any, _object = {}): Promise<ResultData<T>> {
+  delete<T>(url: string, params?: any, _object = {}): Promise<BaseResponse<T>> {
     return this.service.delete(url, { params, ..._object });
   }
   download(url: string, params?: object, _object = {}): Promise<BlobPart> {

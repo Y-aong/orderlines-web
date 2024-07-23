@@ -136,17 +136,6 @@ export interface ProcessControlStatus {
   pc_type: string;
 }
 
-export interface runningTask {
-  task_name: string;
-  method_kwargs: any;
-  task_config: any;
-  task_status: string;
-  start_time: string;
-  end_time: string;
-  task_result: any;
-  task_error_info: any;
-}
-
 export interface FlowStoreType {
   process_name: string;
   process_id: string;
@@ -162,9 +151,6 @@ export interface FlowStoreType {
   nodeResult: nodeResultType[];
   defaultTaskConfig: DefaultTaskConfigType[];
   processControlOptions: any;
-  runningTask: runningTask[];
-  taskProgress: number;
-  clickCheckTask: runningTask;
 }
 
 export interface TaskGroupItem {

@@ -1,6 +1,6 @@
 import http from "@/api";
-import { ResultData, BaseUpdate } from "@/api/interface";
-import { Process } from "@/api/orderlines/process/type";
+import { BaseData, DeleteData } from "@/api/interface";
+import { Process } from "./type";
 
 enum API {
   PROCESS_URL = "/orderlines/process",
@@ -18,10 +18,8 @@ export const getProcessRequest = (data: Process.ProcessFilter) => http.get<Proce
 export const getProcessDetailRequest = (process_id: string) =>
   http.get<Process.ProcessItem>(`${API.PROCESS_DETAIL_URL}?process_id=${process_id}`);
 // 创建流程
-export const createProcessRequest = (data: Process.ProcessItem) =>
-  http.post<ResultData<BaseUpdate>>(API.PROCESS_URL, data);
+export const createProcessRequest = (data: Process.ProcessItem) => http.post<BaseData>(API.PROCESS_URL, data);
 // 修改流程
-export const updateProcessRequest = (data: Process.ProcessItem) =>
-  http.put<ResultData<BaseUpdate>>(API.PROCESS_URL, data);
+export const updateProcessRequest = (data: Process.ProcessItem) => http.put<BaseData>(API.PROCESS_URL, data);
 // 删除流程
-export const deleteProcessRequest = (id: string) => http.delete<ResultData<BaseUpdate>>(`${API.PROCESS_URL}?id=${id}`);
+export const deleteProcessRequest = (id: string) => http.delete<DeleteData>(`${API.PROCESS_URL}?id=${id}`);

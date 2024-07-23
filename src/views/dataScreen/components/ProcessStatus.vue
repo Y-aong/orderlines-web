@@ -9,7 +9,7 @@
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
 import { ref, defineProps, watch } from "vue";
-import { RunStatusType } from "@/api/data_screen/type";
+import { RunStatusType } from "@/api/dataScreen/type";
 
 let option = ref<ECOption>({});
 

@@ -1,20 +1,3 @@
-// 请求响应参数（不包含data）
-export interface Result {
-  code: string;
-  msg: string;
-}
-export interface BaseUpdate {
-  table_id: number;
-}
-
-export interface BaseCreate extends BaseUpdate {}
-export interface BaseDelete extends BaseUpdate {}
-
-// 请求响应参数（包含data）
-export interface ResultData<T = any> extends Result {
-  data: T;
-}
-
 // 分页响应参数
 export interface ResPage<T> {
   list: T[];
@@ -35,9 +18,6 @@ export namespace Upload {
     fileUrl: string;
   }
 }
-export interface DeleteRes {
-  id: number;
-}
 
 // 登录模块
 export namespace Login {
@@ -51,4 +31,39 @@ export namespace Login {
   export interface ResAuthButtons {
     [key: string]: string[];
   }
+}
+
+export interface Result {
+  code: number;
+  success: boolean;
+  message: string;
+}
+// 请求响应参数（包含data）
+export interface BaseResponse<T = any> extends Result {
+  data: T;
+}
+
+export interface BaseData {
+  table_id: number;
+}
+// 基本创建请求
+export interface BaseCreateResponse extends BaseResponse {
+  data: BaseData;
+}
+// 基本修改请求
+export interface BaseUpdateResponse extends BaseResponse {
+  data: BaseData;
+}
+
+export interface DeleteData {
+  id: number;
+}
+// 基本删除请求
+export interface BaseDeleteResponse extends BaseResponse {
+  data: DeleteData;
+}
+
+export interface OptionItemType {
+  label: string;
+  value: string;
 }

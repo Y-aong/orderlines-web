@@ -4,7 +4,7 @@ import { Variable } from "./type";
 enum API {
   VARIABLE_URL = "/orderlines/variable",
   VARIABLE_INSTANCE_URL = "/orderlines/variable_instance/detail",
-  VARIABLE_INSTANCE_EXPORT = "/orderlines/export/variable"
+  VARIABLE_INSTANCE_EXPORT = "/orderlines/variable/export"
 }
 
 export const variableExport = (data: Variable.VariableFilter) => http.download(API.VARIABLE_INSTANCE_EXPORT, data);

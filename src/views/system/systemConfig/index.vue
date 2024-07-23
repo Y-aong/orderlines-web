@@ -81,7 +81,7 @@ const batchDelete = async (id: string[]) => {
 
 // 删除流程信息
 const deleteSystemSetting = async (params: Conf.ConfItem) => {
-  await useHandleData(deleteSystemSettingRequest, { id: [params.id] }, `删除【${params.config_name}】系统配置`);
+  await useHandleData(deleteSystemSettingRequest, params.id, `删除【${params.config_name}】系统配置`);
   proTable.value?.getTableList();
 };
 

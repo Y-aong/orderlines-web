@@ -111,15 +111,10 @@ import {
   getRunningTrendRequest,
   getTriggerTypeRequest,
   getRunningInfoRequest
-} from "@/api/data_screen/index";
-import {
-  BaseInfoType,
-  PluginStatusType,
-  ProcessAlarmType,
-  TrendDataType,
-  TriggerType,
-  RunningInfoType
-} from "@/api/data_screen/type";
+} from "@/api/dataScreen/index";
+import { DataScreen } from "@/api/dataScreen/type";
+import { BaseResponse } from "@/api/interface";
+
 const router = useRouter();
 
 const toProcessInstance = () => {
@@ -128,8 +123,8 @@ const toProcessInstance = () => {
 
 const dataScreenRef = ref<HTMLElement | null>(null);
 
-const plugin = ref<PluginStatusType[]>([]);
-const Alarm = ref<ProcessAlarmType[]>([]);
+const plugin = ref<DataScreen.PluginUseType[]>([]);
+const Alarm = ref<DataScreen.ProcessAlarmType[]>([]);
 const ProcessStatusData = ref([]);
 const RunningCountData = ref({
   colors: [],
@@ -137,25 +132,25 @@ const RunningCountData = ref({
   data: [{ label: "", value: [] }],
   unit: []
 });
-const RunningTrendData = ref<TrendDataType>({
+const RunningTrendData = ref<DataScreen.RunTrendType>({
   date: [],
   value: [],
   unit: []
 });
-const BaseInfoData = ref<BaseInfoType>({
-  alarm_count: 0,
+const BaseInfoData = ref<DataScreen.BaseInfoType>({
+  alarm_count: "0",
   free_space_mb: "",
-  process_failure_total: 0,
-  process_run_total: 0,
-  process_success_total: 0,
-  process_total: 0,
-  safe_run_day: 0
+  process_failure_total: "0",
+  process_run_total: "0",
+  process_success_total: "0",
+  process_total: "0",
+  safe_run_day: "0"
 });
-let triggerData = ref<TriggerType>({
+let triggerData = ref<DataScreen.TriggerType>({
   schedule: 0,
   trigger: 0
 });
-let runningInfo = ref<RunningInfoType>({
+let runningInfo = ref<DataScreen.RunningInfoType>({
   process_info: {
     name: "",
     process_instance_id: "",
@@ -200,7 +195,7 @@ onMounted(async () => {
 });
 
 const getRunningInfo = async () => {
-  const res: any = await getRunningInfoRequest();
+  const res: BaseResponse<DataScreen.RunningInfoType> = await getRunningInfoRequest();
   if (res.code == 200) {
     runningInfo.value = res.data;
   } else {
@@ -209,7 +204,7 @@ const getRunningInfo = async () => {
 };
 
 const getTriggerType = async () => {
-  const res: any = await getTriggerTypeRequest();
+  const res: BaseResponse<DataScreen.TriggerType> = await getTriggerTypeRequest();
   if (res.code == 200) {
     triggerData.value = res.data;
   } else {
@@ -218,7 +213,7 @@ const getTriggerType = async () => {
 };
 
 const getBaseInfo = async () => {
-  const res: any = await getBaseInfoRequest();
+  const res: BaseResponse<DataScreen.BaseInfoType> = await getBaseInfoRequest();
   if (res.code == 200) {
     BaseInfoData.value = res.data;
   } else {
@@ -227,7 +222,7 @@ const getBaseInfo = async () => {
 };
 
 const getRunningTrend = async () => {
-  const res: any = await getRunningTrendRequest();
+  const res: BaseResponse = await getRunningTrendRequest();
   if (res.code == 200) {
     RunningTrendData.value = res.data;
   } else {
@@ -236,7 +231,7 @@ const getRunningTrend = async () => {
 };
 
 const getRunningCount = async () => {
-  const res: any = await getRunningCountRequest();
+  const res: BaseResponse = await getRunningCountRequest();
   if (res.code == 200) {
     RunningCountData.value = res.data;
   } else {
@@ -245,7 +240,7 @@ const getRunningCount = async () => {
 };
 
 const getProcessStatus = async () => {
-  const res: any = await getProcessStatusRequest();
+  const res: BaseResponse = await getProcessStatusRequest();
   if (res.code == 200) {
     ProcessStatusData.value = res.data;
   } else {
@@ -254,7 +249,7 @@ const getProcessStatus = async () => {
 };
 
 const getPluginInfo = async () => {
-  const pluginRes: any = await getPluginInfoRequest();
+  const pluginRes: BaseResponse = await getPluginInfoRequest();
   if (pluginRes.code == 200) {
     plugin.value = pluginRes.data;
   } else {
@@ -263,9 +258,9 @@ const getPluginInfo = async () => {
 };
 
 const getAlarmData = async () => {
-  const res: any = await getProcessAlarmRequest();
-  if (res.code == 200) {
-    Alarm.value = res.data;
+  const processAlarmRes: BaseResponse = await getProcessAlarmRequest();
+  if (processAlarmRes.code == 200) {
+    Alarm.value = processAlarmRes.data;
   } else {
     ElMessage.error("告警信息获取异常");
   }

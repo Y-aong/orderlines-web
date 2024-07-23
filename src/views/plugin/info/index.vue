@@ -86,7 +86,7 @@ const batchDelete = async (id: string[]) => {
 
 // 删除插件信息
 const deletePlugin = async (params: Plugin.PluginItem) => {
-  await useHandleData(deletePluginRequest, { id: [params.id] }, `删除【${params.method_name}】插件`);
+  await useHandleData(deletePluginRequest, params.id, `删除【${params.method_name}】插件`);
   proTable.value?.getTableList();
 };
 

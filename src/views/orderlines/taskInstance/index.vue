@@ -50,16 +50,16 @@ import SelectFilter from "@/components/SelectFilter/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import taskInstanceDrawer from "./taskInstanceDrawer.vue";
-import { getProcessOptionRequest } from "@/api/orderlines/processInstance/index";
+import { getProcessOptionRequest } from "@/api/option/index";
 import {
   getTaskInstanceRequest,
   createTaskInstanceRequest,
   updateTaskInstanceRequest,
   deleteTaskInstanceRequest,
   TaskInstanceExport
-} from "@/api/orderlines/taskInstance/index";
+} from "@/api/orderlines/orderlinesManager/taskInstance/index";
 import { useDownload } from "@/hooks/useDownload";
-import { TaskInstance } from "@/api/orderlines/taskInstance/type";
+import { TaskInstance } from "@/api/orderlines/orderlinesManager/taskInstance/type";
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
@@ -167,7 +167,7 @@ const changeTreeFilter = (val: string[]) => {
 
 // 删除流程信息
 const deleteTaskInstance = async (params: TaskInstance.TaskInstanceItem) => {
-  await useHandleData(deleteTaskInstanceRequest, { id: [params.id] }, `删除【${params.task_name}】任务实例`);
+  await useHandleData(deleteTaskInstanceRequest, params.id, `删除【${params.task_name}】任务实例`);
   proTable.value?.getTableList();
 };
 

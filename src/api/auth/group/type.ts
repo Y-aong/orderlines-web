@@ -1,13 +1,18 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace Group {
   export interface GroupItem {
-    id?: number;
-    desc: string;
+    id: number;
     group_name: string;
+    desc: string;
+    owner_id: number;
+    owner_name: string;
     insert_time: string;
-    owner_id?: number;
-    owner_name?: number;
     update_time: string;
+    creator_name: null;
+    creator_id: null;
+    updater_name: null;
+    updater_id: null;
+    active: number;
   }
   export interface GroupFilter extends ReqPage {
     id?: number;

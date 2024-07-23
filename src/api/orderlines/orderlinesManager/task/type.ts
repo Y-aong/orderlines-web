@@ -1,16 +1,16 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace Task {
   export interface TaskItem {
-    creator?: any;
-    creator_id?: any;
+    creator_name?: string;
+    creator_id?: string;
     desc?: string;
     id?: number;
     insert_time?: string;
     method_kwargs?: any;
     method_name?: string;
     module_version?: string;
-    next_id?: any;
-    prev_id?: any;
+    next_id?: string;
+    prev_id?: string;
     process_id: string;
     result_config?: any;
     task_config?: any;
@@ -18,9 +18,9 @@ export namespace Task {
     task_module?: string;
     task_name?: string;
     task_type?: string;
-    update_time?: any;
-    updater?: any;
-    updater_id?: any;
+    update_time?: string;
+    updater_name?: string;
+    updater_id?: number;
   }
   export interface TaskFilter extends ReqPage {
     id?: number;

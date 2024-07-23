@@ -34,6 +34,7 @@ import alarmDrawer from "./alarmDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { Alarm } from "@/api/alarm/type";
 import { getCurrentDate } from "@/utils/currentDateTime";
+import { BaseUpdateResponse } from "@/api/interface";
 
 const proTable = ref<ProTableInstance>();
 
@@ -50,7 +51,7 @@ const openDrawer = (title: string, row: Partial<Alarm.AlarmItem> = {}) => {
   drawerRef.value?.acceptParams(params);
 };
 
-const updateAlarm = async (row: any) => {
+const updateAlarm = async (row: Alarm.AlarmItem) => {
   if (row.people_confirm) {
     ElMessage.warning("告警已经确认");
     return;
@@ -58,17 +59,17 @@ const updateAlarm = async (row: any) => {
   row["update_time"] = getCurrentDate();
   row["people_confirm"] = true;
 
-  const res: any = await updateAlarmRequest(row);
-  if (res.code == 200) {
+  const response: BaseUpdateResponse = await updateAlarmRequest(row);
+  if (response.code == 200) {
     ElMessage.success("告警确认成功");
   } else {
-    ElMessage.error("告警确认失败");
+    ElMessage.error("告警确认失败" + response.message);
   }
 };
 
 // 删除告警信息
 const deletePlugin = async (params: Alarm.AlarmItem) => {
-  await useHandleData(deleteAlarmRequest, { id: [params.id] }, `删除【${params.task_name}】告警`);
+  await useHandleData(deleteAlarmRequest, params.id, `删除【${params.task_name}】告警`);
   proTable.value?.getTableList();
 };
 
@@ -154,4 +155,3 @@ const initParam = reactive({ pageNum: 1, pageSize: 10 });
 </script>
 
 <style lang="scss" scoped></style>
-@/api/orderlines/process/index

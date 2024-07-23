@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ref, defineProps, watch } from "vue";
-import { BaseInfoType } from "@/api/data_screen/type";
+import { BaseInfoType } from "@/api/dataScreen/type";
 
 interface Props {
   data: BaseInfoType;

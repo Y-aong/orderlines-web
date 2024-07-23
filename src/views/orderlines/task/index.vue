@@ -35,14 +35,14 @@ import {
   updateTaskRequest,
   deleteTaskRequest,
   taskExport
-} from "@/api/orderlines/task/index";
+} from "@/api/orderlines/orderlinesManager/task/index";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import TaskDrawer from "./taskDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
-import { Task } from "@/api/orderlines/task/type";
+import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 
 const proTable = ref<ProTableInstance>();
 
@@ -68,7 +68,7 @@ const downloadFile = async () => {
 
 // 删除流程信息
 const deleteTask = async (params: Task.TaskItem) => {
-  await useHandleData(deleteTaskRequest, { id: [params.id] }, `删除【${params.task_name}】任务`);
+  await useHandleData(deleteTaskRequest, params.id, `删除【${params.task_name}】任务`);
   proTable.value?.getTableList();
 };
 

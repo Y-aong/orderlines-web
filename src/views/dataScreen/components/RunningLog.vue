@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts" setup name="RunningLog">
-import { RunningInfoType } from "@/api/data_screen/type";
+import { RunningInfoType } from "@/api/dataScreen/type";
 import { ref, defineProps, watch } from "vue";
 let resultVisible = ref<boolean>(false);
 let errorVisible = ref<boolean>(false);
