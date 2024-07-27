@@ -18,14 +18,11 @@
         <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除</el-button>
       </template>
     </ProTable>
-    <alarmDrawer ref="drawerRef" />
-    <ImportExcel ref="dialogRef" />
   </div>
 </template>
 <script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
-import ImportExcel from "@/components/ImportExcel/index.vue";
 import { getAlarmRequest, updateAlarmRequest, deleteAlarmRequest } from "@/api/message/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
@@ -35,10 +32,13 @@ import { useHandleData } from "@/hooks/useHandleData";
 import { Alarm } from "@/api/message/type";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { BaseUpdateResponse } from "@/api/interface";
+import { useRoute } from "vue-router";
 import { useGlobalStore } from "@/stores/modules/global";
 import { storeToRefs } from "pinia";
 
 let { refreshMessage } = storeToRefs(useGlobalStore());
+
+const route = useRoute();
 
 const proTable = ref<ProTableInstance>();
 
@@ -100,29 +100,24 @@ const getTableList = (params: Alarm.AlarmFilter) => {
 };
 
 const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
-  { type: "expand", label: "Expand", width: 100 },
   {
     prop: "id",
     label: "序号",
-    search: { el: "input" },
     width: 80
   },
   {
     prop: "process_name",
     label: "流程名称",
-    search: { el: "input" },
     width: 140
   },
   {
     prop: "process_instance_id",
     label: "流程实例ID",
-    search: { el: "input" },
     width: 160
   },
   {
     prop: "task_name",
     label: "任务名称",
-    search: { el: "input" },
     width: 140
   },
   {
@@ -140,7 +135,6 @@ const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
   {
     prop: "people_confirm",
     label: "是否确认",
-    search: { el: "input" },
     width: 120,
     render: (scope: any) => {
       return (
@@ -156,7 +150,8 @@ const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 
-const initParam = reactive({ pageNum: 1, pageSize: 10 });
+const initDetailParam = Object.assign({}, { pageNum: 1, pageSize: 10 }, route.params);
+const initParam = reactive(initDetailParam);
 </script>
 
 <style lang="scss" scoped></style>

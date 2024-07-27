@@ -96,3 +96,38 @@ export namespace DataScreen {
     status: string;
   }
 }
+
+export interface RunningInfoType {
+  process_info: ProcessInfo;
+  running_task: RunningTask;
+  task_nodes: TaskNode[];
+}
+
+interface TaskNode {
+  color: string;
+  icon: string;
+  start_time: string;
+  task_name: string;
+}
+
+interface RunningTask {
+  end_time: string;
+  start_time: string;
+  task_error: TaskError;
+  task_name: string;
+  task_result: TaskResult;
+  task_status: string;
+}
+
+interface TaskResult {
+  status: string;
+}
+
+interface TaskError {}
+
+interface ProcessInfo {
+  name: string;
+  process_instance_id: string;
+  progress: number;
+  status: string;
+}

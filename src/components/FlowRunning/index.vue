@@ -15,12 +15,10 @@ import "@/components/Flow/style.css";
 import useFlowStore from "../../stores/modules/flow";
 import useRunningTaskStore from "../../stores/modules/runningTask";
 import { storeToRefs } from "pinia";
-import { getFlowDataRequest } from "@/api/flow/taskNode/index.ts";
 import { getTaskInstanceItem } from "@/api/flow/runningTask/index.ts";
-import { ElMessage } from "element-plus";
 
-let { process_id, process_instance_id } = storeToRefs(useFlowStore());
-let { clickCheckTask, running_edge } = storeToRefs(useRunningTaskStore());
+let { process_instance_id } = storeToRefs(useFlowStore());
+let { clickCheckTask, running_edge, graph_data } = storeToRefs(useRunningTaskStore());
 
 export default {
   name: "FlowRunning",
@@ -87,21 +85,11 @@ export default {
   },
   methods: {
     async getGraphData() {
-      const flowDataFilter = {
-        process_id: process_id.value,
-        process_instance_id: process_instance_id.value
-      };
-      const result = await getFlowDataRequest(flowDataFilter);
-      if (result.code === 200) {
-        this.graphData = result.data.graphData;
-      } else {
-        this.graphData = [];
-        ElMessage.error("获取流程图失败");
-      }
+      this.graphData = graph_data.value;
     },
     async runningTask(flow) {
       this.timer = setInterval(async () => {
-        await this.getGraphData();
+        this.graphData = graph_data.value;
         await flow.render(this.graphData);
         let edgeIds = running_edge.value;
         edgeIds.forEach(item => {

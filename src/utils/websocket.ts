@@ -1,7 +1,7 @@
 import useRunningTaskStore from "@/stores/modules/runningTask";
 import { storeToRefs } from "pinia";
 
-let { running_edge, taskProgress } = storeToRefs(useRunningTaskStore());
+let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
 
 export function useWebSocket(
   url: string,
@@ -26,14 +26,14 @@ export function useWebSocket(
 
     // 监听接受信息
     socket.addEventListener("message", (event: MessageEvent) => {
-      console.log("消息接收", event.data);
       try {
+        console.log(event.data);
         const data = JSON.parse(event.data);
         if (topic === "running_logger") {
           running_edge.value = data.msg.running_edge;
-          taskProgress.value = data.msg.taskProgress;
+          taskProgress.value = data.msg.task_progress;
+          graph_data.value = data.msg.graph_data.graphData;
         }
-        console.log("running_logger处理完成" + data);
       } catch (error) {
         console.error("处理消息时出错:", error);
       }

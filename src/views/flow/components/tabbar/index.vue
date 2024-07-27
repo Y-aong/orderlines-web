@@ -120,7 +120,6 @@ import LOGO from "./logo/index.vue";
 import { ref, reactive, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import useRunningTaskStore from "@/stores/modules/runningTask";
 import { InfoFilled } from "@element-plus/icons-vue";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import {
@@ -135,7 +134,6 @@ import {
   getProcessVersionRequest,
   getProcessVersionByNameRequest
 } from "@/api/flow/taskNode/index";
-import { getRunningTaskRequest } from "@/api/flow/runningTask/index";
 import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
@@ -149,7 +147,6 @@ import { getProcessVersionOptionRequest } from "@/api/option/index";
 let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, isRedirect } = storeToRefs(
   useFlowStore()
 );
-let { runningTask } = storeToRefs(useRunningTaskStore());
 
 let activeName = "create";
 
@@ -179,7 +176,6 @@ const getProcessInfo = async () => {
 const getProcessVersionOption = async () => {
   const res: any = await getProcessVersionOptionRequest(process_name.value);
   if (res.code == 200) {
-    console.log(res.data, process_name.value);
     options.value = res.data;
   } else {
     ElMessage.error("获取流程流程版本失败");
@@ -258,23 +254,12 @@ const startProcess = async () => {
     ElMessage.success(response.message);
     isRunning.value = true;
     setStorage(true, "IS_RUNNING");
-    await getRunningTask();
+    // await getRunningTask();
   } else {
     ElMessage.error("流程启动失败" + response.message);
   }
 };
-// 获取运行中的任务
-const getRunningTask = async () => {
-  const RunningTaskFilter = {
-    process_id: process_id.value,
-    process_instance_id: process_instance_id.value
-  };
-  let response: any = await getRunningTaskRequest(RunningTaskFilter);
-  if (response.code === 200 && response.data.running_task != null) {
-    runningTask.value = response.data.running_task;
-  }
-  return response.code === 200 ? response.data.running_edge : [];
-};
+
 // 停止流程
 const stopProcess = async () => {
   let response: any = await stopProcessRequest(process_id.value);

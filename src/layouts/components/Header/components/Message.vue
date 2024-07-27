@@ -2,46 +2,18 @@
   <div class="message">
     <el-popover placement="bottom" :width="310" trigger="click">
       <template #reference>
-        <el-badge :value="5" class="item">
+        <el-badge :value="total" class="item">
           <i :class="'iconfont icon-xiaoxi'" class="toolBar-icon"></i>
         </el-badge>
       </template>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="通知(5)" name="first">
+        <el-tab-pane :label="`告警(${total})`" name="first">
           <div class="message-list">
-            <div class="message-item">
+            <div v-for="item in activeMessage" :key="item.id" class="message-item">
               <img src="@/assets/images/msg01.png" alt="" class="message-icon" />
               <div class="message-content">
-                <span class="message-title">一键三连 orderlines 🧡</span>
-                <span class="message-date">一分钟前</span>
-              </div>
-            </div>
-            <div class="message-item">
-              <img src="@/assets/images/msg02.png" alt="" class="message-icon" />
-              <div class="message-content">
-                <span class="message-title">一键三连 orderlines 💙</span>
-                <span class="message-date">一小时前</span>
-              </div>
-            </div>
-            <div class="message-item">
-              <img src="@/assets/images/msg03.png" alt="" class="message-icon" />
-              <div class="message-content">
-                <span class="message-title">一键三连 orderlines 💚</span>
-                <span class="message-date">半天前</span>
-              </div>
-            </div>
-            <div class="message-item">
-              <img src="@/assets/images/msg04.png" alt="" class="message-icon" />
-              <div class="message-content">
-                <span class="message-title">一键三连 orderlines 💜</span>
-                <span class="message-date">一星期前</span>
-              </div>
-            </div>
-            <div class="message-item">
-              <img src="@/assets/images/msg05.png" alt="" class="message-icon" />
-              <div class="message-content">
-                <span class="message-title">一键三连 orderlines 💛</span>
-                <span class="message-date">一个月前</span>
+                <span class="message-title" @click="goToDetail(item.id)">{{ item.process_name }}</span>
+                <span class="message-date">{{ item.insert_time }}</span>
               </div>
             </div>
           </div>
@@ -64,8 +36,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { getAlarmMessageRequest } from "@/api/message/index";
+import { useRouter } from "vue-router";
+import { useGlobalStore } from "@/stores/modules/global";
+import { storeToRefs } from "pinia";
+
+let { refreshMessage } = storeToRefs(useGlobalStore());
+
+const router = useRouter();
+
 const activeName = ref("first");
+const activeMessage = ref<any>([]);
+const total = ref<number>(0);
+onMounted(async () => {
+  await getAlarmMessage();
+});
+const getAlarmMessage = async () => {
+  const res: any = await getAlarmMessageRequest();
+  if (res.code === 200) {
+    activeMessage.value = res.data.alarm_message;
+    total.value = res.data.total;
+  }
+};
+
+const goToDetail = async (detailId: string) => {
+  console.log("detailId" + detailId);
+  router.push({ path: `/alarm/detail/${detailId}` });
+};
+
+watch(refreshMessage, async (value: boolean) => {
+  if (value) {
+    await getAlarmMessage();
+    refreshMessage.value = false;
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -75,11 +80,13 @@ const activeName = ref("first");
   align-items: center;
   justify-content: center;
   height: 260px;
-  line-height: 45px;
+  line-height: 40px;
 }
 .message-list {
   display: flex;
   flex-direction: column;
+  height: 500px;
+  overflow-y: auto;
   .message-item {
     display: flex;
     align-items: center;
@@ -89,8 +96,8 @@ const activeName = ref("first");
       border: none;
     }
     .message-icon {
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       margin: 0 20px 0 5px;
     }
     .message-content {
@@ -100,7 +107,7 @@ const activeName = ref("first");
         margin-bottom: 5px;
       }
       .message-date {
-        font-size: 12px;
+        font-size: 10px;
         color: var(--el-text-color-secondary);
       }
     }

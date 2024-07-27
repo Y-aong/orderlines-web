@@ -6,6 +6,7 @@ import http from "@/api";
 enum API {
   LOGIN_URL = "/token/",
   LOGOUT_URL = "/token/logout",
+  TOKEN_CHECK_URL = "/token/check",
   TOKEN_REFRESH_URL = "/token/refresh",
   TOKEN_REGISTER_URL = "/token/register",
   TOKEN_USER_INFO_URL = "/token/user_info"
@@ -23,6 +24,9 @@ export const loginApi = (params: Login.ReqLoginForm) => {
   // return http.get<Login.ResLogin>(`/login?${qs.stringify(params, { arrayFormat: "repeat" })}`); // get 请求可以携带数组等复杂参数
 };
 
+export const checkTokenApi = (token: string) => {
+  return http.get<Login.ResLogin>(`${API.TOKEN_CHECK_URL}?token=${token}`, { loading: false });
+};
 // 获取菜单列表
 export const getAuthMenuListApi = () => {
   return authMenuList;

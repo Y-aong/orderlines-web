@@ -57,7 +57,7 @@ const proTable = ref<ProTableInstance>();
 // 导出报告
 const downloadExport = async (row: any) => {
   ElMessageBox.confirm("确认导出流程报告?", "温馨提示", { type: "warning" }).then(() => {
-    useDownload(downExport, "流程报告", row.id, true, ".html");
+    useDownload(downExport, "流程报告", row.process_instance_id, true, ".html");
   });
 };
 
@@ -111,7 +111,7 @@ const toDetail = (row: any) => {
     isSave.value = false;
     isRunning.value = false;
     isRedirect.value = true;
-    router.push(`/flow/general`);
+    router.push(`/flow/general/index`);
   }
 };
 

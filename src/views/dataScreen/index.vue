@@ -76,7 +76,7 @@
           </div>
           <div class="dataScreen-bottom">
             <div class="dataScreen-main-title">
-              <span>插件使用统计—前4</span>
+              <span>插件使用统计—TOP4</span>
             </div>
             <div class="dataScreen-main-chart">
               <PluginStatus :data="plugin" />

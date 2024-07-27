@@ -33,7 +33,7 @@ class RequestHttp {
      * token校验(JWT) : 接受服务器返回的 token,存储到 vuex/pinia/本地储存当中
      */
     this.service.interceptors.request.use(
-      (config: CustomAxiosRequestConfig) => {
+      async (config: CustomAxiosRequestConfig) => {
         const userStore = useUserStore();
         // 当前请求不需要显示 loading，在 api 服务中通过指定的第三个参数: { loading: false } 来控制
         config.loading ?? (config.loading = false);

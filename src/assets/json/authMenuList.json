@@ -271,7 +271,24 @@
         "isFull": false,
         "isAffix": false,
         "isKeepAlive": true
-      }
+      },
+      "children": [
+        {
+          "path": "/alarm/detail/:id",
+          "name": "alarmDetail",
+          "component": "/alarm/detail",
+          "meta": {
+            "icon": "Menu",
+            "title": "告警详情",
+            "activeMenu": "/alarm",
+            "isLink": "",
+            "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     },
     {
       "path": "/plugin",
