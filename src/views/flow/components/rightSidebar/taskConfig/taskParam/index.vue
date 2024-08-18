@@ -1,14 +1,13 @@
 <template>
   <el-collapse-item title="任务参数配置" name="taskParams">
-    {{ nodeConfig.task_type }}
     <template v-if="nodeConfig.task_type === 'process_control'">
       <ProcessControl />
     </template>
     <template v-if="nodeConfig.task_type === 'group'">
       <TaskGroup />
     </template>
-    <template v-if="nodeConfig.task_type === 'common'">
-      common
+    <SubProcess />
+    <template v-if="nodeConfig.task_type === 'common1'">
       <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
         <el-table-column fixed prop="desc" label="参数名" min-width="80" />
         <el-table-column prop="desc" label="参数值" min-width="240" required>
@@ -102,6 +101,7 @@
 <script setup lang="ts" name="TaskParam">
 import ProcessControl from "./processControl/index.vue";
 import TaskGroup from "./taskGroup/index.vue";
+import SubProcess from "./subProcess/index.vue";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";

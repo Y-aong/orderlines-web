@@ -2,8 +2,9 @@ import { defineStore } from "pinia";
 import { getNodeMenuRequest, getTaskNodeRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
 
 import { getStorage } from "@/utils/storage";
-import { FlowStoreType } from "../interface/index";
+import { FlowStoreType, NodeMenuType } from "../interface/index";
 import { TaskNodeNS } from "@/api/flow/taskNode/type";
+import { BaseResponse } from "@/api/interface/index";
 
 const useFlowStore = defineStore("FlowStore", {
   state: (): FlowStoreType => {
@@ -51,12 +52,12 @@ const useFlowStore = defineStore("FlowStore", {
     },
     // 获取插件节点信息
     async getNodeMenu() {
-      const result: any = await getNodeMenuRequest();
+      const result: BaseResponse<NodeMenuType[]> = await getNodeMenuRequest();
       if (result.code == 200) {
         this.nodeMenu = result.data;
         return result.data;
       } else {
-        return Promise.reject(new Error(result.data));
+        return Promise.reject(new Error(result.message));
       }
     },
     // 获取任务节点数据

@@ -26,13 +26,13 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getAlarmRequest, updateAlarmRequest, deleteAlarmRequest } from "@/api/message/index";
+import { getAlarmRequest, updateAlarmRequest, deleteAlarmRequest } from "@/api/notice/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import alarmDrawer from "./alarmDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { Alarm } from "@/api/message/type";
+import { Notice } from "@/api/notice/type";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { BaseUpdateResponse } from "@/api/interface";
 import { useGlobalStore } from "@/stores/modules/global";
@@ -44,7 +44,7 @@ const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof alarmDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<Alarm.AlarmItem> = {}) => {
+const openDrawer = (title: string, row: Partial<Notice.AlarmItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
@@ -55,7 +55,7 @@ const openDrawer = (title: string, row: Partial<Alarm.AlarmItem> = {}) => {
   drawerRef.value?.acceptParams(params);
 };
 
-const updateAlarm = async (row: Alarm.AlarmItem) => {
+const updateAlarm = async (row: Notice.AlarmItem) => {
   if (row.people_confirm) {
     ElMessage.warning("告警已经确认");
     return;
@@ -73,7 +73,7 @@ const updateAlarm = async (row: Alarm.AlarmItem) => {
 };
 
 // 删除告警信息
-const deletePlugin = async (params: Alarm.AlarmItem) => {
+const deletePlugin = async (params: Notice.AlarmItem) => {
   await useHandleData(deleteAlarmRequest, params.id, `删除【${params.task_name}】告警`);
   proTable.value?.getTableList();
 };
@@ -85,7 +85,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: Alarm.AlarmResponse) => {
+const dataCallback = (data: Notice.AlarmResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -94,12 +94,12 @@ const dataCallback = (data: Alarm.AlarmResponse) => {
   };
 };
 
-const getTableList = (params: Alarm.AlarmFilter) => {
+const getTableList = (params: Notice.AlarmFilter) => {
   let newParams = JSON.parse(JSON.stringify(params));
   return getAlarmRequest(newParams);
 };
 
-const columns = reactive<ColumnProps<Alarm.AlarmItem>[]>([
+const columns = reactive<ColumnProps<Notice.AlarmItem>[]>([
   { type: "expand", label: "Expand", width: 100 },
   {
     prop: "id",

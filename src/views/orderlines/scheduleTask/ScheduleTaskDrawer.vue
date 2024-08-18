@@ -101,32 +101,7 @@
       </el-form>
 
       <!-- 周期执行配置 -->
-      <el-form v-if="trigger === 'crontab'" :model="intervalOption" label-width="120px">
-        <el-form-item label="执行间隔" prop="interval_type" clearable>
-          <el-select v-model="intervalSchedulePlan.interval_type" placeholder="请选择间隔类型" size="large">
-            <el-option v-for="item in intervalOption" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="间隔数值" prop="interval_val" clearable>
-          <el-input-number :model-value="intervalSchedulePlan.interval_val" :min="1" :max="60" />
-        </el-form-item>
-        <el-form-item label="开始时间" prop="start_time" clearable>
-          <el-date-picker
-            v-model="intervalSchedulePlan.start_date"
-            type="datetime"
-            placeholder="选择开始时间"
-            :value-format="dateFormat"
-          />
-        </el-form-item>
-        <el-form-item label="结束时间" prop="end_time" clearable>
-          <el-date-picker
-            v-model="intervalSchedulePlan.end_date"
-            type="datetime"
-            placeholder="选择结束时间"
-            :value-format="dateFormat"
-          />
-        </el-form-item>
-      </el-form>
+      <CronTab v-if="trigger === 'crontab'" />
     </el-form>
     <template #footer>
       <el-button @click="drawerVisible = false">取消</el-button>
@@ -138,6 +113,7 @@
 <script setup lang="ts" name="TaskDrawer">
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
+import CronTab from "./CronTab.vue";
 
 const process_id = ref<string>("");
 

@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { getAlarmMessageRequest } from "@/api/message/index";
+import { getAlarmMessageRequest } from "@/api/notice/index";
 import { useRouter } from "vue-router";
 import { useGlobalStore } from "@/stores/modules/global";
 import { storeToRefs } from "pinia";

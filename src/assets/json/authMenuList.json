@@ -260,12 +260,12 @@
       ]
     },
     {
-      "path": "/alarm",
-      "name": "alarm",
-      "component": "/alarm/index",
+      "path": "/notice",
+      "name": "notice",
+      "redirect": "/alarm",
       "meta": {
-        "icon": "WarnTriangleFilled",
-        "title": "流程告警",
+        "icon": "Tickets",
+        "title": "消息通知",
         "isLink": "",
         "isHide": false,
         "isFull": false,
@@ -283,6 +283,34 @@
             "activeMenu": "/alarm",
             "isLink": "",
             "isHide": true,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/alarm",
+          "name": "alarm",
+          "component": "/alarm/index",
+          "meta": {
+            "icon": "WarnTriangleFilled",
+            "title": "流程告警",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/loggerInfo",
+          "name": "loggerInfo",
+          "component": "/loggerInfo/index",
+          "meta": {
+            "icon": "Tickets",
+            "title": "API日志",
+            "isLink": "",
+            "isHide": false,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true

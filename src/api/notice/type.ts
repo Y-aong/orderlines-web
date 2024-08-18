@@ -1,5 +1,5 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
-export namespace Alarm {
+export namespace Notice {
   export interface AlarmItem {
     id: number;
     process_name: string;
@@ -27,4 +27,29 @@ export namespace Alarm {
   }
 
   export interface AlarmResponse extends ResPage<AlarmItem> {}
+
+  export interface LoggerFilter extends ReqPage {
+    id?: number;
+    api_path?: string;
+    method?: string;
+    state?: string;
+    visitor?: string;
+    message?: string;
+  }
+
+  export interface LoggerItem {
+    id: number;
+    insert_time: string;
+    update_time: string;
+    creator_name: string;
+    creator_id: number;
+    updater_name: string;
+    updater_id: number;
+    active: boolean;
+    api_path: string;
+    method: string;
+    state: string;
+    visitor: string;
+    message: string;
+  }
 }

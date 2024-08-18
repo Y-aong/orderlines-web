@@ -1,5 +1,6 @@
 import http from "@/api";
-import { NodeMenu, TaskNodeNS } from "./type";
+import { TaskNodeNS } from "./type";
+import { NodeMenuType } from "@/stores/interface";
 import { BaseData } from "@/api/interface";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 
@@ -14,7 +15,7 @@ enum API {
 }
 
 // 获取节点菜单
-export const getNodeMenuRequest = () => http.get<NodeMenu>(`${API.PLUGIN_NODE}`);
+export const getNodeMenuRequest = () => http.get<NodeMenuType[]>(`${API.PLUGIN_NODE}`);
 
 // 获取节点参数
 export const getTaskNodeRequest = (taskNode: TaskNodeNS.TaskNodeParam) =>

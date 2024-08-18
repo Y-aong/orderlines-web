@@ -147,7 +147,6 @@ export interface FlowStoreType {
   isRedirect: boolean;
   nodeMenu: NodeMenuType[];
   nodeConfig: nodeConfigType;
-  // nodeParam: CommonParamType[] | ProcessControlStatus;
   nodeParam: any;
   nodeResult: nodeResultType[];
   defaultTaskConfig: DefaultTaskConfigType[];

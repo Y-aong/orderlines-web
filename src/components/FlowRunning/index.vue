@@ -15,7 +15,7 @@ import "@/components/Flow/style.css";
 import useFlowStore from "../../stores/modules/flow";
 import useRunningTaskStore from "../../stores/modules/runningTask";
 import { storeToRefs } from "pinia";
-import { getTaskInstanceItem } from "@/api/flow/runningTask/index.ts";
+import { getTaskInstanceItem } from "@/api/orderlines/orderlinesManager/taskInstance/index";
 
 let { process_instance_id } = storeToRefs(useFlowStore());
 let { clickCheckTask, running_edge, graph_data } = storeToRefs(useRunningTaskStore());
