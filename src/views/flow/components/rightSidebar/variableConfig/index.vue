@@ -6,14 +6,11 @@
         <el-table-column fixed prop="variable_key" label="变量名" min-width="110" />
         <el-table-column prop="variable_value" label="变量值" min-width="100" />
         <el-table-column prop="variable_type" label="类型" min-width="80" width="80" />
-        <el-table-column fixed="right" label="active" min-width="120" align="center">
+        <el-table-column fixed="right" label="action" min-width="120" align="center">
           <template #default="scope">
-            <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row)" circle icon="View">
-            </el-button>
-            <el-button type="warning" size="small" @click.prevent="updateVariable(scope.row)" circle icon="Edit">
-            </el-button>
-            <el-button type="danger" size="small" @click.prevent="deleteVariable(scope.row.id)" circle icon="Delete">
-            </el-button>
+            <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row)" circle icon="View" />
+            <el-button type="warning" size="small" @click.prevent="updateVariable(scope.row)" circle icon="Edit" />
+            <el-button type="danger" size="small" @click.prevent="deleteVariable(scope.row.id)" circle icon="Delete" />
           </template>
         </el-table-column>
       </el-table>
@@ -148,6 +145,8 @@ const getVariableDetail = async (row: any) => {
     if (res.code === 200) variableDetail.value = [res.data];
   } else {
     let res: any = await getVariableDetailRequest(row.id);
+    console.log(res.data);
+
     if (res.code === 200) variableDetail.value = [res.data];
   }
 };
@@ -167,6 +166,7 @@ const cancel = () => {
   //对话框隐藏
   dialogFormVisible.value = false;
 };
+
 const confirm = async () => {
   if (VariableItem.id) {
     // 修改变量
@@ -190,7 +190,7 @@ const confirm = async () => {
       process_name: process_name.value,
       variable_key: VariableItem.variable_key,
       variable_value: VariableItem.variable_value,
-      variable_type: "str",
+      variable_type: VariableItem.variable_type,
       variable_desc: VariableItem.variable_desc
     };
     let result: any = await createVariableRequest(variableItem as Variable.VariableItem);

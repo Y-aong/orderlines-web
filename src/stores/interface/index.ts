@@ -136,6 +136,17 @@ export interface ProcessControlStatus {
   conditions: Condition[];
   pc_type: string;
 }
+interface nodeParamItem {
+  desc: string;
+  name: string;
+  type: string;
+  title: string;
+  default: Default | string;
+  required: boolean;
+  param_type: string;
+}
+
+interface Default {}
 
 export interface FlowStoreType {
   process_name: string;
@@ -147,7 +158,7 @@ export interface FlowStoreType {
   isRedirect: boolean;
   nodeMenu: NodeMenuType[];
   nodeConfig: nodeConfigType;
-  nodeParam: any;
+  nodeParam: nodeParamItem[];
   nodeResult: nodeResultType[];
   defaultTaskConfig: DefaultTaskConfigType[];
   processControlOptions: any;

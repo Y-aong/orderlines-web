@@ -11,7 +11,7 @@
   />
 </template>
 
-<script lang="js" setup name="Code">
+<script lang="js" setup name="EDACode">
 import { Codemirror } from "vue-codemirror";
 import { python } from "@codemirror/lang-python";
 import { oneDark } from "@codemirror/theme-one-dark";

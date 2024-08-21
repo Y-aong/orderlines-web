@@ -1,5 +1,5 @@
 import http from "@/api";
-import { TaskNodeNS } from "./type";
+import { TaskNodeNS, SubprocessParmaType } from "./type";
 import { NodeMenuType } from "@/stores/interface";
 import { BaseData } from "@/api/interface";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
@@ -11,7 +11,8 @@ enum API {
   FLOW_DATA = "/flow/data",
   FLOW_SAVE = "/orderlines/save",
   PROCESS_VERSION = "/flow/process_version",
-  PROCESS_PARAM_URL = "/flow/process_param"
+  PROCESS_PARAM_URL = "/flow/process_param",
+  SUB_PROCESS_PARAM_URL = "/flow/sub_process/param"
 }
 
 // 获取节点菜单
@@ -52,3 +53,11 @@ export const updateProcessModeRequest = (process_name: string) =>
 // 修改流程参数
 export const updateProcessParamRequest = (data: Process.ProcessParamType) =>
   http.put<BaseData>(API.PROCESS_PARAM_URL, data);
+
+// 获取子流程参数
+export const getSubProcess = (process_id: string) =>
+  http.get<SubprocessParmaType[]>(`${API.SUB_PROCESS_PARAM_URL}?process_id=${process_id}`);
+
+// 修改子流程参数
+export const updateSubProcess = (sub_process: SubprocessParmaType) =>
+  http.post<BaseData>(API.SUB_PROCESS_PARAM_URL, sub_process);

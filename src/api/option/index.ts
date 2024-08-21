@@ -6,7 +6,8 @@ enum API {
   GROUP_OWNER_OPTION = "/option/group_owner_opt",
   PROCESS_NAMESPACE_OPTION = "/option/namespace_process_opt",
   PROCESS_OPTION = "/option/process_opt",
-  VARIABLE_OPTION = "/option/variable_opt"
+  VARIABLE_OPTION = "/option/variable_opt",
+  SUB_PROCESS_OPTION = "/option/sub_process_opt"
 }
 // 获取流程名称options
 export const getProcessNameOptionRequest = () => http.get(API.PROCESS_NAME_OPTION);
@@ -23,3 +24,6 @@ export const getProcessOptionRequest = () => http.get(API.PROCESS_OPTION);
 // 获取变量选项
 export const getProcessVariableOptionRequest = (process_id: string) =>
   http.get(`${API.VARIABLE_OPTION}?process_id=${process_id}`);
+// 获取子流程信息
+export const getSubProcessOptionRequest = (process_id: string) =>
+  http.get(`${API.SUB_PROCESS_OPTION}?process_id=${process_id}`);

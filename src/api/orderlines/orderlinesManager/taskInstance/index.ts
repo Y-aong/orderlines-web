@@ -6,7 +6,7 @@ enum API {
   TASK_INSTANCE_URL = "/orderlines/task_instance",
   TASK_INSTANCE_DETAIL_ID_URL = "/orderlines/task_instance/detail",
   TASK_INSTANCE_EXPORT_URL = "/orderlines/task_instance/export",
-  TASK_INSTANCE_DETAIL_URL = "/flow/task_instance_detail"
+  TASK_INSTANCE_DETAIL_URL = "/orderlines/task_instance_detail"
 }
 // 导出任务实例
 export const TaskInstanceExport = (data: TaskInstance.TaskInstanceFilter) =>

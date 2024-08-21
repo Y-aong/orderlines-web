@@ -85,3 +85,11 @@ export interface ProcessVersionOptionType {
   label: string;
   value: string;
 }
+
+export interface SubprocessParmaType {
+  process_id: string;
+  variable_key: string;
+  variable_value: string;
+  variable_type: string;
+  variable_desc: string;
+}

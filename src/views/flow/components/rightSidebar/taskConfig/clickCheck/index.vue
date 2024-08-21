@@ -25,7 +25,7 @@
 
             <div>
               <el-button
-                v-if="JSON.stringify(clickCheckTask.task_result) !== '{}'"
+                v-if="clickCheckTask.task_result"
                 size="small"
                 icon="View"
                 type="primary"
@@ -34,7 +34,7 @@
               />
 
               <el-button
-                v-if="JSON.stringify(clickCheckTask.task_error_info) !== '{}'"
+                v-if="clickCheckTask.task_error_info"
                 size="small"
                 icon="BellFilled"
                 type="warning"
@@ -90,12 +90,17 @@ let title = ref<string>("查看任务结果");
 let taskResultError = reactive({});
 
 const check = (type: string, row: any) => {
-  title.value = type;
-  dialogVisible.value = true;
-  if (typeof row === "string") {
-    row = JSON.parse(row);
+  try {
+    title.value = type;
+    dialogVisible.value = true;
+    if (typeof row === "string") {
+      row = JSON.parse(row);
+    }
+    taskResultError = row;
+  } catch (e) {
+    console.error(`${row}数据解析失败, ${e}`);
+    taskResultError = row;
   }
-  taskResultError = row;
 };
 
 // 导出数据

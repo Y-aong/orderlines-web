@@ -27,7 +27,6 @@ export function useWebSocket(
     // 监听接受信息
     socket.addEventListener("message", (event: MessageEvent) => {
       try {
-        console.log(event.data);
         const data = JSON.parse(event.data);
         if (topic === "running_logger") {
           running_edge.value = data.msg.running_edge;

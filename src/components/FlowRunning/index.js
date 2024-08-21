@@ -9,6 +9,7 @@ import ProcessControlNode from "./nodes/ProcessControlNode.js";
 import ParallelNode from "./nodes/ParallelNode.js";
 import GroupNode from "./nodes/GroupNode.js";
 import SelectNode from "./nodes/SelectNode.js";
+import SubProcess from "./nodes/SubProcess.js";
 import FlowLink from "./FlowLink.js";
 import Palette from "./palette/index.vue";
 import VueHtmlNode from "./nodes/VueHtmlNode.js";
@@ -24,6 +25,7 @@ class OrderlinesNodeExtension {
     lf.register(EndNode);
     lf.register(DelayNode);
     lf.register(SelectNode);
+    lf.register(SubProcess);
     // 普通任务节点
     lf.register(FunctionNode);
     // 任务网关

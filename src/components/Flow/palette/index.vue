@@ -64,7 +64,8 @@ const taskTypes: any = {
   "end-node": "end",
   "process-control-node": "process_control",
   "parallel-node": "parallel",
-  "group-node": "group"
+  "group-node": "group",
+  "sub-process-node": "sub_process"
 };
 
 const props = defineProps({
