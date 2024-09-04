@@ -43,13 +43,16 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" name="Palette" setup>
 import LogicFlow from "@logicflow/core";
 import { onMounted } from "vue";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
 import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { createTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
+import { Task } from "@/api/orderlines/orderlinesManager/task/type";
+import { nodeConfigType } from "@/stores/interface/index";
+
 import { v4 as uuid } from "uuid";
 
 import { processControlStatusItem } from "@/utils/variable";
@@ -104,54 +107,69 @@ const startDrag = async (item: any) => {
       version: item.version
     };
     await getTaskNode(taskNode);
-    // 创建节点
     const taskType = taskTypes[item.type];
-    //创建节点
-    let task: any = {
-      task_id: task_id,
-      task_name: item.text,
-      desc: item.text,
-      process_id: process_id.value,
-      task_type: taskType,
-      method_name: item.method_name,
-      task_module: item.class_name,
-      task_config: defaultTaskConfig.value
-    };
-    let flow_data: any = {
-      process_id: process_id.value,
-      task_id: task_id,
-      nodeResult: nodeResult.value,
-      defaultTaskConfig: defaultTaskConfig.value
-    };
-    if (item.type !== "process-control-node") {
-      flow_data["nodeParam"] = nodeParam.value;
-    } else {
-      flow_data["nodeParam"] = processControlStatusItem;
-      nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
-    }
-    const res: any = await createTaskFlowDataRequest(flow_data);
-    if (res.code !== 200) ElMessage.error("存放流程数据失败");
-    const node_config: any = {
-      task_name: item.text,
-      desc: item.text,
-      version: item.version,
-      task_module: item.class_name,
-      task_id: task_id,
-      method_name: item.method_name,
-      task_type: taskType
-    };
-    if (item.type !== "select-node") {
-      // 创建任务节点
-      const result: any = await createTaskRequest(task);
-      if (result.code == 200) {
-        node_config["id"] = result.data.table_id;
-      }
-      // 设置node config
-      nodeConfig.value = node_config;
-    }
+
+    // 创建流程图节点信息
+    await createFlowNode(item, task_id);
+
+    // 创建任务节点
+    await createTaskNode(item, task_id, taskType);
   }
 };
 
+// 创建流程图信息
+const createFlowNode = async (item: any, task_id: string) => {
+  let flow_data: any = {
+    process_id: process_id.value,
+    task_id: task_id,
+    nodeResult: nodeResult.value,
+    defaultTaskConfig: defaultTaskConfig.value
+  };
+  if (item.type !== "process-control-node") {
+    flow_data["nodeParam"] = nodeParam.value;
+  } else {
+    flow_data["nodeParam"] = processControlStatusItem;
+    nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
+  }
+  const res: any = await createTaskFlowDataRequest(flow_data);
+  if (res.code !== 200) ElMessage.error("存放流程数据失败");
+};
+
+// 创建任务节点
+const createTaskNode = async (item: any, taskId: string, taskType: string) => {
+  const node_config: nodeConfigType = {
+    task_name: item.text,
+    desc: item.text,
+    version: item.version,
+    task_module: item.class_name,
+    task_id: taskId,
+    method_name: item.method_name,
+    task_type: taskType
+  };
+
+  let task: Task.TaskItem = {
+    task_id: taskId,
+    task_name: item.text,
+    desc: item.text,
+    process_id: process_id.value,
+    task_type: taskType,
+    method_name: item.method_name,
+    task_module: item.class_name,
+    task_config: defaultTaskConfig.value
+  };
+
+  if (item.type !== "select-node") {
+    // 创建任务节点
+    const result: any = await createTaskRequest(task);
+    if (result.code == 200) {
+      node_config["id"] = result.data.table_id;
+    }
+    // 设置node config
+    nodeConfig.value = node_config;
+  }
+};
+
+// 检查开始节点不可以存在多个
 const checkStartNode = (nodeType: string, graphData: any): boolean => {
   const nodes = graphData.nodes;
   nodes.forEach((val: any) => {
@@ -161,12 +179,6 @@ const checkStartNode = (nodeType: string, graphData: any): boolean => {
     }
   });
   return true;
-};
-</script>
-
-<script lang="ts">
-export default {
-  name: "Palette"
 };
 </script>
 

@@ -143,6 +143,7 @@ import {
   getProcessDetailRequest
 } from "@/api/orderlines/orderlinesManager/process/index";
 import { getProcessVersionOptionRequest } from "@/api/option/index";
+import { getCurrentDate } from "@/utils/currentDateTime";
 
 let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, isRedirect } = storeToRefs(
   useFlowStore()
@@ -208,6 +209,8 @@ const getProcessVersionByName = async () => {
 // 修改流程运行模式
 const changeProcessMode = async () => {
   processInfo["mode"] = debugMode.value ? "debug" : "run";
+  processInfo["update_time"] = getCurrentDate();
+
   const response: any = await updateProcessRequest(processInfo);
   if (response.code == 200) {
     ElMessage.success(response.message);

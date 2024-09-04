@@ -31,6 +31,7 @@ const useFlowStore = defineStore("FlowStore", {
         desc: "",
         version: "",
         task_id: "",
+        task_module: "",
         method_name: "",
         task_type: "",
         id: 0

@@ -96,8 +96,9 @@ export interface nodeConfigType {
   version: string;
   task_id: string;
   method_name: string;
+  task_module: string;
   task_type: string;
-  id: number;
+  id?: number;
 }
 
 export interface nodeResultType {

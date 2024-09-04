@@ -12,6 +12,9 @@
     <template v-if="nodeConfig.task_type === 'common'">
       <Common />
     </template>
+    <template v-if="nodeConfig.task_type === 'parallel'">
+      <Parallel />
+    </template>
   </el-collapse-item>
 </template>
 
@@ -20,6 +23,7 @@ import ProcessControl from "./processControl/index.vue";
 import TaskGroup from "./taskGroup/index.vue";
 import SubProcess from "./subProcess/index.vue";
 import Common from "./common/index.vue";
+import Parallel from "./parallel/index.vue";
 
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";

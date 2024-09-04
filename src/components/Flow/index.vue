@@ -117,22 +117,12 @@ export default {
     this.lf.render(this.graphData);
     // 文本更新监听
     this.lf.on("text:update", async data => {
-      if (data.type.search("node") !== -1) {
-        nodeConfig.value.task_name = data.text;
-        let taskNode = {
-          id: nodeConfig.value.id,
-          process_id: process_id.value,
-          task_name: nodeConfig.value.task_name,
-          desc: nodeConfig.value.desc
-        };
-        await updateTaskRequest(taskNode);
-      }
+      await this.updateTask(data);
     });
     // 自定义规则监听
     this.lf.on("connection:not-allowed", msg => {
       ElMessage.error(msg.msg);
     });
-
     // group节点提示信息
     this.lf.on("group:not-allowed", data => {
       ElMessage.error("任务组只允许加入普通任务节点,请手动删除新加入的" + data.node.text.value);
@@ -146,46 +136,14 @@ export default {
       nodeResult.value = [];
       defaultTaskConfig.value = [];
       // 获取接口中的数据
-      const taskResponse = await getTaskDetailRequest(data.id);
-      if (taskResponse.code === 200) {
-        // 重新设置接口数据
-        let task_node = taskResponse.data;
-        // 设置任务配置
-        const _task_config = {
-          task_name: task_node.task_name,
-          desc: task_node.desc,
-          version: task_node.module_version,
-          task_id: task_node.task_id,
-          method_name: task_node.method_name,
-          task_type: task_node.task_type,
-          id: task_node.id
-        };
-        nodeConfig.value = _task_config;
-      } else {
-        ElMessage.error("获取任务信息失败");
-      }
+      await this.getTaskDetail(data);
       // 获取流程控制节点的后续节点
       if (data.type === "process-control-node") {
-        let pcResponse = await getProcessControlRequest(data.id, process_id.value);
-        if (pcResponse.code === 200) {
-          processControlOptions.value = pcResponse.data;
-        } else {
-          ElMessage.error("流程控制节点没有前置节点");
-        }
-        // 获取流程图的返回
-        const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
-        nodeParam.value = taskFlowResponse.data.nodeParam;
+        await this.handleProcessControl(data);
       } else if (data.type === "group-node") {
-        let _taskGroup = [];
-        const children = data.children;
-        children.forEach(task_id => {
-          const task_name = this.lf.getNodeModelById(task_id).text.value;
-          _taskGroup.push({
-            task_name: task_name,
-            task_id: task_id
-          });
-        });
-        taskGroup.value = _taskGroup;
+        await this.handleTaskGroup(data);
+      } else if (data.type === "parallel-node") {
+        await this.handleParallel(data);
       } else {
         // 获取节点的展示数据
         await getFlowTaskData(process_id.value, data.id);
@@ -204,6 +162,70 @@ export default {
     });
   },
   methods: {
+    // 获取任务节点详情
+    async getTaskDetail(data) {
+      const taskResponse = await getTaskDetailRequest(data.id);
+      if (taskResponse.code === 200) {
+        // 重新设置接口数据
+        let task_node = taskResponse.data;
+        // 设置任务配置
+        const _task_config = {
+          task_name: task_node.task_name,
+          desc: task_node.desc,
+          version: task_node.module_version,
+          task_id: task_node.task_id,
+          method_name: task_node.method_name,
+          task_type: task_node.task_type,
+          id: task_node.id
+        };
+        nodeConfig.value = _task_config;
+      } else {
+        ElMessage.error("获取任务信息失败");
+      }
+    },
+    // 处理流程控制节点
+    async handleProcessControl(data) {
+      let pcResponse = await getProcessControlRequest(data.id, process_id.value);
+      if (pcResponse.code === 200) {
+        processControlOptions.value = pcResponse.data;
+      } else {
+        ElMessage.error("流程控制节点没有前置节点");
+      }
+      // 获取流程图的返回
+      const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
+      nodeParam.value = taskFlowResponse.data.nodeParam;
+    },
+    // 处理任务组节点
+    async handleTaskGroup(data) {
+      let _taskGroup = [];
+      const children = data.children;
+      children.forEach(task_id => {
+        const task_name = this.lf.getNodeModelById(task_id).text.value;
+        _taskGroup.push({
+          task_name: task_name,
+          task_id: task_id
+        });
+      });
+      taskGroup.value = _taskGroup;
+    },
+    // 处理并行节点
+    async handleParallel(data) {
+      console.log(data);
+    },
+    // 修改任务节点数据
+    async updateTask(data) {
+      if (data.type.search("node") !== -1) {
+        nodeConfig.value.task_name = data.text;
+        let taskNode = {
+          id: nodeConfig.value.id,
+          process_id: process_id.value,
+          task_name: nodeConfig.value.task_name,
+          desc: nodeConfig.value.desc
+        };
+        await updateTaskRequest(taskNode);
+      }
+    },
+    // 获取流程图数据
     async getGraphData() {
       if (process_id.value) {
         const result = await getFlowDataRequest({ process_id: process_id.value });

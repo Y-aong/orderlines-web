@@ -21,6 +21,7 @@ export namespace Task {
     update_time?: string;
     updater_name?: string;
     updater_id?: number;
+    version?: string;
   }
   export interface TaskFilter extends ReqPage {
     id?: number;
