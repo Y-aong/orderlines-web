@@ -23,6 +23,10 @@ export namespace Task {
     updater_id?: number;
     version?: string;
   }
+  export interface TaskGroup {
+    task_id: string;
+    method_kwargs?: any;
+  }
   export interface TaskFilter extends ReqPage {
     id?: number;
     task_name?: string;

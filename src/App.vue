@@ -52,7 +52,6 @@ const buttonConfig = reactive({ autoInsertSpace: false });
 const scheduleRefresh = () => {
   timeoutId = setTimeout(async () => {
     const response = await checkTokenApi(token.value);
-    console.log(response);
 
     if (response.code == 200 || token.value !== response.data.token) {
       token.value = response.data.token;

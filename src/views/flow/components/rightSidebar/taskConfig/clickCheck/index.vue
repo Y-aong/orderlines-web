@@ -3,7 +3,7 @@
     <h3>任务运行日志</h3>
     <div class="task-progress">
       <el-progress
-        :percentage="taskProgress"
+        :percentage="taskProgress < 100 ? taskProgress : 100"
         :stroke-width="20"
         striped
         :text-inside="true"

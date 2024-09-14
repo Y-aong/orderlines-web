@@ -109,13 +109,7 @@
   </el-dialog>
 </template>
 
-<script lang="ts">
-export default {
-  name: "FlowTabbar"
-};
-</script>
-
-<script setup lang="ts">
+<script setup lang="ts" name="FlowTabbar">
 import LOGO from "./logo/index.vue";
 import { ref, reactive, onMounted } from "vue";
 import { storeToRefs } from "pinia";
@@ -144,6 +138,9 @@ import {
 } from "@/api/orderlines/orderlinesManager/process/index";
 import { getProcessVersionOptionRequest } from "@/api/option/index";
 import { getCurrentDate } from "@/utils/currentDateTime";
+import { UseSocketIo } from "@/utils/webSocketio";
+
+const { init, close, send } = UseSocketIo("running_logger");
 
 let { process_id, process_instance_id, process_name, process_version, isSave, isRunning, isRedirect } = storeToRefs(
   useFlowStore()
@@ -166,6 +163,7 @@ onMounted(async () => {
   await getProcessVersionOption();
   await getProcessVersionByName();
   await getProcessInfo();
+  init();
 });
 
 const getProcessInfo = async () => {
@@ -257,7 +255,7 @@ const startProcess = async () => {
     ElMessage.success(response.message);
     isRunning.value = true;
     setStorage(true, "IS_RUNNING");
-    // await getRunningTask();
+    send("start");
   } else {
     ElMessage.error("流程启动失败" + response.message);
   }
@@ -272,7 +270,7 @@ const stopProcess = async () => {
     ElMessage.error("流程停止失败" + response.message);
   }
 };
-
+// 暂停流程
 const pausedProcess = async () => {
   let response: any = await pausedProcessRequest(process_id.value);
   if (response.code === 200) {
@@ -281,7 +279,7 @@ const pausedProcess = async () => {
     ElMessage.error("流程暂停失败" + response.message);
   }
 };
-
+// 恢复流程
 const recoverProcess = async () => {
   let response: any = await recoverProcessRequest(process_id.value);
   if (response.code == 200) {
@@ -290,12 +288,13 @@ const recoverProcess = async () => {
     ElMessage.error("流程恢复失败" + response.message);
   }
 };
-
+// 保存流程
 const saveProcess = async () => {
   if (isSave.value) {
     ElMessage.success("流程开始编辑！");
     isSave.value = false;
     isRunning.value = false;
+    close();
   } else {
     const response: any = await saveFlowRequest({ process_id: process_id.value });
     if (response.code === 200) {

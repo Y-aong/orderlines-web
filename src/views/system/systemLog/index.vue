@@ -5,10 +5,11 @@
 </template>
 
 <script setup lang="ts" name="systemLog">
-import { useWebSocket } from "@/utils/websocket";
+import { UseSocketIo } from "@/utils/webSocketio";
+
 import { onMounted, onUnmounted } from "vue";
 
-const { init, close, send } = useWebSocket("ws://127.0.0.1:18765", "running_logger");
+const { init, close, send } = UseSocketIo("running_logger");
 
 onMounted(() => {
   init();

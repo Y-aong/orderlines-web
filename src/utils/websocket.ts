@@ -6,7 +6,11 @@ let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore
 export function useWebSocket(
   url: string,
   topic: string
-): { init: () => void; send: (data: any) => void; close: () => void } {
+): {
+  init: () => void;
+  send: (data: any) => void;
+  close: () => void;
+} {
   // 尝试重新连接次数
   let reconnectAttempts = 0;
   // 重连间隔时间

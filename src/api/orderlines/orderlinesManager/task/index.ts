@@ -5,7 +5,8 @@ import { DeleteData, BaseData } from "@/api/interface";
 enum API {
   TASK_URL = "/orderlines/task",
   TASK_DETAIL_URL = "/orderlines/task/detail",
-  TASK_EXPORT_URL = "/orderlines//task/export"
+  TASK_EXPORT_URL = "/orderlines/task/export",
+  TASK_GROUP_URL = "/orderlines/task_group"
 }
 
 //导出任务配置信息
@@ -18,5 +19,7 @@ export const getTaskRequest = (data: Task.TaskFilter) => http.get<Task.TaskItem>
 export const createTaskRequest = (data: Task.TaskItem) => http.post<BaseData>(API.TASK_URL, data);
 // 修改任务配置
 export const updateTaskRequest = (data: Task.TaskItem) => http.put<BaseData>(API.TASK_URL, data);
+// 修改任务组参数
+export const updateGroupTaskRequest = (data: Task.TaskGroup) => http.put<BaseData>(API.TASK_GROUP_URL, data);
 // 删除任务配置
 export const deleteTaskRequest = (task_id: string) => http.delete<DeleteData>(`${API.TASK_URL}?task_id=${task_id}`);

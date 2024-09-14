@@ -19,7 +19,8 @@ import { getProcessControlRequest } from "@/api/flow/processControl/index.ts";
 import {
   getTaskDetailRequest,
   updateTaskRequest,
-  deleteTaskRequest
+  deleteTaskRequest,
+  updateGroupTaskRequest
 } from "@/api/orderlines/orderlinesManager/task/index";
 import { getFlowDataRequest, getFlowTaskDataRequest, createFlowDataRequest } from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
@@ -197,6 +198,8 @@ export default {
     },
     // 处理任务组节点
     async handleTaskGroup(data) {
+      console.log("处理任务组节点", data);
+
       let _taskGroup = [];
       const children = data.children;
       children.forEach(task_id => {
@@ -207,6 +210,7 @@ export default {
         });
       });
       taskGroup.value = _taskGroup;
+      await updateGroupTaskRequest({ task_id: data.id, method_kwargs: { group_ids: children } });
     },
     // 处理并行节点
     async handleParallel(data) {

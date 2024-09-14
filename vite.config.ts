@@ -51,7 +51,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           rewrite: path => path.replace(/^\/api/, "")
         },
         "/socket.io": {
-          target: "ws://127.0.0.1:18765",
+          target: "ws://127.0.0.1:15900",
           ws: true
         }
       }
