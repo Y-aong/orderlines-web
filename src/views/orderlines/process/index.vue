@@ -47,7 +47,9 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
+let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+let { isRunning } = storeToRefs(useFlowStatueStore());
 import { setStorage } from "@/utils/storage";
 
 const isCard = ref<boolean>(true);

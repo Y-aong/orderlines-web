@@ -70,7 +70,40 @@ export default {
     });
     this.lf.on("node:click", async ({ data }) => {
       let res = await getTaskInstanceItem(process_instance_id.value, data.id);
-      clickCheckTask.value = res.data;
+      if (res.code == 200) clickCheckTask.value = res.data;
+    });
+    // 增加菜单选项
+    this.lf.addMenuConfig({
+      nodeMenu: [
+        {
+          text: "添加断点",
+          callback: async node => {
+            const properties = this.lf.getProperties(node.id);
+            if (properties.breakpoint) {
+              ElMessage.warning("该节点已设置断点！");
+              return;
+            }
+            const result = await taskBreakpointRequest(node.id, 1);
+            if (result.code == 200) ElMessage.success("设置断点成功！");
+            // 增加节点断点状态
+            this.lf.setProperties(node.id, { breakpoint: true });
+          }
+        },
+        {
+          text: "删除断点",
+          callback: async node => {
+            const properties = this.lf.getProperties(node.id);
+            if (!properties.breakpoint) {
+              ElMessage.warning("该节点已取消断点！");
+              return;
+            }
+            const result = await taskBreakpointRequest(node.id, 0);
+            if (result.code == 200) ElMessage.success("取消断点成功！");
+            // 删除断点
+            this.lf.setProperties(node.id, { breakpoint: false });
+          }
+        }
+      ]
     });
     // 获取流程图数据
     await this.getGraphData();
@@ -105,13 +138,13 @@ export default {
 .container {
   position: fixed;
   top: 60px;
-  width: 77%;
-  height: 100%;
+  width: 75%;
+  height: 75%;
 }
 .flow-chart {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 75%;
 }
 .flow-chart /deep/ .lf-red-node,
 .flow-chart /deep/ .lf-element-text {

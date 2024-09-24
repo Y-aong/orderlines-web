@@ -1,49 +1,72 @@
 import { io, Socket } from "socket.io-client";
 import useRunningTaskStore from "@/stores/modules/runningTask";
+import useFlowStore from "@/stores/modules/flow";
+import useDebugStore from "@/stores/modules/debug";
 import { storeToRefs } from "pinia";
 
+let { process_id } = storeToRefs(useFlowStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
+let { debugMessage } = storeToRefs(useDebugStore());
 
-export function UseSocketIo(namespace: string) {
+export function UseSocketIo() {
   let socketIo: Socket;
-  const init = () => {
+  const init = (namespace: string) => {
     socketIo = io(`http://127.0.0.1:15900/${namespace}`, { path: "/socket.io" });
 
     // 监听连接事件
     socketIo.on("connect", () => {
-      console.log(`connected to ${namespace} namespace`);
+      console.log(`websocket:: connected to ${namespace} namespace`);
     });
 
     // 监听关闭事件
     socketIo.on("disconnect", () => {
-      console.log(`disconnected to namespace ${namespace} `);
+      console.log(`websocket:: disconnected to namespace ${namespace} `);
     });
 
     // 监听接受信息
-    socketIo.on(namespace, message => {
+    socketIo.on(namespace, data => {
       try {
-        if (namespace === "running_logger") {
+        const topic = data.topic;
+        const message = data.message;
+        const receive_process_id = data.process_id;
+
+        if (topic === "running_logger" && receive_process_id === process_id.value) {
           running_edge.value = message.running_edge;
           taskProgress.value = message.task_progress;
           graph_data.value = message.graph_data.graphData;
+        } else if (topic === "debug_message" && message && receive_process_id === process_id.value) {
+          if (!debugMessage.value.find(item => deepEqual(item, message))) {
+            debugMessage.value.push(message);
+          }
         }
       } catch (error) {
-        console.error("异常信息", message);
-        console.error("处理消息时出错:", error);
+        console.error("websocket:: 异常信息", data);
+        console.error("websocket:: 处理消息时出错:", error);
       }
     });
   };
-
+  const deepEqual = (a: any, b: any) => {
+    if (a === b) return true;
+    if (a == null || typeof a != "object" || b == null || typeof b != "object") return false;
+    let keysA = Object.keys(a),
+      keysB = Object.keys(b);
+    if (keysA.length != keysB.length) return false;
+    for (let key of keysA) {
+      if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;
+    }
+    return true;
+  };
   // 发送消息
-  const send = (data: any) => {
+  const send = (namespace: string, data: any) => {
     socketIo.emit(namespace, data);
-    console.log(`namespace ${namespace}发送消息, ${data}`);
+    console.log(`websocket:: namespace ${namespace}发送消息:`, data);
   };
 
   // socket io关闭
-  const close = () => {
+  const close = (namespace: string) => {
     if (socketIo) {
       socketIo.close();
+      console.log(`websocket:: 关闭namespace ${namespace} `);
     }
   };
 

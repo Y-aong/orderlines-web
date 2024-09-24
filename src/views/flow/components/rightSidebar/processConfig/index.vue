@@ -38,7 +38,9 @@ import useFlowStore from "@/stores/modules/flow";
 import { updateProcessParamRequest } from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
 import { BaseUpdateResponse } from "@/api/interface/index";
-let { isRunning, process_id } = storeToRefs(useFlowStore());
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+const { isRunning } = storeToRefs(useFlowStatueStore());
+const { process_id } = storeToRefs(useFlowStore());
 
 const options = [
   {

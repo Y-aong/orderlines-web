@@ -1,6 +1,7 @@
 <template>
-  <div class="flow-chart">
-    <div ref="container" class="container"></div>
+  {{ isDebug }}
+  <div :class="{ debug_flow_chart: isDebug, edit_flow_chart: !isDebug }">
+    <div ref="container" :class="{ debug_container: isDebug, edit_container: !isDebug }"></div>
   </div>
 </template>
 
@@ -13,7 +14,9 @@ import { Control, Group, MiniMap, SelectionSelect, InsertNodeInPolyline, Menu } 
 import "@logicflow/extension/lib/style/index.css";
 import "@/components/Flow/style.css";
 import useFlowStore from "@/stores/modules/flow";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
 import useTaskGroupStore from "@/stores/modules/taskGroup";
+import useProcessControlStore from "@/stores/modules/processControl";
 import { storeToRefs } from "pinia";
 import { getProcessControlRequest } from "@/api/flow/processControl/index.ts";
 import {
@@ -22,12 +25,23 @@ import {
   deleteTaskRequest,
   updateGroupTaskRequest
 } from "@/api/orderlines/orderlinesManager/task/index";
-import { getFlowDataRequest, getFlowTaskDataRequest, createFlowDataRequest } from "@/api/flow/taskNode/index";
+import {
+  getFlowDataRequest,
+  getFlowTaskDataRequest,
+  createFlowDataRequest,
+  taskBreakpointRequest
+} from "@/api/flow/taskNode/index";
 import { ElMessage } from "element-plus";
+import { stepDebugRequest } from "@/api/orderlines/orderlinesOperate";
+import { UseSocketIo } from "@/utils/webSocketio";
+
+const { init, send } = UseSocketIo();
+
 const { getFlowTaskData } = useFlowStore();
-let { isRunning, process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig, processControlOptions } =
-  storeToRefs(useFlowStore());
+let { process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(useFlowStore());
+let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
+let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());
 
 export default {
   name: "FLOW",
@@ -38,11 +52,13 @@ export default {
     return {
       count,
       currentNode,
-      graphData
+      graphData,
+      isDebug
     };
   },
 
   async mounted() {
+    init("running_logger");
     this.lf = new LogicFlow({
       container: this.$refs.container,
       grid: {
@@ -96,6 +112,71 @@ export default {
         ]
       },
       plugins: [OrderlinesNodeExtension, Control, Group, MiniMap, SelectionSelect, InsertNodeInPolyline, Menu]
+    });
+    // 增加菜单选项
+    this.lf.setMenuConfig({
+      nodeMenu: [
+        {
+          text: "删除节点",
+          callback: node => {
+            this.lf.deleteNode(node.id);
+            ElMessage.success("删除节点成功！");
+          }
+        },
+        {
+          text: "添加断点",
+          callback: async node => {
+            const properties = this.lf.getProperties(node.id);
+            if (properties.breakpoint) {
+              ElMessage.warning("该节点已设置断点！");
+              return;
+            }
+            const result = await taskBreakpointRequest(node.id, 1);
+            if (result.code == 200) ElMessage.success("设置断点成功！");
+            // 增加节点断点状态
+            this.lf.setProperties(node.id, { breakpoint: true });
+          }
+        },
+        {
+          text: "删除断点",
+          callback: async node => {
+            const properties = this.lf.getProperties(node.id);
+            if (!properties.breakpoint) {
+              ElMessage.warning("该节点已取消断点！");
+              return;
+            }
+            const result = await taskBreakpointRequest(node.id, 0);
+            if (result.code == 200) ElMessage.success("取消断点成功！");
+            // 删除断点
+            this.lf.setProperties(node.id, { breakpoint: false });
+          }
+        },
+        {
+          text: "逐步运行",
+          callback: async node => {
+            if (!isDebug.value) {
+              ElMessage.warning("请先开启调试模式！");
+              return;
+            }
+            if (node.type !== "function-node") {
+              ElMessage.warning("该节点不是任务节点，无法逐步运行！");
+              return;
+            }
+            const message = {
+              topic: "running_logger",
+              msg: "step debug",
+              process_id: process_id.value
+            };
+            send("running_logger", message);
+            const response = await stepDebugRequest(process_id.value, node.id);
+            if (response.code !== 200) {
+              ElMessage.error("下一步运行失败！");
+            } else {
+              ElMessage.success("下一步运行成功！");
+            }
+          }
+        }
+      ]
     });
     // 开启框选
     this.lf.extension.selectionSelect.openSelectionSelect();
@@ -162,6 +243,7 @@ export default {
       await createFlowDataRequest(flow_data);
     });
   },
+
   methods: {
     // 获取任务节点详情
     async getTaskDetail(data) {
@@ -194,6 +276,12 @@ export default {
       }
       // 获取流程图的返回
       const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
+      console.log("获取流程图的返回::", taskFlowResponse);
+      if (taskFlowResponse.data.nodeParam.pc_type === "result") {
+        processControlResult.value = taskFlowResponse.data.nodeParam;
+      } else {
+        processControlStatus.value = taskFlowResponse.data.nodeParam;
+      }
       nodeParam.value = taskFlowResponse.data.nodeParam;
     },
     // 处理任务组节点
@@ -243,16 +331,27 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.edit_container {
   position: fixed;
   top: 60px;
   width: 77%;
   height: 100%;
 }
-.flow-chart {
+.edit_flow_chart {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.debug_container {
+  position: fixed;
+  top: 60px;
+  width: 77%;
+  height: 75%;
+}
+.debug_flow_chart {
+  position: relative;
+  width: 100%;
+  height: 75%;
 }
 .flow-chart /deep/ .lf-red-node,
 .flow-chart /deep/ .lf-element-text {

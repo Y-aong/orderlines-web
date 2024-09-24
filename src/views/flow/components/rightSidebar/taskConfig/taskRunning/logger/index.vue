@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts" name="clickCheck">
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import useRunningTaskStore from "@/stores/modules/runningTask";
@@ -81,6 +81,9 @@ import { Download } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
 import { processHtmlExport } from "@/api/orderlines/orderlinesManager/process/index";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+
+const { isComplete } = storeToRefs(useFlowStatueStore());
 
 const { process_instance_id, process_name } = storeToRefs(useFlowStore());
 const { clickCheckTask, taskProgress } = storeToRefs(useRunningTaskStore());
@@ -89,6 +92,13 @@ const dialogVisible = ref<boolean>(false);
 let title = ref<string>("查看任务结果");
 let taskResultError = reactive({});
 
+// 监听任务进度，处理流程状态
+watch(taskProgress, val => {
+  if (val >= 100) {
+    isComplete.value = true;
+  }
+});
+// 检查任务结果
 const check = (type: string, row: any) => {
   try {
     title.value = type;

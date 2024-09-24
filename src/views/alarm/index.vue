@@ -14,7 +14,15 @@
 
       <template #operation="scope">
         <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen" @click="updateAlarm(scope.row)">告警确认</el-button>
+        <el-button
+          type="primary"
+          link
+          :icon="EditPen"
+          @click="updateAlarm(scope.row)"
+          :disabled="scope.row.people_confirm"
+        >
+          告警确认
+        </el-button>
         <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除</el-button>
       </template>
     </ProTable>

@@ -46,11 +46,13 @@ import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
 
 let dialogTableVisible = ref<boolean>(false);
 let variableOption = ref<any>([]);
 
-const { nodeConfig, nodeResult, process_id, isRunning } = storeToRefs(useFlowStore());
+const { nodeConfig, nodeResult, process_id } = storeToRefs(useFlowStore());
+const { isRunning } = storeToRefs(useFlowStatueStore());
 const height = ref(isRunning ? "30vh" : "65vh");
 
 const getVariableOption = async () => {

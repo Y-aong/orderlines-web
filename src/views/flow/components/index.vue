@@ -10,6 +10,9 @@
     <template v-if="isRunning">
       <FlowRunning />
     </template>
+    <template v-if="isDebug || isRunning">
+      <FlowBottom />
+    </template>
   </div>
   <div :class="{ running_right: isRunning, config_right: !isRunning }">
     <FlowRightSidebar></FlowRightSidebar>
@@ -38,6 +41,7 @@
 import FLOW from "@/components/Flow/index.vue";
 import FlowRunning from "@/components/FlowRunning/index.vue";
 import FlowTabbar from "./tabbar/index.vue";
+import FlowBottom from "./bottom/index.vue";
 import FlowRightSidebar from "./rightSidebar/index.vue";
 import { onMounted, reactive, ref } from "vue";
 import { v4 as uuid } from "uuid";
@@ -45,11 +49,13 @@ import { v4 as uuid } from "uuid";
 import { createProcessRequest } from "@/api/orderlines/orderlinesManager/process/index";
 import { ElMessage } from "element-plus";
 import useFlowStore from "@/stores/modules/flow";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
 import { storeToRefs } from "pinia";
 import { setStorage } from "@/utils/storage";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 
-let { isRunning, process_name, process_id, process_version } = storeToRefs(useFlowStore());
+let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
+let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let dialogFormVisible = ref<boolean>(false);
 
 onMounted(async () => {

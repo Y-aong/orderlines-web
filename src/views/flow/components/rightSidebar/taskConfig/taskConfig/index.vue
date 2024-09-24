@@ -80,17 +80,18 @@
   </el-dialog>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="TaskRunning">
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { createFlowDataRequest } from "@/api/flow/taskNode/index";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
 
+const { isRunning } = storeToRefs(useFlowStatueStore());
 const flowStore = useFlowStore();
-
-const { nodeConfig, process_id, isRunning, defaultTaskConfig } = storeToRefs(flowStore);
+const { nodeConfig, process_id, defaultTaskConfig } = storeToRefs(flowStore);
 let dialogTableVisible = ref<boolean>(false);
 
 const getTaskConfig = async () => {

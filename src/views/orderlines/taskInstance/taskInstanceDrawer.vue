@@ -1,6 +1,5 @@
 <template>
   <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="450px" :title="`${drawerProps.title}任务实例`">
-    {{ drawerProps.row }}
     <el-form
       ref="ruleFormRef"
       label-width="100px"

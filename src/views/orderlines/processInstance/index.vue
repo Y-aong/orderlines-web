@@ -18,7 +18,15 @@
 
       <template #operation="scope">
         <el-button type="primary" link :icon="View" @click="toProcessRunning(scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="Download" @click="downloadExport(scope.row)">报告</el-button>
+        <el-button
+          type="primary"
+          link
+          :icon="Download"
+          @click="downloadExport(scope.row)"
+          :disabled="scope.row.process_status !== 'SUCCESS' && scope.row.process_status !== 'FAILURE'"
+        >
+          报告
+        </el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">归档</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
@@ -50,7 +58,9 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { PInstance } from "@/api/orderlines/orderlinesManager/processInstance/type";
 import { setStorage } from "@/utils/storage";
 import { useDownload } from "@/hooks/useDownload";
-let { process_id, process_instance_id, process_name, isSave, isRedirect, isRunning } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, process_name } = storeToRefs(useFlowStore());
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+let { isSave, isRedirect, isRunning } = storeToRefs(useFlowStatueStore());
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 

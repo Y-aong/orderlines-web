@@ -154,15 +154,11 @@ export interface FlowStoreType {
   process_id: string;
   process_version: string;
   process_instance_id: string;
-  isRunning: boolean;
-  isSave: boolean;
-  isRedirect: boolean;
   nodeMenu: NodeMenuType[];
   nodeConfig: nodeConfigType;
   nodeParam: nodeParamItem[];
   nodeResult: nodeResultType[];
   defaultTaskConfig: DefaultTaskConfigType[];
-  processControlOptions: any;
 }
 
 export interface TaskGroupItem {

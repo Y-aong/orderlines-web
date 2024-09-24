@@ -26,7 +26,7 @@
       </el-select>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="generateCron">生成Cron表达式</el-button>
+      <el-button type="primary" @click="generateCron">Cron表达式预览</el-button>
       <el-button @click="clearForm">清空</el-button>
     </el-form-item>
     <el-form-item>

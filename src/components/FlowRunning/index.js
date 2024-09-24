@@ -45,11 +45,13 @@ class OrderlinesNodeExtension {
     }
     const node = document.createElement("div");
     node.className = "task-node";
-    domOverlay.appendChild(node);
-    this.app.use(pinia);
-    this.app.use(ElementPlus);
-    this.app.use(JsonViewer);
-    this.app.mount(node);
+    if (domOverlay) {
+      domOverlay.appendChild(node);
+      this.app.use(pinia);
+      this.app.use(ElementPlus);
+      this.app.use(JsonViewer);
+      this.app.mount(node);
+    }
   }
 }
 

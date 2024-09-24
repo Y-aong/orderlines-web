@@ -19,6 +19,7 @@ export namespace Task {
     task_name?: string;
     task_type?: string;
     update_time?: string;
+    breakpoint?: number;
     updater_name?: string;
     updater_id?: number;
     version?: string;

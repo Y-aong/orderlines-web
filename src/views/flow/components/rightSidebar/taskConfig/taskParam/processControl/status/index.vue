@@ -1,8 +1,8 @@
 <template>
   <el-tab-pane label="任务状态" name="status">
-    <template v-if="nodeParam.pc_type === 'status'">
+    <template v-if="processControlStatus.pc_type === 'status'">
       <p>流程控制——任务状态</p>
-      <el-table :data="nodeParam.conditions" style="width: 100%" title>
+      <el-table :data="processControlStatus.conditions" style="width: 100%" title>
         <el-table-column label="任务条件" min-width="90">
           <template #default="scope">
             <el-select
@@ -56,6 +56,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
+import useProcessControlStore from "@/stores/modules/processControl";
 import { taskStatusOptions } from "@/utils/variable";
 import { ref } from "vue";
 import { createTaskFlowDataRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
@@ -66,8 +67,12 @@ import { setStorage } from "@/utils/storage";
 import { OptionItemType } from "@/api/interface/index";
 import "vue3-json-viewer/dist/index.css";
 import { BaseResponse } from "@/api/interface/index";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
 
-let { nodeParam, process_id, nodeConfig, processControlOptions, isRunning } = storeToRefs(useFlowStore());
+let { processControlOptions, processControlStatus } = storeToRefs(useProcessControlStore());
+
+let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
+let { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
 let taskIdOption = ref<OptionItemType[]>([{ label: "", value: "" }]);
 let visible = ref(false);
 let depth = ref(5);
@@ -110,10 +115,9 @@ const updateProcessControlParam = async () => {
   await updateTaskRequest(taskNode);
   await updateFlowData();
   await getProcessControlParam();
-  ElMessage({
-    type: "success",
-    message: "保存流程控制参数成功"
-  });
+  ElMessage.success("保存流程控制参数成功");
+  isEdit.value = true;
+  isSave.value = false;
 };
 </script>
 

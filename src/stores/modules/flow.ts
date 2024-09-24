@@ -17,13 +17,7 @@ const useFlowStore = defineStore("FlowStore", {
       process_version: getStorage("PROCESS_VERSION", "str") as string,
       // 流程实例id
       process_instance_id: "",
-      // 是否运行
-      isRunning: false,
-      // 是否为跳转的链接
-      isRedirect: false,
-      // 是否保存
-      isSave: false,
-      //节点菜单
+      // 节点菜单
       nodeMenu: [],
       // 节点配置
       nodeConfig: {
@@ -41,16 +35,10 @@ const useFlowStore = defineStore("FlowStore", {
       // 节点结果
       nodeResult: [],
       // 节点任务配置文件
-      defaultTaskConfig: [],
-      // 流程控制任务id options
-      processControlOptions: []
+      defaultTaskConfig: []
     };
   },
   actions: {
-    // change running
-    changeRunning() {
-      this.isRunning = true;
-    },
     // 获取插件节点信息
     async getNodeMenu() {
       const result: BaseResponse<NodeMenuType[]> = await getNodeMenuRequest();

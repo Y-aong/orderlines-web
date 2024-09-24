@@ -66,9 +66,10 @@ import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { Variable } from "@/api/orderlines/orderlinesManager/variable/type";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
 
-let { process_id, process_name, process_instance_id, isRunning } = storeToRefs(useFlowStore());
-
+const { isRunning } = storeToRefs(useFlowStatueStore());
+const { process_id, process_name, process_instance_id } = storeToRefs(useFlowStore());
 let dialogFormVisible = ref<boolean>(false);
 let detailVisible = ref<boolean>(false);
 let VariableItem = reactive<Variable.VariableItem>({

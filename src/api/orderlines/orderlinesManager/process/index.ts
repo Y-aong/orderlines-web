@@ -22,4 +22,4 @@ export const createProcessRequest = (data: Process.ProcessItem) => http.post<Bas
 // 修改流程
 export const updateProcessRequest = (data: Process.ProcessItem) => http.put<BaseData>(API.PROCESS_URL, data);
 // 删除流程
-export const deleteProcessRequest = (id: string) => http.delete<DeleteData>(`${API.PROCESS_URL}?id=${id}`);
+export const deleteProcessRequest = (id: number) => http.delete<DeleteData>(`${API.PROCESS_URL}?id=${id}`);

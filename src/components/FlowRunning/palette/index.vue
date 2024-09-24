@@ -13,7 +13,7 @@
             <!-- common -->
             <template v-if="!node.nodes[0].nodes">
               <div class="node-form draggable draggable-handle" v-for="(item, index) in node.nodes" :key="index">
-                <el-menu-item :index="item.text" @mousedown="startDrag(item)" v-if="!node.nodes[0].nodes">
+                <el-menu-item :index="item.text" v-if="!node.nodes[0].nodes">
                   <el-button class="title" plain>{{ item.text }}</el-button>
                 </el-menu-item>
               </div>
@@ -23,12 +23,7 @@
               <template v-for="item in node.nodes" :key="item.title">
                 <el-sub-menu :index="item.title">
                   <template #title>{{ item.title }}</template>
-                  <div
-                    class="node-form draggable draggable-handle"
-                    v-for="temp in item.nodes"
-                    :key="temp.text"
-                    @mousedown="startDrag(temp)"
-                  >
+                  <div class="node-form draggable draggable-handle" v-for="temp in item.nodes" :key="temp.text">
                     <el-menu-item :index="temp.text">
                       <el-button class="title" plain>{{ temp.text }}</el-button>
                     </el-menu-item>
@@ -44,123 +39,17 @@
 </template>
 
 <script lang="ts" setup>
-import LogicFlow from "@logicflow/core";
 import { onMounted } from "vue";
 import useFlowStore from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
-import { createTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
-import { v4 as uuid } from "uuid";
-import { processControlStatusItem } from "@/utils/variable";
-import { ElMessage } from "element-plus";
 
-let { getNodeMenu, getTaskNode } = useFlowStore();
-let { nodeConfig, nodeResult, nodeParam, process_id, defaultTaskConfig, nodeMenu } = storeToRefs(useFlowStore());
-
-const taskTypes: any = {
-  "function-node": "common",
-  "start-node": "start",
-  "end-node": "end",
-  "process-control-node": "process_control",
-  "parallel-node": "parallel",
-  "group-node": "group",
-  "sub-process-node": "sub-process"
-};
-
-const props = defineProps({
-  lf: {
-    type: LogicFlow,
-    required: true
-  }
-});
+let { getNodeMenu } = useFlowStore();
+let { nodeMenu } = storeToRefs(useFlowStore());
 
 onMounted(async () => {
   let nodeMenuData = await getNodeMenu();
   nodeMenu.value = nodeMenuData;
 });
-
-const startDrag = async (item: any) => {
-  const { lf } = props;
-  // 检查开始节点不可以存在多个
-  let graphData = lf.getGraphData();
-  let flag = await checkStartNode(item.type, graphData);
-  if (flag) {
-    const taskIDResponse: any = uuid();
-    const task_id = taskIDResponse.data.task_id;
-    lf.dnd.startDrag({
-      id: task_id,
-      type: item.type,
-      text: item.text,
-      properties: {
-        method_name: item.method_name,
-        class_name: item.class_name,
-        version: item.version
-      }
-    });
-    // 获取节点信息
-    const taskNode: any = {
-      method_name: item.method_name,
-      class_name: item.class_name,
-      version: item.version
-    };
-    await getTaskNode(taskNode);
-    // 创建节点
-    const taskType = taskTypes[item.type];
-    //创建节点
-    let task: any = {
-      task_id: task_id,
-      task_name: item.text,
-      desc: item.text,
-      process_id: process_id.value,
-      task_type: taskType,
-      method_name: item.method_name,
-      task_module: item.class_name
-    };
-    let flow_data: any = {
-      process_id: process_id.value,
-      task_id: task_id,
-      nodeResult: nodeResult.value,
-      defaultTaskConfig: defaultTaskConfig.value
-    };
-    if (item.type !== "process-control-node") {
-      flow_data["nodeParam"] = nodeParam.value;
-    } else {
-      flow_data["nodeParam"] = processControlStatusItem;
-      nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
-    }
-    const res: any = await createTaskFlowDataRequest(flow_data);
-    if (res.code !== 200) ElMessage.error("存放流程数据失败");
-    const node_config: any = {
-      task_name: item.text,
-      desc: item.text,
-      version: item.version,
-      task_module: item.class_name,
-      task_id: task_id,
-      method_name: item.method_name,
-      task_type: taskType
-    };
-    if (item.type !== "select-node") {
-      // 创建任务节点
-      const result: any = await createTaskRequest(task);
-      if (result.code == 200) {
-        node_config["id"] = result.data.table_id;
-      }
-      // 设置node config
-      nodeConfig.value = node_config;
-    }
-  }
-};
-
-const checkStartNode = (nodeType: string, graphData: any): boolean => {
-  const nodes = graphData.nodes;
-  nodes.forEach((val: any) => {
-    if (val.type === "start-node" && nodeType === "start-node") {
-      ElMessage.error("一个流程中只可以存在一个开始节点");
-      return false;
-    }
-  });
-  return true;
-};
 </script>
 
 <script lang="ts">

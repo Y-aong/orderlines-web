@@ -9,15 +9,15 @@ import { UseSocketIo } from "@/utils/webSocketio";
 
 import { onMounted, onUnmounted } from "vue";
 
-const { init, close, send } = UseSocketIo("running_logger");
+const { init, close, send } = UseSocketIo();
 
 onMounted(() => {
-  init();
+  init("running_logger");
 });
 
 onUnmounted(() => {
-  close();
+  close("running_logger");
   // 取消订阅主题
-  send(JSON.stringify({ action: "unsubscribe", topic: "running_logger", message: "ok" }));
+  send("running_logger", JSON.stringify({ action: "unsubscribe", topic: "running_logger", message: "ok" }));
 });
 </script>

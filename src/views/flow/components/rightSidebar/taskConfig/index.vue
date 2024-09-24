@@ -29,6 +29,8 @@
             />
           </el-form-item>
         </el-form>
+
+        <!-- 设置任务运行时 -->
         <el-collapse :model-value="isRunning ? ['runningImage', 'clickCheck'] : ['taskParams']" :accordion="!isRunning">
           <TaskParam v-if="!isRunning" />
           <TaskResultParam v-if="!isRunning" />
@@ -43,18 +45,18 @@
 <script setup lang="ts" name="TaskConfig">
 import TaskParam from "./taskParam/index.vue";
 import TaskResultParam from "./taskResult/index.vue";
-import TaskRunningConfig from "./taskRunning/index.vue";
-import clickCheckTask from "./clickCheck/index.vue";
+import TaskRunningConfig from "./taskConfig/index.vue";
+import clickCheckTask from "./taskRunning/logger/index.vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import type { FormProps } from "element-plus";
 import { ref } from "vue";
-
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+const { isRunning } = storeToRefs(useFlowStatueStore());
 const labelPosition = ref<FormProps["labelPosition"]>("right");
-
-let { nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
+const { nodeConfig, process_id } = storeToRefs(useFlowStore());
 
 // 修改任务
 const updateTask = async () => {

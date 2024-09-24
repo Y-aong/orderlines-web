@@ -1,9 +1,9 @@
 <template>
   <el-tab-pane label="任务返回" name="result">
-    <template v-if="nodeParam.pc_type === 'result'">
+    <template v-if="processControlResult.pc_type === 'result'">
       <p>流程控制——任务返回值</p>
 
-      <el-table :data="nodeParam.conditions" style="width: 100%" title>
+      <el-table :data="processControlResult.conditions" style="width: 100%" title>
         <el-table-column label="任务分支" min-width="90">
           <template #default="scope">
             <el-select v-model="scope.row.task_id" placeholder="请选择任务分支" disabled>
@@ -36,7 +36,7 @@
       </div>
     </template>
 
-    <el-table :data="nodeParam.conditions" border style="width: 100%" :default-expand-all="expand">
+    <el-table :data="processControlResult.conditions" border style="width: 100%" :default-expand-all="expand">
       <el-table-column type="expand">
         <template #default="props">
           <el-table :data="props.row.condition">
@@ -115,7 +115,7 @@
           <span v-html="scope.row.expression ? scope.row.expression : ''" />
         </template>
       </el-table-column>
-      <el-table-column label="分支操作" align="center" min-width="80" width="80" fixed="right">
+      <el-table-column label="分支操作" align="center" min-width="90" width="90" fixed="right">
         <template #default="props">
           <el-button type="danger" size="small" @click="deleteBranch(props.$index)">删除</el-button>
         </template>
@@ -140,6 +140,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
+import useProcessControlStore from "@/stores/modules/processControl";
 import { ref } from "vue";
 import { createTaskFlowDataRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
@@ -149,8 +150,11 @@ import { branchItem, conditionItem, processControlStatusItem, signs } from "@/ut
 import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import "vue3-json-viewer/dist/index.css";
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+const { isEdit, isSave } = storeToRefs(useFlowStatueStore());
 
-let { nodeParam, process_id, nodeConfig, processControlOptions } = storeToRefs(useFlowStore());
+let { processControlOptions, processControlResult } = storeToRefs(useProcessControlStore());
+let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
 let depth = ref(5);
 let prevResultOption = ref<any>([]);
 let visible = ref(false);
@@ -187,7 +191,7 @@ const updateFlowData = async () => {
 };
 
 interface TaskNodeType {
-  id: number;
+  id?: number;
   process_id: string;
   method_kwargs: any;
 }
@@ -204,54 +208,56 @@ const updateProcessControlParam = async () => {
   await getProcessControlParam();
   ElMessage.success("保存流程控制参数成功");
   updateResult.value = false;
+  isEdit.value = true;
+  isSave.value = false;
 };
 // 增加分支
 const addBranch = () => {
   let branch_item = JSON.parse(JSON.stringify(branchItem));
   console.log("branch_item", branch_item);
-  nodeParam.value.conditions.push(branch_item);
+  processControlResult.value.conditions.push(branch_item);
 };
 
 // 删除分支
 const deleteBranch = (branchIndex: number) => {
   let newBranch = [];
-  nodeParam.value.conditions.forEach((item: any, index: number) => {
+  processControlResult.value.conditions.forEach((item: any, index: number) => {
     if (index !== branchIndex && item) newBranch.push(item);
   });
   if (newBranch.length === 1) {
     newBranch.push(JSON.parse(JSON.stringify(branchItem)));
   }
-  nodeParam.value.conditions = newBranch;
+  processControlResult.value.conditions = newBranch;
 };
 
 // 增加条件
 const addCondition = (branchIndex: number) => {
   let condition = JSON.parse(JSON.stringify(conditionItem));
-  nodeParam.value.conditions[branchIndex].condition.push(condition);
+  processControlResult.value.conditions[branchIndex].condition.push(condition);
 };
 
 const deleteCondition = (branchIndex: number, conditionIndex: number) => {
   let newCondition = [];
-  nodeParam.value.conditions[branchIndex].condition.forEach((item: any, index: number) => {
+  processControlResult.value.conditions[branchIndex].condition.forEach((item: any, index: number) => {
     if (index !== conditionIndex) newCondition.push(item);
   });
   if (newCondition.length === 1) {
     newCondition.push(JSON.parse(JSON.stringify(conditionItem)));
   }
-  nodeParam.value.conditions[branchIndex].condition = newCondition;
+  processControlResult.value.conditions[branchIndex].condition = newCondition;
 };
 
 // 创建表达式
 const createExpression = (branchIndex: number) => {
-  nodeParam.value.conditions[branchIndex].expression = "";
+  processControlResult.value.conditions[branchIndex].expression = "";
   let conditionStr = "";
-  nodeParam.value.conditions[branchIndex].condition.forEach(
+  processControlResult.value.conditions[branchIndex].condition.forEach(
     (temp: { condition: string; sign: string; target: any }) => {
       let item = `${temp.condition}${temp.sign}${temp.target}`;
       conditionStr += item ? `${item}<br/>` : "";
     }
   );
-  nodeParam.value.conditions[branchIndex].expression = conditionStr;
+  processControlResult.value.conditions[branchIndex].expression = conditionStr;
 };
 </script>
 <script lang="ts">

@@ -62,6 +62,35 @@
             </el-upload>
           </template>
         </el-input>
+        <!-- 参数类型为select -->
+        <el-select
+          v-model="scope.row.value"
+          placeholder="Select"
+          style="width: 240px"
+          @change="updateTask(scope.row)"
+          v-if="scope.row.param_type === 'select'"
+        >
+          <el-option v-for="item in scope.row.default" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <!-- 参数为bool -->
+        <el-switch
+          v-model="scope.row.value"
+          v-if="scope.row.param_type === 'radio'"
+          @change="updateTask(scope.row)"
+          active-text="True"
+          inactive-text="False"
+        />
+
+        <!-- 参数为json -->
+
+        <!-- 参数为时间 -->
+        <el-date-picker
+          v-if="scope.row.param_type === 'datetime'"
+          v-model="scope.row.value"
+          type="datetime"
+          placeholder="请选择时间"
+          @change="updateTask(scope.row)"
+        />
       </template>
     </el-table-column>
   </el-table>
@@ -69,12 +98,17 @@
 
   <el-dialog v-model="dialogTableVisible" :title="`${nodeConfig.task_name}——参数说明`">
     <el-table :data="nodeParam" style="width: 100%" border>
-      <el-table-column prop="name" label="参数名称" min-width="150" />
-      <el-table-column prop="value" label="参数值" min-width="150" />
-      <el-table-column prop="default" label="默认值" min-width="120" />
-      <el-table-column prop="desc" label="描述信息" min-width="150" />
-      <el-table-column prop="required" label="是否必填" min-width="150" />
-      <el-table-column prop="type" label="参数类型" min-width="150" />
+      <el-table-column prop="name" label="参数名称" min-width="120" />
+      <el-table-column prop="value" label="参数值" min-width="100" />
+      <el-table-column prop="default" label="默认值" min-width="120">
+        <template #default="scope">
+          <pre v-if="typeof scope.row.default === 'object'">{{ scope.row.default }}</pre>
+          <span v-else>{{ scope.row.default }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="desc" label="描述信息" min-width="80" />
+      <el-table-column prop="required" label="是否必填" min-width="80" />
+      <el-table-column prop="type" label="参数类型" min-width="140" />
     </el-table>
   </el-dialog>
 
@@ -96,7 +130,9 @@ import { getProcessVariableOptionRequest } from "@/api/option/index";
 import { FlowVariable } from "@/api/flow/variable/type";
 import EDA from "@/components/EDA/index.vue";
 
-const { nodeParam, nodeConfig, process_id, isRunning } = storeToRefs(useFlowStore());
+import useFlowStatueStore from "@/stores/modules/flowStatue";
+const { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
+const { nodeParam, nodeConfig, process_id } = storeToRefs(useFlowStore());
 
 let dialogTableVisible = ref<boolean>(false);
 let clearFlag = ref<boolean>(false);
@@ -112,6 +148,7 @@ interface ParamItem {
   title: string;
   type: string;
   value?: string;
+  param_type?: string;
 }
 
 const cancel = () => {
@@ -155,22 +192,38 @@ const handleChange: UploadProps["onChange"] = uploadFile => {
 // 修改任务参数
 const updateTask = async (row: ParamItem) => {
   if (clearFlag.value) return;
-  if (row.value) {
+  if (row.value !== "") {
     let param_name = row.name;
-    let param_value = await checkParam(row);
-    if (param_value) {
-      let method_kwargs: any = {};
-      method_kwargs[param_name] = param_value;
-      let taskNode: Task.TaskItem = {
-        id: nodeConfig.value.id,
-        process_id: process_id.value,
-        method_kwargs: method_kwargs
-      };
-      let result: any = await updateTaskRequest(taskNode);
-      if (result.code !== 200) ElMessage.error("任务配置修改失败");
-      await updateFlowData();
-      showVariable.value = false;
+    let param_value: any;
+    if (row.param_type === "bool") {
+      param_value = row.value;
+    } else if (row.param_type === "datetime") {
+      param_value = row.value;
+    } else if (row.param_type === "code") {
+      param_value = row.value;
+    } else if (row.param_type === "upload") {
+      param_value = row.value;
+    } else if (row.param_type === "select") {
+      param_value = row.value;
+    } else if (row.param_type === "input") {
+      param_value = await checkParam(row);
+    } else {
+      ElMessage.error("不支持的参数类型");
     }
+
+    let method_kwargs: any = {};
+    method_kwargs[param_name] = param_value;
+    let taskNode: Task.TaskItem = {
+      id: nodeConfig.value.id,
+      process_id: process_id.value,
+      method_kwargs: method_kwargs
+    };
+    let result: any = await updateTaskRequest(taskNode);
+    if (result.code !== 200) ElMessage.error("任务配置修改失败");
+    await updateFlowData();
+    showVariable.value = false;
+    isEdit.value = true;
+    isSave.value = false;
   } else {
     ElMessage.error("修改任务参数失败参数值为空");
   }
@@ -188,8 +241,6 @@ const updateFlowData = async () => {
 
 // 生成表单校验规则
 const checkParam = (row: any) => {
-  console.log(row);
-
   let param_type: string = row.type;
   let param_value: string = row.value;
   // 使用变量
