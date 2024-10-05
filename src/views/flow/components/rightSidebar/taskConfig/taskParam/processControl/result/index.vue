@@ -142,16 +142,17 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import useProcessControlStore from "@/stores/modules/processControl";
 import { ref } from "vue";
-import { createTaskFlowDataRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest, getGraphNodeDataRequest } from "@/api/flow/flowData/index";
+import { FlowNode } from "@/api/flow/flowData/type";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { getPrevNodeResultRequest } from "@/api/flow/processControl/index";
+import { ProcessControl } from "@/api/flow/processControl/type";
 import { setStorage } from "@/utils/storage";
 import { branchItem, conditionItem, processControlStatusItem, signs } from "@/utils/variable";
 import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import "vue3-json-viewer/dist/index.css";
-import useFlowStatueStore from "@/stores/modules/flowStatue";
-const { isEdit, isSave } = storeToRefs(useFlowStatueStore());
+import { BaseResponse } from "@/api/interface";
 
 let { processControlOptions, processControlResult } = storeToRefs(useProcessControlStore());
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
@@ -166,28 +167,30 @@ const checkParam = () => {
 };
 
 const getTaskIdOption = async () => {
-  let preTaskConfigResponse: any = await getPrevNodeResultRequest(nodeConfig.value.task_id, process_id.value);
+  let preTaskConfigResponse: BaseResponse<ProcessControl.PrevNodeResult> = await getPrevNodeResultRequest(
+    nodeConfig.value.task_id,
+    process_id.value
+  );
   if (preTaskConfigResponse.code === 200) {
-    console.log("preTaskConfigResponse.data", preTaskConfigResponse.data);
     prevResultOption.value = preTaskConfigResponse.data.result_config_options;
   }
   updateResult.value = true;
 };
 
 const getProcessControlParam = async () => {
-  const result: any = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
+  const result: any = await getGraphNodeDataRequest(process_id.value, nodeConfig.value.task_id);
   nodeParam.value = result.data.nodeParam;
   setStorage(processControlStatusItem, "NODE_PARAM");
 };
 
-// 修改流程图数据
+// 修改流程图和节点数据
 const updateFlowData = async () => {
-  const update_task_param_flow = {
+  const graph_node_data: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: nodeConfig.value.task_id,
     nodeParam: nodeParam.value
   };
-  await createTaskFlowDataRequest(update_task_param_flow);
+  await createGraphNodeRequest(graph_node_data);
 };
 
 interface TaskNodeType {
@@ -198,6 +201,21 @@ interface TaskNodeType {
 
 // 修改流程控制参数
 const updateProcessControlParam = async () => {
+  console.log(nodeParam.value);
+  for (let i = 0; i < nodeParam.value.conditions.length; i++) {
+    let conditionTaskId = nodeParam.value.conditions[i].task_id;
+    let condition = nodeParam.value.conditions[i].condition;
+    if (conditionTaskId === "") {
+      ElMessage.error("流程控制分支未设置");
+      return;
+    }
+    condition.forEach((conditionItem: any) => {
+      if (conditionItem.condition == "" || conditionItem.sign == "" || conditionItem.target == "") {
+        ElMessage.error("流程任务分支未设置");
+        return;
+      }
+    });
+  }
   let taskNode: TaskNodeType = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
@@ -208,13 +226,10 @@ const updateProcessControlParam = async () => {
   await getProcessControlParam();
   ElMessage.success("保存流程控制参数成功");
   updateResult.value = false;
-  isEdit.value = true;
-  isSave.value = false;
 };
 // 增加分支
 const addBranch = () => {
   let branch_item = JSON.parse(JSON.stringify(branchItem));
-  console.log("branch_item", branch_item);
   processControlResult.value.conditions.push(branch_item);
 };
 
@@ -252,7 +267,7 @@ const createExpression = (branchIndex: number) => {
   processControlResult.value.conditions[branchIndex].expression = "";
   let conditionStr = "";
   processControlResult.value.conditions[branchIndex].condition.forEach(
-    (temp: { condition: string; sign: string; target: any }) => {
+    (temp: { condition: string; sign: string; target: string }) => {
       let item = `${temp.condition}${temp.sign}${temp.target}`;
       conditionStr += item ? `${item}<br/>` : "";
     }

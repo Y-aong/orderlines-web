@@ -1,5 +1,4 @@
 <template>
-  {{ isDebug }}
   <div :class="{ debug_flow_chart: isDebug, edit_flow_chart: !isDebug }">
     <div ref="container" :class="{ debug_container: isDebug, edit_container: !isDebug }"></div>
   </div>
@@ -18,39 +17,41 @@ import useFlowStatueStore from "@/stores/modules/flowStatue";
 import useTaskGroupStore from "@/stores/modules/taskGroup";
 import useProcessControlStore from "@/stores/modules/processControl";
 import { storeToRefs } from "pinia";
-import { getProcessControlRequest } from "@/api/flow/processControl/index.ts";
+import { getPCNextNodeRequest } from "@/api/flow/processControl/index";
 import {
   getTaskDetailRequest,
   updateTaskRequest,
   deleteTaskRequest,
   updateGroupTaskRequest
 } from "@/api/orderlines/orderlinesManager/task/index";
-import {
-  getFlowDataRequest,
-  getFlowTaskDataRequest,
-  createFlowDataRequest,
-  taskBreakpointRequest
-} from "@/api/flow/taskNode/index";
+import { getGraphDataRequest, getGraphNodeDataRequest, createGraphDataRequest } from "@/api/flow/flowData/index";
+import { taskBreakpointRequest } from "@/api/flow/flowOperator/index";
 import { ElMessage } from "element-plus";
 import { stepDebugRequest } from "@/api/orderlines/orderlinesOperate";
 import { UseSocketIo } from "@/utils/webSocketio";
 
 const { init, send } = UseSocketIo();
 
-const { getFlowTaskData } = useFlowStore();
+const { getGraphNodeData } = useFlowStore();
 let { process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(useFlowStore());
 let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
 let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());
+const editGrid = {
+  visible: true,
+  type: "mesh",
+  size: 10,
+  config: {
+    color: "#eeeeee"
+  }
+};
 
 export default {
   name: "FLOW",
   setup() {
-    const count = ref(0);
     const currentNode = ref(null);
     const graphData = ref(null);
     return {
-      count,
       currentNode,
       graphData,
       isDebug
@@ -58,17 +59,13 @@ export default {
   },
 
   async mounted() {
+    // 获取流程图数据
+    await this.getGraphData();
+    console.log(this.graphData);
     init("running_logger");
     this.lf = new LogicFlow({
       container: this.$refs.container,
-      grid: {
-        visible: true,
-        type: "mesh",
-        size: 10,
-        config: {
-          color: "#eeeeee"
-        }
-      },
+      grid: editGrid,
       adjustEdge: true,
       hoverOutline: false,
       edgeSelectedOutline: false,
@@ -80,9 +77,9 @@ export default {
             callback: () => {
               const elements = this.lf.getSelectElements(true);
               let r = null;
-              if ((elements.edges.length !== 0) & (elements.nodes.length == 0)) {
+              if (elements.edges.length !== 0 && elements.nodes.length == 0) {
                 r = window.confirm("确定要删除连线吗？");
-              } else if ((elements.nodes !== 0) & (elements.edges.length == 0)) {
+              } else if (elements.nodes !== 0 && elements.edges.length == 0) {
                 let nodes = [];
                 elements.nodes.forEach(node => {
                   nodes.push(node.text.value);
@@ -98,7 +95,6 @@ export default {
                 elements.nodes.forEach(async node => {
                   // 数据库删除节点
                   if (node.type !== "select-node") {
-                    console.log(node, node.id);
                     let result = await deleteTaskRequest(node.id);
                     if (result.code !== 200) {
                       ElMessage.error("删除节点失败！");
@@ -194,8 +190,7 @@ export default {
         lf.extension.miniMap.show(position.domOverlayPosition.x - 120, position.domOverlayPosition.y + 35);
       }
     });
-    // 获取流程图数据
-    await this.getGraphData();
+
     this.lf.render(this.graphData);
     // 文本更新监听
     this.lf.on("text:update", async data => {
@@ -211,6 +206,7 @@ export default {
     });
     // 节点更新监听
     this.lf.on("node:click", async ({ data }) => {
+      console.log("点击节点", data);
       this.currentNode = data;
       // 将仓库中的数据值设置为空
       nodeConfig.value = [];
@@ -228,7 +224,7 @@ export default {
         await this.handleParallel(data);
       } else {
         // 获取节点的展示数据
-        await getFlowTaskData(process_id.value, data.id);
+        await getGraphNodeData(process_id.value, data.id);
       }
     });
     // 画布上的元素发生变化
@@ -236,11 +232,11 @@ export default {
       let graphData = this.lf.getGraphData();
       console.log("画布上的元素发生变化", graphData);
       isRunning.value = false;
-      const flow_data = {
+      const graph_data = {
         process_id: process_id.value,
         graphData: graphData
       };
-      await createFlowDataRequest(flow_data);
+      await createGraphDataRequest(graph_data);
     });
   },
 
@@ -249,6 +245,9 @@ export default {
     async getTaskDetail(data) {
       const taskResponse = await getTaskDetailRequest(data.id);
       if (taskResponse.code === 200) {
+        if (!taskResponse.data) {
+          ElMessage.warning("当前没有任务信息");
+        }
         // 重新设置接口数据
         let task_node = taskResponse.data;
         // 设置任务配置
@@ -266,28 +265,29 @@ export default {
         ElMessage.error("获取任务信息失败");
       }
     },
-    // 处理流程控制节点
+
+    // 获取流程控制的后置节点
     async handleProcessControl(data) {
-      let pcResponse = await getProcessControlRequest(data.id, process_id.value);
-      if (pcResponse.code === 200) {
-        processControlOptions.value = pcResponse.data;
+      const response = await getPCNextNodeRequest(data.id, process_id.value);
+      if (response.code === 200 && response.data.length !== 0) {
+        processControlOptions.value = response.data;
       } else {
-        ElMessage.error("流程控制节点没有前置节点");
+        ElMessage.error("流程控制节点没有后置节点");
+        return;
       }
-      // 获取流程图的返回
-      const taskFlowResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
-      console.log("获取流程图的返回::", taskFlowResponse);
-      if (taskFlowResponse.data.nodeParam.pc_type === "result") {
-        processControlResult.value = taskFlowResponse.data.nodeParam;
-      } else {
-        processControlStatus.value = taskFlowResponse.data.nodeParam;
+
+      // 处理流程图节点
+      const flowNodeResponse = await getGraphNodeDataRequest(process_id.value, nodeConfig.value.task_id);
+      if (flowNodeResponse.data.nodeParam.pc_type === "result") {
+        processControlResult.value = flowNodeResponse.data.nodeParam;
+      } else if (flowNodeResponse.data.nodeParam.pc_type === "status") {
+        processControlStatus.value = flowNodeResponse.data.nodeParam;
       }
-      nodeParam.value = taskFlowResponse.data.nodeParam;
+      nodeParam.value = flowNodeResponse.data.nodeParam;
     },
+
     // 处理任务组节点
     async handleTaskGroup(data) {
-      console.log("处理任务组节点", data);
-
       let _taskGroup = [];
       const children = data.children;
       children.forEach(task_id => {
@@ -300,10 +300,12 @@ export default {
       taskGroup.value = _taskGroup;
       await updateGroupTaskRequest({ task_id: data.id, method_kwargs: { group_ids: children } });
     },
+
     // 处理并行节点
     async handleParallel(data) {
       console.log(data);
     },
+
     // 修改任务节点数据
     async updateTask(data) {
       if (data.type.search("node") !== -1) {
@@ -317,14 +319,83 @@ export default {
         await updateTaskRequest(taskNode);
       }
     },
+
     // 获取流程图数据
     async getGraphData() {
       if (process_id.value) {
-        const result = await getFlowDataRequest({ process_id: process_id.value });
-        if (result && result.code === 200) {
-          this.graphData = result.data.graphData;
+        const response = await getGraphDataRequest({ process_id: process_id.value });
+        if (response && response.code === 200 && response.data.length !== 0) {
+          this.graphData = response.data.graphData;
+        } else {
+          ElMessage.warning("当前没有流程图数据");
         }
       }
+    },
+
+    // 处理节点菜单
+    async menuConfig() {
+      return [
+        {
+          text: "删除节点",
+          callback: node => {
+            this.lf.deleteNode(node.id);
+            ElMessage.success("删除节点成功！");
+          }
+        },
+        {
+          text: "添加断点",
+          callback: async node => {
+            const properties = this.lf.getProperties(node.id);
+            if (properties.breakpoint) {
+              ElMessage.warning("该节点已设置断点！");
+              return;
+            }
+            const result = await taskBreakpointRequest(node.id, 1);
+            if (result.code == 200) ElMessage.success("设置断点成功！");
+            // 增加节点断点状态
+            this.lf.setProperties(node.id, { breakpoint: true });
+          }
+        },
+        {
+          text: "删除断点",
+          callback: async node => {
+            const properties = this.lf.getProperties(node.id);
+            if (!properties.breakpoint) {
+              ElMessage.warning("该节点已取消断点！");
+              return;
+            }
+            const result = await taskBreakpointRequest(node.id, 0);
+            if (result.code == 200) ElMessage.success("取消断点成功！");
+            // 删除断点
+            this.lf.setProperties(node.id, { breakpoint: false });
+          }
+        },
+        {
+          text: "逐步运行",
+          callback: async node => {
+            if (!isDebug.value) {
+              ElMessage.warning("请先开启调试模式！");
+              return;
+            }
+            if (node.type !== "function-node") {
+              ElMessage.warning("该节点不是任务节点，无法逐步运行！");
+              return;
+            }
+            const message = {
+              topic: "running_logger",
+              msg: "step debug",
+              process_id: process_id.value
+            };
+            send("running_logger", message);
+            const response = await stepDebugRequest(process_id.value, node.id);
+            if (response.code !== 200) {
+              ElMessage.error("下一步运行失败！");
+            } else {
+              ElMessage.success("下一步运行成功！");
+            }
+          }
+        }
+      ];
     }
   }
 };

@@ -158,7 +158,7 @@ const processStatusTag: any = {
 
 const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
@@ -188,7 +188,7 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   {
     prop: "start_time",
     label: "开始时间",
-    width: 180,
+    width: 165,
     search: {
       el: "date-picker",
       span: 2,
@@ -198,7 +198,7 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   {
     prop: "end_time",
     label: "结束时间",
-    width: 180,
+    width: 165,
     search: {
       el: "date-picker",
       span: 2,

@@ -5,9 +5,8 @@ class ParallelNode extends BaseNode.view {}
 class ParallelNodeModel extends BaseNode.model {
   initNodeData(data) {
     super.initNodeData(data);
-    this.width = 30;
-    this.height = 120;
-    this.radius = 5;
+    this.width = 80;
+    this.height = 35;
     // const edgeOutRule = {
     //   message: "并行网关为起点的连线只能有一条",
     //   validate: sourceNode => {

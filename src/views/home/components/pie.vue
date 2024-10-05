@@ -54,10 +54,10 @@ watch(props, () => {
         for (let i = 0; i < props.pieData.length; i++) {
           if (props.pieData[i].name == name && props.pieData[i].value >= 10000) {
             dataCopy = (props.pieData[i].value / 10000).toFixed(2);
-            return name + "      " + dataCopy + "w";
+            return name + ":" + dataCopy + "w";
           } else if (props.pieData[i].name == name) {
             dataCopy = props.pieData[i].value + "";
-            return name + "      " + dataCopy;
+            return name + ":" + dataCopy;
           }
         }
         return "";

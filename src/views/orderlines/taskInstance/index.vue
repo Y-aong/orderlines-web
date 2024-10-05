@@ -95,7 +95,7 @@ const downloadFile = async () => {
 
 // 表格配置项
 const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70 },
   { prop: "task_name", label: "任务名称", width: 120 },
   { prop: "method_name", label: "插件方法", width: 140 },
@@ -107,8 +107,8 @@ const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
       return <el-tag type={taskStatusTag[scope.row.task_status]}>{taskStatusDesc[scope.row.task_status]}</el-tag>;
     }
   },
-  { prop: "start_time", label: "开始时间" },
-  { prop: "end_time", label: "结束时间" },
+  { prop: "start_time", label: "开始时间", width: 165 },
+  { prop: "end_time", label: "结束时间", width: 165 },
   {
     prop: "task_result",
     label: "任务结果",

@@ -27,9 +27,9 @@ class GroupNodeModel extends GroupNode.model {
     this.text.editable = true;
     this.isRestrict = true;
     this.resizable = true;
-    this.width = 320;
-    this.height = 200;
-    this.radius = 10;
+    this.width = 180;
+    this.height = 120;
+    this.radius = 5;
   }
   // 重写节点样式
   getNodeStyle() {

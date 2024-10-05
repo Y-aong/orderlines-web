@@ -99,21 +99,24 @@ const getTableList = (params: VariableInstance.VariableInstanceFilter) => {
 
 const columns = reactive<ColumnProps<VariableInstance.VariableInstanceItem>[]>([
   { type: "selection", fixed: "left", width: 70 },
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 65 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "variable_key", label: "变量名称", search: { el: "input" } },
   { prop: "variable_value", label: "变量值" },
-  { prop: "variable_desc", label: "变量描述" },
+  { prop: "variable_desc", label: "变量描述", width: 120 },
   {
     prop: "variable_type",
     label: "变量类型",
+    width: 90,
     render: (scope: any) => {
       return <el-tag>{scope.row.variable_type}</el-tag>;
     }
   },
   { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater_name", label: "修改者", width: 100 },
+  { prop: "create_time", label: "创建时间", width: 165 },
+  { prop: "update_time", label: "修改时间", width: 165 },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

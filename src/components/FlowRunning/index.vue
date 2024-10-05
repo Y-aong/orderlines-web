@@ -69,8 +69,8 @@ export default {
       }
     });
     this.lf.on("node:click", async ({ data }) => {
-      let res = await getTaskInstanceItem(process_instance_id.value, data.id);
-      if (res.code == 200) clickCheckTask.value = res.data;
+      const response = await getTaskInstanceItem(process_instance_id.value, data.id);
+      if (response.code == 200) clickCheckTask.value = response.data;
     });
     // 增加菜单选项
     this.lf.addMenuConfig({

@@ -22,8 +22,8 @@ export const useHandleData = (
       type: confirmType,
       draggable: true
     }).then(async () => {
-      const res = await api(params);
-      if (!res) return reject(false);
+      const response = await api(params);
+      if (!response) return reject(false);
       ElMessage({
         type: "success",
         message: `${message}成功!`

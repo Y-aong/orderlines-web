@@ -33,8 +33,10 @@ import { ref, reactive, onMounted } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { getGroupOwnerOptionRequest } from "@/api/option/index";
+import { Option } from "@/api/option/type";
+import { BaseResponse } from "@/api/interface/index";
 
-let groupOwner = reactive<any>([]);
+let groupOwner = reactive<Option.OptionItem[]>([]);
 const rules = reactive({
   group_name: [{ required: true, message: "请填写群组名称" }],
   desc: [{ required: false, message: "请填写群组描述" }],
@@ -42,8 +44,8 @@ const rules = reactive({
 });
 
 onMounted(async () => {
-  const data = await getGroupOwnerOptionRequest();
-  groupOwner = data.data;
+  const response: BaseResponse<Option.OptionResponse> = await getGroupOwnerOptionRequest();
+  groupOwner = Array.isArray(response.data) ? response.data : [];
 });
 
 interface DrawerProps {
@@ -66,9 +68,9 @@ const acceptParams = (params: DrawerProps) => {
   drawerProps.value = params;
   drawerVisible.value = true;
 };
-const getOwnerName = (owner_id: number) => {
+const getOwnerName = (owner_id: string) => {
   let owner_name = "";
-  groupOwner.forEach((item: { label: string; value: number }) => {
+  groupOwner.forEach((item: Option.OptionItem) => {
     if (item.value == owner_id) {
       owner_name = item.label;
     }

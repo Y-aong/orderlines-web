@@ -87,7 +87,7 @@ const getTableList = (params: Task.TaskFilter) => {
 };
 
 const columns = reactive<ColumnProps<Task.TaskItem>[]>([
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "task_name", label: "任务名称", search: { el: "input" } },
   { prop: "task_id", label: "任务id", search: { el: "input" } },
@@ -97,7 +97,7 @@ const columns = reactive<ColumnProps<Task.TaskItem>[]>([
   {
     prop: "insert_time",
     label: "插入时间",
-    width: 200,
+    width: 165,
     search: {
       el: "date-picker",
       span: 2,
@@ -108,7 +108,7 @@ const columns = reactive<ColumnProps<Task.TaskItem>[]>([
   {
     prop: "update_time",
     label: "修改时间",
-    width: 200,
+    width: 165,
     search: {
       el: "date-picker",
       span: 2,

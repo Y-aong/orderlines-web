@@ -24,8 +24,8 @@ export const useDownload = async (
     });
   }
   try {
-    const res = await api(params);
-    const blob = new Blob([res]);
+    const response = await api(params);
+    const blob = new Blob([response]);
     // 兼容 edge 不支持 createObjectURL 方法
     if ("msSaveOrOpenBlob" in navigator) return window.navigator.msSaveOrOpenBlob(blob, tempName + fileType);
     const blobUrl = window.URL.createObjectURL(blob);

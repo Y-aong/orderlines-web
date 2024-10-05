@@ -114,6 +114,8 @@
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import CronTab from "./CronTab.vue";
+import { Option } from "@/api/option/type";
+import { BaseResponse } from "@/api/interface/index";
 
 const process_id = ref<string>("");
 
@@ -138,17 +140,13 @@ const intervalOption = ref([
   { label: "周", value: "weeks" }
 ]);
 
-interface optionType {
-  label: string;
-  value: string;
-}
 let dataSchedulePlan = ref({ run_date: "" });
 let intervalSchedulePlan = ref({ interval_type: "", interval_val: 0, start_date: "", end_date: "" });
 let trigger = ref<string>("");
-let processNameOption = ref<optionType[]>([]);
-let processVersionOption = ref<optionType[]>([]);
+let processNameOption = ref<Option.OptionItem[]>([]);
+let processVersionOption = ref<Option.OptionItem[]>([]);
 
-let triggerOption = ref<optionType[]>([
+let triggerOption = ref<Option.OptionItem[]>([
   { label: "定时执行", value: "date" },
   { label: "间隔执行", value: "interval" },
   { label: "周期执行", value: "crontab" }
@@ -159,13 +157,13 @@ onMounted(async () => {
 });
 
 const getProcessName = async () => {
-  const processNameRes: any = await getProcessNameOptionRequest();
-  processNameOption.value = processNameRes.data;
+  const response: BaseResponse<Option.OptionResponse> = await getProcessNameOptionRequest();
+  processNameOption.value = Array.isArray(response.data) ? response.data : [];
 };
 
 const getProcessVersion = async (process_name: string) => {
-  const processVersionRes: any = await getProcessVersionOptionRequest(process_name);
-  processVersionOption.value = processVersionRes.data;
+  const response: BaseResponse<Option.OptionResponse> = await getProcessVersionOptionRequest(process_name);
+  processVersionOption.value = Array.isArray(response.data) ? response.data : [];
 };
 
 interface DrawerProps {
@@ -185,7 +183,6 @@ const drawerProps = ref<DrawerProps>({
 
 // 接收父组件传过来的参数
 const acceptParams = (params: DrawerProps) => {
-  console.log("接收父组件传过来的参数", params);
   if (params.title === "查看" || params.title === "编辑") {
     trigger.value = params.row.trigger;
     if (params.row.trigger === "date") {
@@ -202,7 +199,7 @@ const acceptParams = (params: DrawerProps) => {
   drawerVisible.value = true;
 };
 const getProcessId = (version: string) => {
-  processVersionOption.value.forEach((item: optionType) => {
+  processVersionOption.value.forEach((item: Option.OptionItem) => {
     if (item.label === version) {
       process_id.value = item.value;
     }

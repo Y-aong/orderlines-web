@@ -23,6 +23,9 @@
       <el-form-item label="流程版本" prop="version">
         <el-input v-model="drawerProps.row!.version" placeholder="请填写流程版本" clearable></el-input>
       </el-form-item>
+      <el-form-item label="命名空间" prop="version">
+        <el-input v-model="drawerProps.row!.namespace" placeholder="请填写命名空间" clearable></el-input>
+      </el-form-item>
       <el-form-item label="流程描述" prop="desc" clearable>
         <el-input v-model="drawerProps.row!.desc" placeholder="请填写流程描述" clearable></el-input>
       </el-form-item>
@@ -42,7 +45,7 @@ import { storeToRefs } from "pinia";
 import { v4 as uuid } from "uuid";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import useFlowStore from "@/stores/modules/flow";
-let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
+let { process_name, process_id, process_version, namespace } = storeToRefs(useFlowStore());
 import useFlowStatueStore from "@/stores/modules/flowStatue";
 let { isRunning } = storeToRefs(useFlowStatueStore());
 import { setStorage } from "@/utils/storage";
@@ -53,10 +56,12 @@ const router = useRouter();
 const toProcessConfig = async (row: Process.ProcessItem) => {
   process_id.value = row.process_id;
   process_name.value = row.process_name;
-  process_version.value = row.process_id;
+  process_version.value = row.version;
+  namespace.value = row.namespace;
   setStorage(row.process_id, "PROCESS_ID");
   setStorage(row.process_name, "PROCESS_NAME");
-  setStorage(row.process_id, "PROCESS_VERSION");
+  setStorage(row.version, "PROCESS_VERSION");
+  setStorage(row.namespace, "PROCESS_NAMESPACE");
   isRunning.value = false;
   router.push(`/flow/general/index`);
 };
@@ -107,7 +112,6 @@ const handleSubmit = () => {
         process.process_params = { timeout: 7200, notice_type: "FAILURE", is_send: true };
         process.drawerProps.value.row = process;
       }
-      console.log(drawerProps.value.row);
 
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });

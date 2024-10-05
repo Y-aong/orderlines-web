@@ -20,6 +20,7 @@
               placeholder="使用变量"
               style="width: 100px"
               @click="getVariableOption"
+              @blur="updateTask(scope.row)"
               @change="showVariable = !showVariable"
             >
               <el-option v-for="(item, index) in variableOption" :key="index" :label="item.label" :value="item.value" />
@@ -124,13 +125,15 @@ import useFlowStore from "@/stores/modules/flow";
 import { Search, UploadFilled } from "@element-plus/icons-vue";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElNotification, ElMessage } from "element-plus";
-import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest } from "@/api/flow/flowData/index";
+import { FlowNode } from "@/api/flow/flowData/type";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 import { getProcessVariableOptionRequest } from "@/api/option/index";
 import { FlowVariable } from "@/api/flow/variable/type";
 import EDA from "@/components/EDA/index.vue";
-
+import { BaseData, BaseResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+
 const { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
 const { nodeParam, nodeConfig, process_id } = storeToRefs(useFlowStore());
 
@@ -157,9 +160,11 @@ const cancel = () => {
 
 // 运行python代码修改参数
 const updatePythonCodeParam = () => {
-  nodeParam.value.forEach((item: any) => {
-    if (item.param_type === "code") updateTask(item);
-  });
+  if (nodeParam.value) {
+    nodeParam.value.forEach((item: any) => {
+      if (item.param_type === "code") updateTask(item);
+    });
+  }
 };
 
 // 显示python代码编辑器
@@ -218,9 +223,9 @@ const updateTask = async (row: ParamItem) => {
       process_id: process_id.value,
       method_kwargs: method_kwargs
     };
-    let result: any = await updateTaskRequest(taskNode);
+    let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
     if (result.code !== 200) ElMessage.error("任务配置修改失败");
-    await updateFlowData();
+    await updateGraphNodeData();
     showVariable.value = false;
     isEdit.value = true;
     isSave.value = false;
@@ -229,20 +234,23 @@ const updateTask = async (row: ParamItem) => {
   }
 };
 
-// 修改流程图数据
-const updateFlowData = async () => {
-  const update_task_param_flow = {
+// 修改流程图节点数据
+const updateGraphNodeData = async () => {
+  const graph_node_data: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: nodeConfig.value.task_id,
     nodeParam: nodeParam.value
   };
-  await createTaskFlowDataRequest(update_task_param_flow);
+  await createGraphNodeRequest(graph_node_data);
 };
 
 // 生成表单校验规则
 const checkParam = (row: any) => {
   let param_type: string = row.type;
   let param_value: string = row.value;
+  console.log("param_value", param_value);
+
+  if (!param_value) return;
   // 使用变量
   if (param_value.startsWith("${") && param_value.endsWith("}")) return param_value;
   // 使用普通输入

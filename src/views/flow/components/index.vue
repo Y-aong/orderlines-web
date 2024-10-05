@@ -7,6 +7,7 @@
     <template v-if="!isRunning">
       <FLOW />
     </template>
+
     <template v-if="isRunning">
       <FlowRunning />
     </template>
@@ -53,6 +54,8 @@ import useFlowStatueStore from "@/stores/modules/flowStatue";
 import { storeToRefs } from "pinia";
 import { setStorage } from "@/utils/storage";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
+import { BaseResponse } from "@/api/interface";
+import { BaseData } from "@/api/interface";
 
 let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
 let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
@@ -75,21 +78,25 @@ let ProcessItem = reactive<Process.ProcessItem>({
   process_config: "",
   process_params: "",
   update_time: "",
-  updater: ""
+  updater: "",
+  namespace: ""
 });
 
+// 确定
 const confirm = async () => {
   const processUUID: any = uuid();
   let requestData: Process.ProcessItem = {
     process_id: processUUID,
     process_name: ProcessItem.process_name,
+    version: ProcessItem.version,
+    namespace: ProcessItem.namespace,
     desc: ProcessItem.desc,
     process_params: ProcessItem.process_params,
     process_config: ProcessItem.process_config
   };
   setStorage(processUUID, "PROCESS_ID");
   setStorage(ProcessItem.process_name, "PROCESS_NAME");
-  let res: any = await createProcessRequest(requestData);
+  let res: BaseResponse<BaseData> = await createProcessRequest(requestData);
   if (res.code == 200) {
     dialogFormVisible.value = false;
     ElMessage.success("添加流程配置成功");

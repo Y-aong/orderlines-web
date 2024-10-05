@@ -117,19 +117,20 @@ const getTableList = (params: Process.ProcessFilter) => {
   return getProcessRequest(newParams);
 };
 const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "version", label: "流程版本", search: { el: "input" } },
+  { prop: "namespace", label: "命名空间", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
-  { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },
-  { prop: "updater", label: "修改者", width: 100, search: { el: "input" } },
+  { prop: "creator", label: "创建者", width: 80, search: { el: "input" } },
+  { prop: "updater", label: "修改者", width: 80, search: { el: "input" } },
   { prop: "mode", label: "运行方式", width: 100, search: { el: "input" } },
   {
     prop: "insert_time",
     label: "插入时间",
-    width: 200,
+    width: 165,
     search: {
       el: "date-picker",
       span: 2,
@@ -139,7 +140,7 @@ const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   {
     prop: "update_time",
     label: "修改时间",
-    width: 200,
+    width: 165,
     search: {
       el: "date-picker",
       span: 2,

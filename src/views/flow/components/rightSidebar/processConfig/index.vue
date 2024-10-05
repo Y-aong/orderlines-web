@@ -35,7 +35,7 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { updateProcessParamRequest } from "@/api/flow/taskNode/index";
+import { updateProcessParamRequest } from "@/api/flow/flowOperator/index";
 import { ElMessage } from "element-plus";
 import { BaseUpdateResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";

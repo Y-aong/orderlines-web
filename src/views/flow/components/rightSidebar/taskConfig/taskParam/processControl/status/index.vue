@@ -59,8 +59,10 @@ import useFlowStore from "@/stores/modules/flow";
 import useProcessControlStore from "@/stores/modules/processControl";
 import { taskStatusOptions } from "@/utils/variable";
 import { ref } from "vue";
-import { createTaskFlowDataRequest, getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest, getGraphNodeDataRequest } from "@/api/flow/flowData/index";
+import { FlowNode } from "@/api/flow/flowData/type";
 import { getPrevNodeResultRequest } from "@/api/flow/processControl/index";
+import { ProcessControl } from "@/api/flow/processControl/type";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
@@ -72,41 +74,63 @@ import useFlowStatueStore from "@/stores/modules/flowStatue";
 let { processControlOptions, processControlStatus } = storeToRefs(useProcessControlStore());
 
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
-let { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
+let { isRunning } = storeToRefs(useFlowStatueStore());
 let taskIdOption = ref<OptionItemType[]>([{ label: "", value: "" }]);
 let visible = ref(false);
 let depth = ref(5);
 let theme = ref("vs-code");
 
+// 获取任务状态选项
 const getTaskIdOption = async () => {
-  let preTaskConfigResponse: any = await getPrevNodeResultRequest(nodeConfig.value.task_id, process_id.value);
-  if (preTaskConfigResponse.code === 200) {
-    taskIdOption.value = preTaskConfigResponse.data.pre_task_config;
+  let response: BaseResponse<ProcessControl.PrevNodeResult> = await getPrevNodeResultRequest(
+    nodeConfig.value.task_id,
+    process_id.value
+  );
+  if (response.code === 200 && response.data.pre_task_config.length !== 0) {
+    taskIdOption.value = response.data.pre_task_config;
+  } else {
+    ElMessage.error("流程控制节点没有前置任务");
   }
 };
 
+// 查看流程控制参数
 const checkParam = () => {
   visible.value = true;
 };
-
+// 获取流程控制参数
 const getProcessControlParam = async () => {
-  const result: BaseResponse = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
-  nodeParam.value = result.data.nodeParam;
-  setStorage(result.data.nodeParam, "NODE_PARAM");
+  const response: BaseResponse = await getGraphNodeDataRequest(process_id.value, nodeConfig.value.task_id);
+  nodeParam.value = response.data.nodeParam;
+  setStorage(response.data.nodeParam, "NODE_PARAM");
 };
 
-// 修改流程图数据
+// 修改流程图节点数据
 const updateFlowData = async () => {
-  const update_task_param_flow = {
+  const graph_data: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: nodeConfig.value.task_id,
     nodeParam: nodeParam.value
   };
-  await createTaskFlowDataRequest(update_task_param_flow);
+  await createGraphNodeRequest(graph_data);
 };
 
 // 修改流程控制参数
 const updateProcessControlParam = async () => {
+  for (let i = 0; i < nodeParam.value.conditions.length; i++) {
+    let conditionTaskId = nodeParam.value.conditions[i].task_id;
+    let condition = nodeParam.value.conditions[i].condition;
+    if (conditionTaskId === "") {
+      ElMessage.error("流程控制条件未设置");
+      return;
+    }
+    condition.forEach((conditionItem: any) => {
+      if (conditionItem.condition == "" || conditionItem.task_status == "") {
+        ElMessage.error("流程任务分支未设置");
+        return;
+      }
+    });
+  }
+
   let taskNode = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
@@ -116,14 +140,6 @@ const updateProcessControlParam = async () => {
   await updateFlowData();
   await getProcessControlParam();
   ElMessage.success("保存流程控制参数成功");
-  isEdit.value = true;
-  isSave.value = false;
-};
-</script>
-
-<script lang="ts">
-export default {
-  name: "STATUS"
 };
 </script>
 

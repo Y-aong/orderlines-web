@@ -5,8 +5,8 @@ class processControlModel extends DiamondNodeModel {
   //初始化
   initNodeData(data) {
     super.initNodeData(data);
-    this.rx = 70;
-    this.ry = 45;
+    this.rx = 50;
+    this.ry = 35;
     this.text.x = this.x;
 
     // 设置节点的校验规则

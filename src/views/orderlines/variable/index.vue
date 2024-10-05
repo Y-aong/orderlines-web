@@ -85,7 +85,7 @@ const getTableList = (params: Variable.VariableFilter) => {
 };
 
 const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 65 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "variable_key", label: "变量名称", search: { el: "input" } },
@@ -102,7 +102,9 @@ const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
   { prop: "is_cache", label: "是否缓存" },
   { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater_name", label: "修改者", width: 100 },
-  { prop: "operation", label: "操作", fixed: "right", width: 240 }
+  { prop: "operation", label: "操作", fixed: "right", width: 240 },
+  { prop: "create_time", label: "创建时间", width: 165 },
+  { prop: "update_time", label: "修改时间", width: 165 }
 ]);
 
 const initParam = reactive({ pageNum: 1, pageSize: 10 });

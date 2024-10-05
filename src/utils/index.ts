@@ -212,8 +212,8 @@ export function findMenuByPath(menuList: Menu.MenuOptions[], path: string): Menu
   for (const item of menuList) {
     if (item.path === path) return item;
     if (item.children) {
-      const res = findMenuByPath(item.children, path);
-      if (res) return res;
+      const response = findMenuByPath(item.children, path);
+      if (response) return response;
     }
   }
   return null;

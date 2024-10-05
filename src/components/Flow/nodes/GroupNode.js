@@ -10,9 +10,9 @@ class GroupNodeModel extends GroupNode.model {
     this.isRestrict = true;
     this.resizable = true;
     this.isFolded = true;
-    this.width = 320;
-    this.height = 200;
-    this.radius = 10;
+    this.width = 180;
+    this.height = 120;
+    this.radius = 5;
     this.foldedWidth = 100;
     this.foldedHeight = 0;
 

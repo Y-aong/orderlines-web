@@ -15,14 +15,14 @@ import { processControlResult, processControlStatusItem } from "@/utils/variable
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { setStorage } from "@/utils/storage";
-import { getFlowTaskDataRequest } from "@/api/flow/taskNode/index";
+import { getGraphNodeDataRequest } from "@/api/flow/flowData/index";
 
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
 
 const activeName = ref("status");
 
 const handleClick = async (tab: TabsPaneContext) => {
-  const result: any = await getFlowTaskDataRequest(process_id.value, nodeConfig.value.task_id);
+  const result: any = await getGraphNodeDataRequest(process_id.value, nodeConfig.value.task_id);
   let processControlParam = result.data.nodeParam;
   if (tab.props.name === "result" && processControlParam.pc_type === "result") {
     nodeParam.value = processControlParam;

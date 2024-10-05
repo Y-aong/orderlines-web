@@ -2,18 +2,19 @@ import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace Process {
   export interface ProcessItem {
     id?: number;
-    creator?: any;
-    creator_id?: any;
+    process_id: string;
+    process_name: string;
+    version: string;
+    namespace: string;
+    creator?: string;
+    creator_id?: number;
     desc?: string;
     insert_time?: string;
     process_config?: string;
-    process_id: string;
-    process_name: string;
     process_params?: string;
-    update_time?: any;
-    updater?: any;
-    updater_id?: any;
-    version?: any;
+    update_time?: string;
+    updater?: string;
+    updater_id?: number;
     mode?: string;
   }
   export interface ProcessFilter extends ReqPage {

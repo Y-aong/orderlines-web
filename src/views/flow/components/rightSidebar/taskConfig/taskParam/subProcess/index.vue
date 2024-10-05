@@ -61,22 +61,25 @@ import { ref, reactive, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { ElMessage } from "element-plus";
-import { getSubProcess, updateSubProcess } from "@/api/flow/taskNode/index";
-import { SubprocessParmaType } from "@/api/flow/taskNode/type";
+import { getSubProcess, updateSubProcess } from "@/api/flow/flowOperator/index";
+import { FlowOperator } from "@/api/flow/flowOperator/type";
 import { getSubProcessOptionRequest } from "@/api/option/index";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
-import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest } from "@/api/flow/flowData/index";
+import { FlowNode } from "@/api/flow/flowData/type";
+import { Option } from "@/api/option/type";
+import { BaseResponse } from "@/api/interface/index";
 
 // 标记是否是编辑状态
 const isEditing = ref<any>({});
 // 子流程ID
 const subProcessId = ref<string>("");
 // 子流程参数选项
-const subProcessOption = ref<any>([]);
+const subProcessOption = ref<Option.OptionItem[]>([]);
 // 设置点击修改
 const deliveryForm = reactive({ delivery: false });
-const variables = ref<SubprocessParmaType[]>();
+const variables = ref<FlowOperator.SubprocessParmaType[]>();
 const { process_id, nodeConfig, nodeParam } = storeToRefs(useFlowStore());
 
 onMounted(async () => {
@@ -85,15 +88,18 @@ onMounted(async () => {
 
 // 获取子流程参数选项
 const getSubProcessOption = async () => {
-  const response = await getSubProcessOptionRequest(process_id.value);
-  subProcessOption.value = response.data;
+  const response: BaseResponse<Option.OptionResponse> = await getSubProcessOptionRequest(process_id.value);
+  subProcessOption.value = Array.isArray(response.data) ? response.data : [];
 };
 
 // 选择子流程ID
 const selectSubProcessId = async (row: any) => {
+  if (!row.value) {
+    ElMessage.error("请选择子流程名称");
+    return;
+  }
   await updateFlowData();
   subProcessId.value = row.value;
-  console.log("选择子流程ID", row.value);
 };
 
 // 处理单元格点击事件
@@ -153,12 +159,12 @@ const getParamType = async (row: any) => {
 
 // 修改流程图数据
 const updateFlowData = async () => {
-  const update_task_param_flow = {
+  const graph_node: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: nodeConfig.value.task_id,
     nodeParam: nodeParam.value
   };
-  await createTaskFlowDataRequest(update_task_param_flow);
+  await createGraphNodeRequest(graph_node);
 };
 </script>
 

@@ -84,10 +84,13 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { createFlowDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest } from "@/api/flow/flowData/index";
+import { FlowNode } from "@/api/flow/flowData/type";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { BaseData, BaseResponse } from "@/api/interface/index";
+import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const flowStore = useFlowStore();
@@ -109,36 +112,36 @@ const NoticeTypes = [
   { label: "忽略", value: "SKIP" }
 ];
 
-// 修改流程图数据
-const updateFlowData = async () => {
-  const update_flow_task_default_config = {
+// 修改流程图和节点数据
+const updateGraphNodeData = async (task_id: string) => {
+  const graph_node_data: FlowNode.GraphNode = {
     process_id: process_id.value,
-    task_id: nodeConfig.value.task_id,
+    task_id: task_id,
     defaultTaskConfig: defaultTaskConfig.value
   };
-  await createFlowDataRequest(update_flow_task_default_config);
+  await createGraphNodeRequest(graph_node_data);
 };
 
 // 修改数据库数据
 const updateTask = async (config_name: string, config_value: string) => {
-  // 修改流程图节点
-  await updateFlowData();
   // 修改数据库节点数据
   defaultTaskConfig.value.forEach(function (ele: any) {
     if (ele.config_name === config_name) {
       ele.config_value = config_value;
     }
   });
-  let taskNode: any = {
+  let taskNode: Task.TaskItem = {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
     task_config: defaultTaskConfig.value
   };
-  let result: any = await updateTaskRequest(taskNode);
-  await updateFlowData();
+  // 修改流程图和节点
+  await updateGraphNodeData(nodeConfig.value.task_id);
+  let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
   if (result.code != 200) ElMessage.error("任务配置修改失败");
 };
+
 // 修改消息通知
 const updateTaskNoticeType = async (value: string) => {
   let task_config: any = defaultTaskConfig.value;
@@ -148,39 +151,35 @@ const updateTaskNoticeType = async (value: string) => {
       ele.config_value = value;
     }
   });
-  let taskNode: any = {
+  let taskNode: Task.TaskItem = {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
     task_config: task_config
   };
 
-  await updateFlowData();
-  let result: any = await updateTaskRequest(taskNode);
+  await updateGraphNodeData(nodeConfig.value.task_id);
+  let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
   if (result.code != 200) ElMessage.error("任务配置修改失败");
 };
 // 修改任务异常处理策略
 const updateTaskStrategy = async (value: string) => {
   defaultTaskConfig.value.forEach(function (ele: any) {
+    console.log("ele", ele);
     if (ele.config_name === "task_strategy") {
       ele.config_value = value;
     }
   });
-  let taskNode: any = {
+  let taskNode: Task.TaskItem = {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
     task_config: defaultTaskConfig.value
   };
 
-  let result: any = await updateTaskRequest(taskNode);
-  await updateFlowData();
+  let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
+  await updateGraphNodeData(nodeConfig.value.task_id);
   if (result.code != 200) ElMessage.error("任务配置修改失败");
-};
-</script>
-<script lang="ts">
-export default {
-  name: "TaskRunningConfig"
 };
 </script>
 

@@ -1,3 +1,6 @@
+import { FlowData, DefaultTaskConfig, NodeResultItem } from "@/api/flow/flowData/type";
+import { FlowConfig } from "@/api/flow/flowConfig/type";
+
 export type LayoutType = "vertical" | "classic" | "transverse" | "columns";
 
 export type AssemblySizeType = "large" | "default" | "small";
@@ -60,105 +63,18 @@ export interface AuthState {
 export interface KeepAliveState {
   keepAliveName: string[];
 }
-export interface Node {
-  background: string;
-  class_name: string;
-  method_name: string;
-  task_type?: any;
-  text: string;
-  type: string;
-  version: string;
-}
-export interface CategoryNode {
-  nodes: Node[];
-}
-
-export interface NodeMenuType {
-  nodes: any;
-  nodesType: string;
-  title: string;
-  icon: string;
-}
-
-export interface CommonParamType {
-  default?: any;
-  desc: string;
-  name: string;
-  required: boolean;
-  title: string;
-  type: string;
-  value: string;
-}
-
-export interface nodeConfigType {
-  task_name: string;
-  desc: string;
-  version: string;
-  task_id: string;
-  method_name: string;
-  task_module: string;
-  task_type: string;
-  id?: number;
-}
-
-export interface nodeResultType {
-  default?: any;
-  desc: string;
-  name: string;
-  required?: boolean;
-  result_key: string;
-  title: string;
-  type: string;
-}
-
-export interface SelectOption {
-  label: string;
-  value: string;
-}
-
-export interface DefaultTaskConfigType {
-  config_name: string;
-  config_label: string;
-  config_value: string | SelectOption[];
-  desc: string;
-}
-
-export interface ConditionItem {
-  condition: string;
-  task_status: string;
-}
-
-export interface Condition {
-  condition: ConditionItem[];
-  task_id: string;
-}
-
-export interface ProcessControlStatus {
-  conditions: Condition[];
-  pc_type: string;
-}
-interface nodeParamItem {
-  desc: string;
-  name: string;
-  type: string;
-  title: string;
-  default: Default | string;
-  required: boolean;
-  param_type: string;
-}
-
-interface Default {}
 
 export interface FlowStoreType {
   process_name: string;
   process_id: string;
   process_version: string;
+  namespace: string;
   process_instance_id: string;
-  nodeMenu: NodeMenuType[];
-  nodeConfig: nodeConfigType;
-  nodeParam: nodeParamItem[];
-  nodeResult: nodeResultType[];
-  defaultTaskConfig: DefaultTaskConfigType[];
+  nodeMenu: FlowConfig.NodeMenuType[];
+  nodeConfig: FlowData.NodeConfig;
+  nodeParam: any;
+  nodeResult: NodeResultItem[];
+  defaultTaskConfig: DefaultTaskConfig[];
 }
 
 export interface TaskGroupItem {

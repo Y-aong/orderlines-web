@@ -19,7 +19,7 @@ class StartNode extends CircleNode {
 class StartNodeModel extends CircleNodeModel {
   initNodeData(data) {
     super.initNodeData(data);
-    this.r = 36;
+    this.r = 28;
   }
   // 重写节点样式
   getNodeStyle() {

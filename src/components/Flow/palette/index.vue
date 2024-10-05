@@ -47,21 +47,42 @@
 import LogicFlow from "@logicflow/core";
 import { onMounted } from "vue";
 import useFlowStore from "@/stores/modules/flow";
+import { taskNodeType } from "@/stores/modules/flow";
 import { storeToRefs } from "pinia";
-import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest } from "@/api/flow/flowData/index";
+import { FlowData, FlowNode, FlowGraphData } from "@/api/flow/flowData/type";
 import { createTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
-import { nodeConfigType } from "@/stores/interface/index";
 
 import { v4 as uuid } from "uuid";
 
 import { processControlStatusItem } from "@/utils/variable";
 import { ElMessage } from "element-plus";
+import { BaseResponse, BaseData } from "@/api/interface";
 
 let { getNodeMenu, getTaskNode } = useFlowStore();
 let { nodeConfig, nodeResult, nodeParam, process_id, defaultTaskConfig, nodeMenu } = storeToRefs(useFlowStore());
 
-const taskTypes: any = {
+interface TaskType {
+  "function-node": string;
+  "start-node": string;
+  "end-node": string;
+  "process-control-node": string;
+  "parallel-node": string;
+  "group-node": string;
+  "sub-process-node": string;
+}
+interface MenuItem {
+  text: string;
+  type: string;
+  background: string;
+  method_name: string;
+  version: string;
+  class_name: string;
+  task_type: string;
+}
+
+const taskTypes: TaskType = {
   "function-node": "common",
   "start-node": "start",
   "end-node": "end",
@@ -83,43 +104,43 @@ onMounted(async () => {
   nodeMenu.value = nodeMenuData;
 });
 
-const startDrag = async (item: any) => {
+// 按下鼠标时拖拽节点
+const startDrag = async (item: MenuItem) => {
   const { lf } = props;
   // 检查开始节点不可以存在多个
-  let graphData = lf.getGraphData();
-  let flag = await checkStartNode(item.type, graphData);
-  if (flag) {
-    const task_id = uuid();
-    lf.dnd.startDrag({
-      id: task_id,
-      type: item.type,
-      text: item.text,
-      properties: {
-        method_name: item.method_name,
-        class_name: item.class_name,
-        version: item.version
-      }
-    });
-    // 获取节点信息
-    const taskNode: any = {
+  const graphData = lf.getGraphData();
+  const flag = await checkStartNode(item.type, graphData);
+  if (!flag) return;
+  const task_id = uuid();
+  lf.dnd.startDrag({
+    id: task_id,
+    type: item.type,
+    text: item.text,
+    properties: {
       method_name: item.method_name,
       class_name: item.class_name,
       version: item.version
-    };
-    await getTaskNode(taskNode);
-    const taskType = taskTypes[item.type];
+    }
+  });
+  // 获取节点信息
+  const taskNode: taskNodeType = {
+    method_name: item.method_name,
+    class_name: item.class_name,
+    version: item.version
+  };
+  await getTaskNode(taskNode);
+  const taskType = taskTypes[item.type as keyof TaskType];
 
-    // 创建流程图节点信息
-    await createFlowNode(item, task_id);
+  // 创建流程图节点信息
+  await createFlowNode(item, task_id);
 
-    // 创建任务节点
-    await createTaskNode(item, task_id, taskType);
-  }
+  // 创建任务节点
+  await createTaskNode(item, task_id, taskType);
 };
 
 // 创建流程图信息
-const createFlowNode = async (item: any, task_id: string) => {
-  let flow_data: any = {
+const createFlowNode = async (item: MenuItem, task_id: string) => {
+  let flow_data: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: task_id,
     nodeResult: nodeResult.value,
@@ -131,13 +152,13 @@ const createFlowNode = async (item: any, task_id: string) => {
     flow_data["nodeParam"] = processControlStatusItem;
     nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
   }
-  const res: any = await createTaskFlowDataRequest(flow_data);
+  const res: BaseResponse<string> = await createGraphNodeRequest(flow_data);
   if (res.code !== 200) ElMessage.error("存放流程数据失败");
 };
 
 // 创建任务节点
-const createTaskNode = async (item: any, taskId: string, taskType: string) => {
-  const node_config: nodeConfigType = {
+const createTaskNode = async (item: MenuItem, taskId: string, taskType: string) => {
+  const node_config: FlowData.NodeConfig = {
     task_name: item.text,
     desc: item.text,
     version: item.version,
@@ -160,7 +181,7 @@ const createTaskNode = async (item: any, taskId: string, taskType: string) => {
 
   if (item.type !== "select-node") {
     // 创建任务节点
-    const result: any = await createTaskRequest(task);
+    const result: BaseResponse<BaseData> = await createTaskRequest(task);
     if (result.code == 200) {
       node_config["id"] = result.data.table_id;
     }
@@ -170,9 +191,9 @@ const createTaskNode = async (item: any, taskId: string, taskType: string) => {
 };
 
 // 检查开始节点不可以存在多个
-const checkStartNode = (nodeType: string, graphData: any): boolean => {
+const checkStartNode = (nodeType: string, graphData: FlowGraphData.GraphData): boolean => {
   const nodes = graphData.nodes;
-  nodes.forEach((val: any) => {
+  nodes.forEach((val: FlowGraphData.Node) => {
     if (val.type === "start-node" && nodeType === "start-node") {
       ElMessage.error("一个流程中只可以存在一个开始节点");
       return false;

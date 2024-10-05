@@ -24,9 +24,9 @@ class RedNodeModel extends RectNodeModel {
    */
   initNodeData(data) {
     super.initNodeData(data);
-    this.width = 220;
-    this.height = 60;
-    this.radius = 8;
+    this.width = 100;
+    this.height = 50;
+    this.radius = 5;
     this.text.x = this.x;
   }
 
@@ -39,10 +39,10 @@ class RedNodeModel extends RectNodeModel {
   // 动态设置初始化数据
   setAttributes() {
     if (this.text.value) {
-      let width = 30 + getBytesLength(this.text.value) * 9;
-      width = Math.ceil(width / 20) * 20;
-      if (width < 100) {
-        width = 100;
+      let width = 10 + getBytesLength(this.text.value) * 8;
+      width = Math.ceil(width / 25) * 20;
+      if (width < 80) {
+        width = 85;
       }
       this.width = width;
     }

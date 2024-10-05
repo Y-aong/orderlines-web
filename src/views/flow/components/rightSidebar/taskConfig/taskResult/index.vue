@@ -42,7 +42,8 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { getProcessVariableOptionRequest } from "@/api/option/index";
-import { createTaskFlowDataRequest } from "@/api/flow/taskNode/index";
+import { createGraphNodeRequest } from "@/api/flow/flowData/index";
+import { FlowNode } from "@/api/flow/flowData/type";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
@@ -62,12 +63,12 @@ const getVariableOption = async () => {
 
 // 修改流程图数据
 const updateFlowData = async () => {
-  const update_flow_param = {
+  const graph_node: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: nodeConfig.value.task_id,
     nodeResult: nodeResult.value
   };
-  await createTaskFlowDataRequest(update_flow_param);
+  await createGraphNodeRequest(graph_node);
 };
 
 // 修改任务参数

@@ -11,15 +11,15 @@ enum API {
 // 启动流程
 export const startProcessRequest = (process_id: string | number) => {
   if (typeof process_id === "string") {
-    return http.post<OrderlinesOperator.start>(API.START_PROCESS_URL, { process_id: process_id });
+    return http.post<OrderlinesOperator.startResponse>(API.START_PROCESS_URL, { process_id: process_id });
   } else {
-    return http.post<OrderlinesOperator.start>(API.START_PROCESS_URL, { id: process_id });
+    return http.post<OrderlinesOperator.startResponse>(API.START_PROCESS_URL, { id: process_id });
   }
 };
 
 // 停止流程
 export const stopProcessRequest = (process_instance_id: string) =>
-  http.post<string[]>(API.STOP_PROCESS_URL, { process_instance_id: process_instance_id });
+  http.post<OrderlinesOperator.StopResponse>(API.STOP_PROCESS_URL, { process_instance_id: process_instance_id });
 
 // 暂停流程
 export const pausedProcessRequest = (process_instance_id: string) =>

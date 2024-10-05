@@ -110,9 +110,19 @@
           v-model="process_version"
           placeholder="选择版本"
           style="width: 120px; margin-left: 15px"
-          @change="changeProcessVersion"
+          @change="gotoTargetProcess"
         >
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in versionOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+
+        <el-select
+          v-if="!isRunning && !isSave"
+          v-model="namespace"
+          placeholder="选择命名空间"
+          style="width: 120px; margin-left: 15px"
+          @change="gotoTargetProcess"
+        >
+          <el-option v-for="item in namespaceOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
     </div>
@@ -131,7 +141,7 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="删除版本" name="delete">
-        <el-table :data="versionData" style="width: 100%" max-height="400">
+        <el-table :data="versionData" style="width: 100%; height: 400px">
           <el-table-column fixed prop="id" label="ID" min-width="30" />
           <el-table-column fixed prop="process_name" label="流程名称" min-width="100" />
           <el-table-column fixed prop="version" label="版本名称" min-width="100" />
@@ -167,14 +177,15 @@ import {
   recoverProcessRequest,
   startProcessRequest,
   stopProcessRequest
-} from "@/api/orderlines/orderlinesOperate";
+} from "@/api/orderlines/orderlinesOperate/index";
+import { OrderlinesOperator } from "@/api/orderlines/orderlinesOperate/type";
 import {
-  saveFlowRequest,
   createProcessVersionRequest,
-  getProcessVersionRequest,
+  getProcessVersionByIDRequest,
   getProcessVersionByNameRequest
-} from "@/api/flow/taskNode/index";
-import { ProcessVersionOptionType, ProcessVersionType } from "@/api/flow/taskNode/type";
+} from "@/api/flow/flowOperator/index";
+import { saveFlowRequest } from "@/api/flow/flowData/index";
+import { FlowOperator } from "@/api/flow/flowOperator/type";
 import { ElMessage } from "element-plus";
 import { setStorage } from "@/utils/storage";
 import {
@@ -182,39 +193,53 @@ import {
   updateProcessRequest,
   getProcessDetailRequest
 } from "@/api/orderlines/orderlinesManager/process/index";
-import { getProcessVersionOptionRequest } from "@/api/option/index";
+import { getProcessVersionOptionRequest, getProcessNameSpaceOptionRequest } from "@/api/option/index";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { UseSocketIo } from "@/utils/webSocketio";
+import { Option } from "@/api/option/type";
+import { BaseResponse } from "@/api/interface/index";
+import { DeleteData, BaseData } from "@/api/interface";
 
 const { init, close, send } = UseSocketIo();
 
-let { process_id, process_instance_id, process_name, process_version } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, process_name, process_version, namespace } = storeToRefs(useFlowStore());
 let { isDebug, isSave, isRunning, isEdit, isRedirect, isPause, isContinue, isStop, isComplete } = storeToRefs(
   useFlowStatueStore()
 );
-
 let activeName = "create";
-
-let options = ref<ProcessVersionOptionType[]>([]);
+let versionOptions = ref<Option.OptionItem[]>([]);
+let namespaceOptions = ref<Option.OptionItem[]>([]);
 let versionVisible = ref<boolean>(false);
-let versionForm = ref<ProcessVersionType>({
+let versionForm = ref<FlowOperator.ProcessVersionType>({
   process_id: process_id.value as string,
   version: "",
+  namespace: "",
   version_desc: ""
 });
-let versionData = ref<ProcessVersionType[]>([]);
-let processInfo = reactive<Process.ProcessItem>({ process_id: process_id.value, process_name: process_name.value });
+let versionData = ref<FlowOperator.ProcessVersionType[]>([]);
+let processInfo = reactive<Process.ProcessItem>({
+  process_id: process_id.value,
+  process_name: process_name.value,
+  namespace: "default",
+  version: "default"
+});
 
 onMounted(async () => {
   await getProcessVersionOption();
+  await getProcessNamespaceOption();
   await getProcessVersionByName();
   await getProcessInfo();
   init("running_logger");
 });
+// 获取流程命名空间选项
+const getProcessNamespaceOption = async () => {
+  const response: BaseResponse<Option.OptionResponse> = await getProcessNameSpaceOptionRequest(namespace.value);
+  namespaceOptions.value = Array.isArray(response.data) ? response.data : [];
+};
 
 // 获取流程debug信息
 const getProcessInfo = async () => {
-  const response: any = await getProcessDetailRequest(process_id.value);
+  const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(process_id.value);
   processInfo = response.data;
   isDebug.value = response.data.mode == "debug";
 };
@@ -231,42 +256,50 @@ const sendDebugSign = async (msg: string) => {
 
 // 获取流程版本
 const getProcessVersionOption = async () => {
-  const res: any = await getProcessVersionOptionRequest(process_name.value);
-  if (res.code == 200) {
-    options.value = res.data;
+  const response: BaseResponse<Option.OptionResponse> = await getProcessVersionOptionRequest(process_name.value);
+  if (response.code == 200) {
+    versionOptions.value = Array.isArray(response.data) ? response.data : [];
   } else {
     ElMessage.error("获取流程流程版本失败");
   }
 };
+
 // 删除版本
 const deleteProcessVersion = async (id: number) => {
-  let res: any = await deleteProcessRequest(id);
-  if (res.code === 200) {
+  let response: BaseResponse<DeleteData> = await deleteProcessRequest(id);
+  if (response.code === 200) {
     ElMessage.success("版本删除成功");
     await getProcessVersionByName();
   }
 };
+
 //获取版本描述
 const getProcessVersion = async () => {
   versionVisible.value = true;
-  let res: any = await getProcessVersionRequest(process_id.value);
-  versionForm.value = res.data;
+  let response: BaseResponse<FlowOperator.ProcessVersionType[]> = await getProcessVersionByIDRequest(process_id.value);
+  if (response.code == 200 && response.data.length === 1) {
+    versionForm.value = response.data[0];
+  }
 };
+
 // 根据流程名称获取流程
 const getProcessVersionByName = async () => {
-  let res: any = await getProcessVersionByNameRequest(process_name.value);
-  if (res.code == 200) {
-    versionData.value = res.data;
+  let response: BaseResponse<FlowOperator.ProcessVersionType[]> = await getProcessVersionByNameRequest(
+    process_name.value
+  );
+  if (response.code == 200) {
+    versionData.value = response.data;
   } else {
     ElMessage.error("获取流程流程版本失败");
   }
 };
+
 // 修改流程运行模式
 const changeProcessMode = async () => {
   processInfo["mode"] = isDebug.value ? "debug" : "run";
   processInfo["update_time"] = getCurrentDate();
 
-  const response: any = await updateProcessRequest(processInfo);
+  const response: BaseResponse<BaseData> = await updateProcessRequest(processInfo);
   if (response.code == 200) {
     ElMessage.success(response.message);
   } else {
@@ -277,7 +310,7 @@ const changeProcessMode = async () => {
 //创建流程版本
 const createProcessVersion = async () => {
   versionVisible.value = false;
-  let response: any = await createProcessVersionRequest(versionForm.value);
+  let response: BaseResponse<FlowOperator.CreateProcessVersion> = await createProcessVersionRequest(versionForm.value);
   if (response.code == 200) {
     process_id.value = process_version.value;
     process_version.value = process_version.value;
@@ -288,12 +321,18 @@ const createProcessVersion = async () => {
   }
 };
 
-//修改流程版本
-const changeProcessVersion = async () => {
-  process_id.value = process_version.value;
-  process_version.value = process_version.value;
-  setStorage(process_version.value, "PROCESS_ID");
-  setStorage(process_version.value, "PROCESS_VERSION");
+//根据流程命名空间/版本获取流程
+const gotoTargetProcess = async (value: string) => {
+  console.log("value", value);
+  const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(value);
+  process_id.value = response.data.process_id;
+  process_name.value = response.data.process_name;
+  process_version.value = response.data.version;
+  namespace.value = response.data.namespace;
+  setStorage(response.data.process_id, "PROCESS_ID");
+  setStorage(response.data.process_name, "PROCESS_NAME");
+  setStorage(response.data.version, "PROCESS_VERSION");
+  setStorage(response.data.namespace, "PROCESS_NAMESPACE");
   isRunning.value = false;
   window.location.reload();
 };
@@ -303,9 +342,10 @@ const runningStatus = () => {
   isRedirect.value = false;
   isSave.value = true;
 };
+
 // 启动流程
 const startProcess = async () => {
-  const response: any = await startProcessRequest(process_id.value);
+  const response: BaseResponse<OrderlinesOperator.startResponse> = await startProcessRequest(process_id.value);
   process_instance_id.value = response.data.process_instance_id;
   if (response.code == 200) {
     ElMessage.success(response.message);
@@ -329,7 +369,7 @@ const startProcess = async () => {
 
 // 停止流程
 const stopProcess = async () => {
-  let response: any = await stopProcessRequest(process_id.value);
+  let response: BaseResponse<OrderlinesOperator.StopResponse> = await stopProcessRequest(process_id.value);
   if (response.code == 200) {
     ElMessage.success(response.message);
     isStop.value = true;
@@ -337,9 +377,10 @@ const stopProcess = async () => {
     ElMessage.error("流程停止失败" + response.message);
   }
 };
+
 // 暂停流程
 const pausedProcess = async () => {
-  let response: any = await pausedProcessRequest(process_id.value);
+  let response: BaseResponse<null> = await pausedProcessRequest(process_id.value);
   if (response.code === 200) {
     ElMessage.success(response.message);
     isPause.value = true;
@@ -347,9 +388,10 @@ const pausedProcess = async () => {
     ElMessage.error("流程暂停失败" + response.message);
   }
 };
+
 // 恢复流程
 const recoverProcess = async () => {
-  let response: any = await recoverProcessRequest(process_id.value);
+  let response: BaseResponse<null> = await recoverProcessRequest(process_id.value);
   if (response.code == 200) {
     ElMessage.success("流程恢复成功");
     isContinue.value = true;
@@ -358,6 +400,7 @@ const recoverProcess = async () => {
     ElMessage.error("流程恢复失败" + response.message);
   }
 };
+
 // 保存流程
 const saveProcess = async () => {
   if (isSave.value) {
@@ -367,7 +410,8 @@ const saveProcess = async () => {
     isEdit.value = true;
     close("running_logger");
   } else {
-    const response: any = await saveFlowRequest({ process_id: process_id.value });
+    const response: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });
+
     if (response.code === 200) {
       isSave.value = true;
       setStorage(true, "IS_SAVE");

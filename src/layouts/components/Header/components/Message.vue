@@ -61,7 +61,6 @@ const getAlarmMessage = async () => {
 };
 
 const goToDetail = async (detailId: string) => {
-  console.log("detailId" + detailId);
   router.push({ path: `/alarm/detail/${detailId}` });
 };
 

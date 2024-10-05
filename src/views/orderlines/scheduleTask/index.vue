@@ -109,7 +109,7 @@ const columns = reactive<ColumnProps<ScheduleTask.ScheduleTaskItem>[]>([
   {
     prop: "insert_time",
     label: "插入时间",
-    width: 180,
+    width: 170,
     search: {
       el: "date-picker",
       span: 2,
@@ -119,7 +119,7 @@ const columns = reactive<ColumnProps<ScheduleTask.ScheduleTaskItem>[]>([
   {
     prop: "update_time",
     label: "修改时间",
-    width: 180,
+    width: 170,
     search: {
       el: "date-picker",
       span: 2,

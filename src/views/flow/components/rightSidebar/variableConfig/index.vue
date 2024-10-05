@@ -18,7 +18,7 @@
     </div>
   </el-card>
 
-  <el-dialog v-model="dialogFormVisible" :title="VariableItem.id ? '插件配置修改' : '插件配置创建'">
+  <el-dialog v-model="dialogFormVisible" :title="VariableItem.id ? '变量配置修改' : '变量配置创建'">
     <el-form style="width: 80%" :model="VariableItem" ref="formRef" label-width="120px" :hide-required-asterisk="true">
       <el-form-item label="变量名称：" prop="variable_key">
         <el-input placeholder="请输入变量名称，支持中文" v-model="VariableItem.variable_key"> </el-input>
@@ -67,6 +67,7 @@ import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { Variable } from "@/api/orderlines/orderlinesManager/variable/type";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { BaseData, BaseResponse, DeleteData } from "@/api/interface";
 
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const { process_id, process_name, process_instance_id } = storeToRefs(useFlowStore());
@@ -78,6 +79,7 @@ let VariableItem = reactive<Variable.VariableItem>({
   variable_type: "",
   variable_desc: ""
 });
+
 const variableTypeOption = [
   {
     value: "str",
@@ -142,18 +144,19 @@ const updateVariable = async (row: any) => {
 const getVariableDetail = async (row: any) => {
   detailVisible.value = true;
   if (isRunning.value) {
-    let res: any = await getVariableInstanceDetailRequest(process_instance_id.value, row.variable_key);
-    if (res.code === 200) variableDetail.value = [res.data];
+    let response: BaseResponse<Variable.VariableItem> = await getVariableInstanceDetailRequest(
+      process_instance_id.value,
+      row.variable_key
+    );
+    if (response.code === 200) variableDetail.value = [response.data];
   } else {
-    let res: any = await getVariableDetailRequest(row.id);
-    console.log(res.data);
-
-    if (res.code === 200) variableDetail.value = [res.data];
+    let variable_response: BaseResponse<Variable.VariableItem> = await getVariableDetailRequest(row.id);
+    if (variable_response.code === 200) variableDetail.value = [variable_response.data];
   }
 };
 
 const deleteVariable = async (id: number) => {
-  let res: any = await deleteVariableRequest(id);
+  let res: BaseResponse<DeleteData> = await deleteVariableRequest(id);
   if (res.code == 200) {
     ElMessage.success("删除变量完成");
   } else {
@@ -168,7 +171,12 @@ const cancel = () => {
   dialogFormVisible.value = false;
 };
 
+// 变量配置确认按钮
 const confirm = async () => {
+  if (!VariableItem.variable_key || !VariableItem.variable_type) {
+    ElMessage.error("请设置流程参数");
+    return;
+  }
   if (VariableItem.id) {
     // 修改变量
     let variableItem = {
@@ -194,7 +202,7 @@ const confirm = async () => {
       variable_type: VariableItem.variable_type,
       variable_desc: VariableItem.variable_desc
     };
-    let result: any = await createVariableRequest(variableItem as Variable.VariableItem);
+    let result: BaseResponse<BaseData> = await createVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {
       ElMessage.error("创建变量失败");
     }
