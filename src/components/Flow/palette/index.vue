@@ -221,7 +221,7 @@ const checkStartNode = (nodeType: string, graphData: FlowGraphData.GraphData): b
   position: fixed;
   top: 60px;
   width: 210px;
-  max-height: 300px !important;
+  max-height: 100vh !important;
   background-color: #ffffff;
 }
 .node-collapse {

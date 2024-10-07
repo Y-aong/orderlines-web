@@ -58,8 +58,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// menu 高度设置
+:deep(.el-sub-menu__title) {
+  height: 46px !important;
+}
 .el-menu {
+  max-height: 300px !important;
   font-size: 16;
   font-weight: bold;
   border-right: none;
@@ -68,7 +73,7 @@ export default {
   position: fixed;
   top: 60px;
   width: 210px;
-  height: 100vh;
+  max-height: 100vh !important;
   background-color: #ffffff;
 }
 .node-collapse {
@@ -81,7 +86,7 @@ export default {
   margin: 8px auto;
 }
 .title {
-  width: 100px;
+  width: 120px;
   height: 24px;
   font-size: 14px;
   font-weight: bold;
