@@ -44,6 +44,11 @@
 <script setup lang="ts" name="taskInstanceDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
+import { useUserStore } from "@/stores/modules/user";
+import { storeToRefs } from "pinia";
+import { getCurrentDate } from "@/utils/currentDateTime";
+
+let { userInfo } = storeToRefs(useUserStore());
 
 const rules = reactive({
   class_name: [{ required: true, message: "请填写插件类名" }],
@@ -83,6 +88,12 @@ const handleSubmit = () => {
     if (!valid) return;
     try {
       if (!drawerProps.value.row.node_type) drawerProps.value.row.node_type = "function-node";
+      if (drawerProps.value.title === "编辑") {
+        drawerProps.value.row["update_time"] = getCurrentDate();
+        drawerProps.value.row["updater_name"] = userInfo.value.login_value;
+      } else {
+        drawerProps.value.row["creator_name"] = userInfo.value.login_value;
+      }
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
       drawerProps.value.getTableList!();

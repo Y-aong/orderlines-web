@@ -56,7 +56,9 @@ import { setStorage } from "@/utils/storage";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { BaseResponse } from "@/api/interface";
 import { BaseData } from "@/api/interface";
+import { useUserStore } from "@/stores/modules/user";
 
+let { userInfo } = storeToRefs(useUserStore());
 let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
 let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let dialogFormVisible = ref<boolean>(false);
@@ -73,12 +75,12 @@ let ProcessItem = reactive<Process.ProcessItem>({
   process_id: "",
   process_name: "",
   version: "",
-  creator: "",
+  creator_name: userInfo.value.login_value,
   desc: "",
   process_config: "",
-  process_params: "",
+  process_params: { timeout: 7200, notice_type: "FAILURE", is_send: true },
   update_time: "",
-  updater: "",
+  updater_name: "",
   namespace: ""
 });
 

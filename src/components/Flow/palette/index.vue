@@ -53,13 +53,13 @@ import { createGraphNodeRequest } from "@/api/flow/flowData/index";
 import { FlowData, FlowNode, FlowGraphData } from "@/api/flow/flowData/type";
 import { createTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
-
 import { v4 as uuid } from "uuid";
-
 import { processControlStatusItem } from "@/utils/variable";
 import { ElMessage } from "element-plus";
 import { BaseResponse, BaseData } from "@/api/interface";
+import { useUserStore } from "@/stores/modules/user";
 
+let { userInfo } = storeToRefs(useUserStore());
 let { getNodeMenu, getTaskNode } = useFlowStore();
 let { nodeConfig, nodeResult, nodeParam, process_id, defaultTaskConfig, nodeMenu } = storeToRefs(useFlowStore());
 
@@ -80,6 +80,7 @@ interface MenuItem {
   version: string;
   class_name: string;
   task_type: string;
+  options: string[];
 }
 
 const taskTypes: TaskType = {
@@ -165,7 +166,8 @@ const createTaskNode = async (item: MenuItem, taskId: string, taskType: string) 
     task_module: item.class_name,
     task_id: taskId,
     method_name: item.method_name,
-    task_type: taskType
+    task_type: taskType,
+    options: item.options
   };
 
   let task: Task.TaskItem = {
@@ -176,7 +178,8 @@ const createTaskNode = async (item: MenuItem, taskId: string, taskType: string) 
     task_type: taskType,
     method_name: item.method_name,
     task_module: item.class_name,
-    task_config: defaultTaskConfig.value
+    task_config: defaultTaskConfig.value,
+    creator_name: userInfo.value.login_value
   };
 
   if (item.type !== "select-node") {
@@ -203,8 +206,13 @@ const checkStartNode = (nodeType: string, graphData: FlowGraphData.GraphData): b
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// menu 高度设置
+:deep(.el-sub-menu__title) {
+  height: 46px !important;
+}
 .el-menu {
+  max-height: 300px !important;
   font-size: 16;
   font-weight: bold;
   border-right: none;
@@ -213,7 +221,7 @@ const checkStartNode = (nodeType: string, graphData: FlowGraphData.GraphData): b
   position: fixed;
   top: 60px;
   width: 210px;
-  height: 100vh;
+  max-height: 300px !important;
   background-color: #ffffff;
 }
 .node-collapse {
@@ -226,7 +234,7 @@ const checkStartNode = (nodeType: string, graphData: FlowGraphData.GraphData): b
   margin: 8px auto;
 }
 .title {
-  width: 100px;
+  width: 120px;
   height: 24px;
   font-size: 14px;
   font-weight: bold;

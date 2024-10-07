@@ -27,6 +27,10 @@ export const loginApi = (params: Login.ReqLoginForm) => {
 export const checkTokenApi = (token: string) => {
   return http.get<Login.ResLogin>(`${API.TOKEN_CHECK_URL}?token=${token}`, { loading: false });
 };
+export const getUserInfoApi = (token: string) => {
+  return http.get<Login.ResUserInfo>(`${API.TOKEN_USER_INFO_URL}?token=${token}`, { loading: false });
+};
+
 // 获取菜单列表
 export const getAuthMenuListApi = () => {
   return authMenuList;

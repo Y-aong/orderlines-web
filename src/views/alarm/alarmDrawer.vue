@@ -41,6 +41,12 @@
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 
+const drawerVisible = ref(false);
+const drawerProps = ref<DrawerProps>({
+  isView: false,
+  title: "",
+  row: {}
+});
 const rules = reactive({
   process_name: [{ required: false, message: "流程名称" }],
   process_instance_id: [{ required: false, message: "流程实例ID" }],
@@ -56,13 +62,6 @@ interface DrawerProps {
   api?: (params: any) => Promise<any>;
   getTableList?: () => void;
 }
-
-const drawerVisible = ref(false);
-const drawerProps = ref<DrawerProps>({
-  isView: false,
-  title: "",
-  row: {}
-});
 
 // 接收父组件传过来的参数
 const acceptParams = (params: DrawerProps) => {

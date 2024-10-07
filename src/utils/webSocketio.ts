@@ -29,7 +29,6 @@ export function UseSocketIo() {
         const topic = data.topic;
         const message = data.message;
         const receive_process_id = data.process_id;
-
         if (topic === "running_logger" && receive_process_id === process_id.value) {
           running_edge.value = message.running_edge;
           taskProgress.value = message.task_progress;

@@ -49,6 +49,7 @@ export namespace FlowData {
     method_name: string;
     task_name: string;
     version: string;
+    options: string[];
   }
   // 任务参数配置
   export interface NodeParam {

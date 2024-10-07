@@ -106,6 +106,8 @@ const columns = reactive<ColumnProps<ScheduleTask.ScheduleTaskItem>[]>([
   { prop: "version", label: "流程版本", width: 100, search: { el: "input" } },
   { prop: "invalid_start_time", label: "可用开始时间", width: 120, search: { el: "input" } },
   { prop: "invalid_end_time", label: "可用结束时间", width: 120, search: { el: "input" } },
+  { prop: "creator_name", label: "创建者", width: 120, search: { el: "input" } },
+  { prop: "updater_name", label: "更新者", width: 120, search: { el: "input" } },
   {
     prop: "insert_time",
     label: "插入时间",

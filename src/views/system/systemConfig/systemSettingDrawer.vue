@@ -34,6 +34,11 @@
 <script setup lang="ts" name="systemSettingDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
+import { storeToRefs } from "pinia";
+import { useUserStore } from "@/stores/modules/user";
+import { getCurrentDate } from "@/utils/currentDateTime";
+
+let { userInfo } = storeToRefs(useUserStore());
 
 const rules = reactive({
   config_name: [{ required: true, message: "填写配置名称" }],
@@ -69,6 +74,12 @@ const handleSubmit = () => {
     if (!valid) return;
     try {
       await drawerProps.value.api!(drawerProps.value.row);
+      if (drawerProps.value.title === "编辑") {
+        drawerProps.value.row["update_time"] = getCurrentDate();
+        drawerProps.value.row["updater_name"] = userInfo.value.login_value;
+      } else {
+        drawerProps.value.row["creator_name"] = userInfo.value.login_value;
+      }
       ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;

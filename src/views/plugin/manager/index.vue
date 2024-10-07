@@ -108,6 +108,8 @@ const columns = reactive<ColumnProps<Plugin.PluginItem>[]>([
   { prop: "desc", label: "插件描述", width: 120, search: { el: "input" } },
   { prop: "insert_time", label: "创建时间" },
   { prop: "update_time", label: "修改时间" },
+  { prop: "creator_name", label: "创建者" },
+  { prop: "updater_name", label: "更新者" },
   {
     prop: "enable",
     label: "是否禁用",

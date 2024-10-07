@@ -124,12 +124,12 @@ const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   { prop: "namespace", label: "命名空间", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
-  { prop: "creator", label: "创建者", width: 80, search: { el: "input" } },
-  { prop: "updater", label: "修改者", width: 80, search: { el: "input" } },
+  { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
+  { prop: "updater_name", label: "修改者", width: 100, search: { el: "input" } },
   { prop: "mode", label: "运行方式", width: 100, search: { el: "input" } },
   {
     prop: "insert_time",
-    label: "插入时间",
+    label: "创建时间",
     width: 165,
     search: {
       el: "date-picker",

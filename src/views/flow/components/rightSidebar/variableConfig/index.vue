@@ -68,9 +68,9 @@ import useFlowStore from "@/stores/modules/flow";
 import { Variable } from "@/api/orderlines/orderlinesManager/variable/type";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
 import { BaseData, BaseResponse, DeleteData } from "@/api/interface";
+import { useUserStore } from "@/stores/modules/user";
 
-const { isRunning } = storeToRefs(useFlowStatueStore());
-const { process_id, process_name, process_instance_id } = storeToRefs(useFlowStore());
+let { userInfo } = storeToRefs(useUserStore());
 let dialogFormVisible = ref<boolean>(false);
 let detailVisible = ref<boolean>(false);
 let VariableItem = reactive<Variable.VariableItem>({
@@ -80,6 +80,8 @@ let VariableItem = reactive<Variable.VariableItem>({
   variable_desc: ""
 });
 
+const { isRunning } = storeToRefs(useFlowStatueStore());
+const { process_id, process_name, process_instance_id } = storeToRefs(useFlowStore());
 const variableTypeOption = [
   {
     value: "str",
@@ -116,7 +118,7 @@ onMounted(async () => {
 });
 
 const variableData = ref();
-let variableDetail = ref<any>();
+let variableDetail = ref<Variable.VariableItem[]>();
 
 const getVariable = async () => {
   let res: any = await getVariableRequest(process_id.value);
@@ -131,7 +133,8 @@ const createVariable = async () => {
   dialogFormVisible.value = false;
   dialogFormVisible.value = true;
 };
-const updateVariable = async (row: any) => {
+
+const updateVariable = async (row: Variable.VariableItem) => {
   VariableItem.id = row.id;
   VariableItem.process_id = row.process_id;
   VariableItem.process_name = row.process_name;
@@ -141,6 +144,8 @@ const updateVariable = async (row: any) => {
   VariableItem.variable_desc = row.variable_desc;
   dialogFormVisible.value = true;
 };
+
+// 获取变量详情
 const getVariableDetail = async (row: any) => {
   detailVisible.value = true;
   if (isRunning.value) {
@@ -154,7 +159,7 @@ const getVariableDetail = async (row: any) => {
     if (variable_response.code === 200) variableDetail.value = [variable_response.data];
   }
 };
-
+// 删除流程变量
 const deleteVariable = async (id: number) => {
   let res: BaseResponse<DeleteData> = await deleteVariableRequest(id);
   if (res.code == 200) {
@@ -186,9 +191,10 @@ const confirm = async () => {
       variable_key: VariableItem.variable_key,
       variable_value: VariableItem.variable_value,
       variable_type: VariableItem.variable_type,
-      variable_desc: VariableItem.variable_desc
+      variable_desc: VariableItem.variable_desc,
+      updater_name: userInfo.value.login_value
     };
-    let result: any = await updateVariableRequest(variableItem as Variable.VariableItem);
+    let result: BaseResponse<BaseData> = await updateVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {
       ElMessage.error("修改变量失败");
     }
@@ -200,7 +206,8 @@ const confirm = async () => {
       variable_key: VariableItem.variable_key,
       variable_value: VariableItem.variable_value,
       variable_type: VariableItem.variable_type,
-      variable_desc: VariableItem.variable_desc
+      variable_desc: VariableItem.variable_desc,
+      creator_name: userInfo.value.login_value
     };
     let result: BaseResponse<BaseData> = await createVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {

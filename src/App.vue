@@ -14,20 +14,22 @@ import { LanguageType } from "./stores/interface";
 import { useGlobalStore } from "@/stores/modules/global";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/modules/user";
-import { checkTokenApi } from "@/api/modules/login";
-let { token } = storeToRefs(useUserStore());
-
+import { checkTokenApi, getUserInfoApi } from "@/api/modules/login";
+import { Login } from "@/api/interface/index";
 import en from "element-plus/es/locale/lang/en";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+import { BaseResponse } from "./api/interface";
+
 const globalStore = useGlobalStore();
+const { initTheme } = useTheme();
+const i18n = useI18n();
+
 let timeoutId: ReturnType<typeof setTimeout> | null = null; // 明确指定timeoutId的类型
+let { token, userInfo } = storeToRefs(useUserStore());
 
 // init theme
-const { initTheme } = useTheme();
 initTheme();
-
 // init language
-const i18n = useI18n();
 onMounted(() => {
   const language = globalStore.language ?? getBrowserLang();
   i18n.locale.value = language;
@@ -56,6 +58,12 @@ const scheduleRefresh = () => {
     if (response.code == 200 || token.value !== response.data.token) {
       token.value = response.data.token;
     }
+    const userInfoResponse: BaseResponse<Login.ResUserInfo> = await getUserInfoApi(token.value);
+    const webUserInfo: Login.ResUserInfo = {
+      login_type: userInfoResponse.data.login_type,
+      login_value: userInfoResponse.data.login_value
+    };
+    userInfo.value = webUserInfo;
   }, 30000);
 };
 

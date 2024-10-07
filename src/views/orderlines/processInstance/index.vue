@@ -157,17 +157,17 @@ const processStatusTag: any = {
 };
 
 const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
-  { type: "selection", fixed: "left", width: 60 },
   { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "process_instance_id", label: "实例id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
+  { prop: "runner", label: "运行者", width: 100 },
   {
     prop: "process_status",
     label: "流程状态",
-    width: 120,
+    width: 100,
     render: scope => {
       return (
         <el-tag type={processStatusTag[scope.row.process_status]}>{processStatusDesc[scope.row.process_status]}</el-tag>
@@ -177,6 +177,7 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   {
     prop: "run_type",
     label: "触发方式",
+    width: 100,
     render: scope => {
       return (
         <el-tag type={scope.row.run_type === "trigger" ? "success" : "warning"}>

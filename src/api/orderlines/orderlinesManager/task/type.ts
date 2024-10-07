@@ -1,8 +1,6 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace Task {
   export interface TaskItem {
-    creator_name?: string;
-    creator_id?: string;
     desc?: string;
     id?: number;
     insert_time?: string;
@@ -20,6 +18,8 @@ export namespace Task {
     task_type?: string;
     update_time?: string;
     breakpoint?: number;
+    creator_name?: string;
+    creator_id?: number;
     updater_name?: string;
     updater_id?: number;
     version?: string;

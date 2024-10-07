@@ -45,6 +45,9 @@ import { getCurrentDate } from "@/utils/currentDateTime";
 import { BaseUpdateResponse } from "@/api/interface";
 import { useGlobalStore } from "@/stores/modules/global";
 import { storeToRefs } from "pinia";
+import { useUserStore } from "@/stores/modules/user";
+
+let { userInfo } = storeToRefs(useUserStore());
 
 let { refreshMessage } = storeToRefs(useGlobalStore());
 
@@ -70,6 +73,7 @@ const updateAlarm = async (row: Notice.AlarmItem) => {
   }
   row["update_time"] = getCurrentDate();
   row["people_confirm"] = true;
+  row["updater_name"] = userInfo.value.login_value;
 
   const response: BaseUpdateResponse = await updateAlarmRequest(row);
   if (response.code == 200) {
@@ -158,7 +162,7 @@ const columns = reactive<ColumnProps<Notice.AlarmItem>[]>([
       );
     }
   },
-  { prop: "creator_name", label: "处理人" },
+  { prop: "updater_name", label: "处理人" },
   { prop: "insert_time", label: "创建时间" },
   { prop: "update_time", label: "修改时间" },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }

@@ -23,13 +23,9 @@ let { clickCheckTask, running_edge, graph_data } = storeToRefs(useRunningTaskSto
 export default {
   name: "FlowRunning",
   setup() {
-    let timer = "";
-    const count = ref(0);
     const currentNode = ref(null);
     return {
-      count,
-      currentNode,
-      timer
+      currentNode
     };
   },
 

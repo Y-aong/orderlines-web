@@ -47,6 +47,10 @@
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { getCurrentDate } from "@/utils/currentDateTime";
+import { useUserStore } from "@/stores/modules/user";
+import { storeToRefs } from "pinia";
+
+let { userInfo } = storeToRefs(useUserStore());
 
 const rules = reactive({
   process_id: [{ required: true, message: "填写流程id" }],
@@ -87,6 +91,12 @@ const handleSubmit = () => {
     try {
       if (drawerProps.value.title === "编辑") {
         drawerProps.value.row.update_time = getCurrentDate();
+      }
+      if (drawerProps.value.title === "编辑") {
+        drawerProps.value.row["update_time"] = getCurrentDate();
+        drawerProps.value.row["updater_name"] = userInfo.value.login_value;
+      } else {
+        drawerProps.value.row["creator_name"] = userInfo.value.login_value;
       }
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}变量成功！` });

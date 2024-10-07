@@ -50,6 +50,10 @@ import useFlowStatueStore from "@/stores/modules/flowStatue";
 let { isRunning } = storeToRefs(useFlowStatueStore());
 import { setStorage } from "@/utils/storage";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/modules/user";
+
+let { userInfo } = storeToRefs(useUserStore());
+
 const router = useRouter();
 
 // 跳转到流程编辑页面
@@ -98,29 +102,32 @@ const ruleFormRef = ref<FormInstance>();
 const handleSubmit = () => {
   ruleFormRef.value!.validate(async (valid: any) => {
     if (!valid) return;
-    try {
-      if (drawerProps.value.title === "新增") {
-        drawerProps.value.row["process_id"] = uuid();
-      }
 
-      if (drawerProps.value.title === "编辑") {
-        let process: any = {};
-        process.id = drawerProps.value.row.id;
-        process.process_name = drawerProps.value.row.process_name;
-        process.desc = drawerProps.value.row.desc;
-        process.update_time = getCurrentDate();
-        process.process_params = { timeout: 7200, notice_type: "FAILURE", is_send: true };
-        process.drawerProps.value.row = process;
-      }
-
-      await drawerProps.value.api!(drawerProps.value.row);
-      ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
-      drawerProps.value.getTableList!();
-      drawerVisible.value = false;
-      await toProcessConfig(drawerProps.value.row as Process.ProcessItem);
-    } catch (error) {
-      console.log(error);
+    if (drawerProps.value.title === "新增") {
+      drawerProps.value.row["process_id"] = uuid();
+      drawerProps.value.row["creator_name"] = userInfo.value.login_value;
     }
+
+    if (drawerProps.value.title === "编辑") {
+      const processItem: Process.ProcessItem = {
+        id: drawerProps.value.row.id,
+        process_id: process_id.value,
+        process_name: drawerProps.value.row.process_name,
+        version: drawerProps.value.row.version,
+        namespace: drawerProps.value.row.namespace,
+        desc: drawerProps.value.row.desc,
+        update_time: getCurrentDate(),
+        updater_name: userInfo.value.login_value
+      };
+
+      drawerProps.value.row = processItem;
+    }
+
+    await drawerProps.value.api!(drawerProps.value.row);
+    ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
+    drawerProps.value.getTableList!();
+    drawerVisible.value = false;
+    await toProcessConfig(drawerProps.value.row as Process.ProcessItem);
   });
 };
 

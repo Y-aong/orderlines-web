@@ -99,11 +99,17 @@ const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
       return <el-tag>{scope.row.variable_type}</el-tag>;
     }
   },
-  { prop: "is_cache", label: "是否缓存" },
-  { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
-  { prop: "updater_name", label: "修改者", width: 100 },
+  {
+    prop: "is_cache",
+    label: "是否缓存",
+    render: (scope: any) => {
+      return <el-tag>{scope.row.is_cache ? "是" : "否"}</el-tag>;
+    }
+  },
+  { prop: "creator_name", label: "创建者", width: 120, search: { el: "input" } },
+  { prop: "updater_name", label: "修改者", width: 120 },
   { prop: "operation", label: "操作", fixed: "right", width: 240 },
-  { prop: "create_time", label: "创建时间", width: 165 },
+  { prop: "insert_time", label: "创建时间", width: 165 },
   { prop: "update_time", label: "修改时间", width: 165 }
 ]);
 
