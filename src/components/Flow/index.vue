@@ -29,14 +29,16 @@ import { taskBreakpointRequest } from "@/api/flow/flowOperator/index";
 import { ElMessage } from "element-plus";
 import { stepDebugRequest } from "@/api/orderlines/orderlinesOperate";
 import { UseSocketIo } from "@/utils/webSocketio";
+import { useUserStore } from "@/stores/modules/user";
 
-const { init, send } = UseSocketIo();
-
-const { getGraphNodeData } = useFlowStore();
+let { userInfo } = storeToRefs(useUserStore());
 let { process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(useFlowStore());
 let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
 let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());
+
+const { init, send } = UseSocketIo();
+const { getGraphNodeData } = useFlowStore();
 const editGrid = {
   visible: true,
   type: "mesh",
@@ -60,8 +62,6 @@ export default {
 
   async mounted() {
     // 获取流程图数据
-    await this.getGraphData();
-    console.log(this.graphData);
     init("running_logger");
     this.lf = new LogicFlow({
       container: this.$refs.container,
@@ -190,7 +190,7 @@ export default {
         lf.extension.miniMap.show(position.domOverlayPosition.x - 120, position.domOverlayPosition.y + 35);
       }
     });
-
+    await this.getGraphData();
     this.lf.render(this.graphData);
     // 文本更新监听
     this.lf.on("text:update", async data => {
@@ -206,7 +206,6 @@ export default {
     });
     // 节点更新监听
     this.lf.on("node:click", async ({ data }) => {
-      console.log("点击节点", data);
       this.currentNode = data;
       // 将仓库中的数据值设置为空
       nodeConfig.value = [];
@@ -258,7 +257,8 @@ export default {
           task_id: task_node.task_id,
           method_name: task_node.method_name,
           task_type: task_node.task_type,
-          id: task_node.id
+          id: task_node.id,
+          creator_name: userInfo.value.login_value
         };
         nodeConfig.value = _task_config;
       } else {
@@ -314,7 +314,8 @@ export default {
           id: nodeConfig.value.id,
           process_id: process_id.value,
           task_name: nodeConfig.value.task_name,
-          desc: nodeConfig.value.desc
+          desc: nodeConfig.value.desc,
+          creator_name: userInfo.value.login_value
         };
         await updateTaskRequest(taskNode);
       }
@@ -330,72 +331,6 @@ export default {
           ElMessage.warning("当前没有流程图数据");
         }
       }
-    },
-
-    // 处理节点菜单
-    async menuConfig() {
-      return [
-        {
-          text: "删除节点",
-          callback: node => {
-            this.lf.deleteNode(node.id);
-            ElMessage.success("删除节点成功！");
-          }
-        },
-        {
-          text: "添加断点",
-          callback: async node => {
-            const properties = this.lf.getProperties(node.id);
-            if (properties.breakpoint) {
-              ElMessage.warning("该节点已设置断点！");
-              return;
-            }
-            const result = await taskBreakpointRequest(node.id, 1);
-            if (result.code == 200) ElMessage.success("设置断点成功！");
-            // 增加节点断点状态
-            this.lf.setProperties(node.id, { breakpoint: true });
-          }
-        },
-        {
-          text: "删除断点",
-          callback: async node => {
-            const properties = this.lf.getProperties(node.id);
-            if (!properties.breakpoint) {
-              ElMessage.warning("该节点已取消断点！");
-              return;
-            }
-            const result = await taskBreakpointRequest(node.id, 0);
-            if (result.code == 200) ElMessage.success("取消断点成功！");
-            // 删除断点
-            this.lf.setProperties(node.id, { breakpoint: false });
-          }
-        },
-        {
-          text: "逐步运行",
-          callback: async node => {
-            if (!isDebug.value) {
-              ElMessage.warning("请先开启调试模式！");
-              return;
-            }
-            if (node.type !== "function-node") {
-              ElMessage.warning("该节点不是任务节点，无法逐步运行！");
-              return;
-            }
-            const message = {
-              topic: "running_logger",
-              msg: "step debug",
-              process_id: process_id.value
-            };
-            send("running_logger", message);
-            const response = await stepDebugRequest(process_id.value, node.id);
-            if (response.code !== 200) {
-              ElMessage.error("下一步运行失败！");
-            } else {
-              ElMessage.success("下一步运行成功！");
-            }
-          }
-        }
-      ];
     }
   }
 };

@@ -116,10 +116,22 @@ import { ElMessage, FormInstance } from "element-plus";
 import CronTab from "./CronTab.vue";
 import { Option } from "@/api/option/type";
 import { BaseResponse } from "@/api/interface/index";
-
-const process_id = ref<string>("");
-
+import { getCurrentDate } from "@/utils/currentDateTime";
 import { getProcessNameOptionRequest, getProcessVersionOptionRequest } from "@/api/option/index";
+import { useUserStore } from "@/stores/modules/user";
+import { storeToRefs } from "pinia";
+
+let { userInfo } = storeToRefs(useUserStore());
+let dataSchedulePlan = ref({ run_date: "" });
+let intervalSchedulePlan = ref({ interval_type: "", interval_val: 0, start_date: "", end_date: "" });
+let trigger = ref<string>("");
+let processNameOption = ref<Option.OptionItem[]>([]);
+let processVersionOption = ref<Option.OptionItem[]>([]);
+let triggerOption = ref<Option.OptionItem[]>([
+  { label: "定时执行", value: "date" },
+  { label: "间隔执行", value: "interval" },
+  { label: "周期执行", value: "crontab" }
+]);
 
 const rules = reactive({
   schedule_task_name: [{ required: true, message: "定时任务名称" }],
@@ -131,25 +143,13 @@ const rules = reactive({
   trigger: [{ required: true, message: "请填写定时启动类型" }]
 });
 const dateFormat = ref("YYYY-MM-DD HH:mm:ss");
-
+const process_id = ref<string>("");
 const intervalOption = ref([
   { label: "秒", value: "seconds" },
   { label: "分", value: "minutes" },
   { label: "时", value: "hours" },
   { label: "天", value: "days" },
   { label: "周", value: "weeks" }
-]);
-
-let dataSchedulePlan = ref({ run_date: "" });
-let intervalSchedulePlan = ref({ interval_type: "", interval_val: 0, start_date: "", end_date: "" });
-let trigger = ref<string>("");
-let processNameOption = ref<Option.OptionItem[]>([]);
-let processVersionOption = ref<Option.OptionItem[]>([]);
-
-let triggerOption = ref<Option.OptionItem[]>([
-  { label: "定时执行", value: "date" },
-  { label: "间隔执行", value: "interval" },
-  { label: "周期执行", value: "crontab" }
 ]);
 
 onMounted(async () => {
@@ -214,6 +214,12 @@ const handleSubmit = () => {
     try {
       // 定时任务参数处理
       if (drawerProps.value.title === "新增" || drawerProps.value.title === "修改") {
+        if (drawerProps.value.title === "新增") {
+          drawerProps.value.row["update_time"] = getCurrentDate();
+          drawerProps.value.row["updater_name"] = userInfo.value.login_value;
+        } else {
+          drawerProps.value.row["creator_name"] = userInfo.value.login_value;
+        }
         if (trigger.value == "date") {
           drawerProps.value.row["schedule_plan"] = dataSchedulePlan.value;
         } else if (trigger.value == "interval") {

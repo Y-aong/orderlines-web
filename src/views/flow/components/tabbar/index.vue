@@ -195,12 +195,15 @@ import {
 } from "@/api/orderlines/orderlinesManager/process/index";
 import { getProcessVersionOptionRequest, getProcessNameSpaceOptionRequest } from "@/api/option/index";
 import { getCurrentDate } from "@/utils/currentDateTime";
-import { UseSocketIo } from "@/utils/webSocketio";
 import { Option } from "@/api/option/type";
 import { BaseResponse } from "@/api/interface/index";
 import { DeleteData, BaseData } from "@/api/interface";
+import { io, Socket } from "socket.io-client";
+import useRunningTaskStore from "@/stores/modules/runningTask";
+import { useUserStore } from "@/stores/modules/user";
 
-const { init, close, send } = UseSocketIo();
+let { userInfo } = storeToRefs(useUserStore());
+let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
 
 let { process_id, process_instance_id, process_name, process_version, namespace } = storeToRefs(useFlowStore());
 let { isDebug, isSave, isRunning, isEdit, isRedirect, isPause, isContinue, isStop, isComplete } = storeToRefs(
@@ -214,7 +217,8 @@ let versionForm = ref<FlowOperator.ProcessVersionType>({
   process_id: process_id.value as string,
   version: "",
   namespace: "",
-  version_desc: ""
+  version_desc: "",
+  creator_name: userInfo.value.login_value
 });
 let versionData = ref<FlowOperator.ProcessVersionType[]>([]);
 let processInfo = reactive<Process.ProcessItem>({
@@ -223,6 +227,7 @@ let processInfo = reactive<Process.ProcessItem>({
   namespace: "default",
   version: "default"
 });
+let socketIo: Socket;
 
 onMounted(async () => {
   await getProcessVersionOption();
@@ -231,6 +236,54 @@ onMounted(async () => {
   await getProcessInfo();
   init("running_logger");
 });
+
+// socket io连接
+const init = (namespace: string) => {
+  socketIo = io(`http://127.0.0.1:15900/${namespace}`, { path: "/socket.io" });
+
+  // 监听连接事件
+  socketIo.on("connect", () => {
+    console.log(`websocket:: connected to ${namespace} namespace`);
+  });
+
+  // 监听关闭事件
+  socketIo.on("disconnect", () => {
+    console.log(`websocket:: disconnected to namespace ${namespace} `);
+  });
+
+  // 监听接受信息
+  socketIo.on(namespace, data => {
+    try {
+      const topic = data.topic;
+      const message = data.message;
+      const receive_process_id = data.process_id;
+      console.log(`websocket:: 接收到消息:`, data);
+      if (topic === "running_logger" && receive_process_id === process_id.value) {
+        running_edge.value = message.running_edge;
+        taskProgress.value = message.task_progress;
+        graph_data.value = message.graph_data.graphData;
+      }
+    } catch (error) {
+      console.error("websocket:: 异常信息", data);
+      console.error("websocket:: 处理消息时出错:", error);
+    }
+  });
+};
+
+// socket 发送消息
+const send = (namespace: string, data: any) => {
+  socketIo.emit(namespace, data);
+  console.log(`websocket:: namespace ${namespace}发送消息:`, data);
+};
+
+// socket io关闭
+const closeSocket = (namespace: string) => {
+  if (socketIo) {
+    socketIo.close();
+    console.log(`websocket:: 关闭namespace ${namespace} `);
+  }
+};
+
 // 获取流程命名空间选项
 const getProcessNamespaceOption = async () => {
   const response: BaseResponse<Option.OptionResponse> = await getProcessNameSpaceOptionRequest(namespace.value);
@@ -298,6 +351,7 @@ const getProcessVersionByName = async () => {
 const changeProcessMode = async () => {
   processInfo["mode"] = isDebug.value ? "debug" : "run";
   processInfo["update_time"] = getCurrentDate();
+  processInfo["updater_name"] = userInfo.value.login_value;
 
   const response: BaseResponse<BaseData> = await updateProcessRequest(processInfo);
   if (response.code == 200) {
@@ -408,7 +462,7 @@ const saveProcess = async () => {
     isSave.value = false;
     isRunning.value = false;
     isEdit.value = true;
-    close("running_logger");
+    closeSocket("running_logger");
   } else {
     const response: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });
 

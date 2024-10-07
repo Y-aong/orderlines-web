@@ -6,14 +6,14 @@ export namespace Process {
     process_name: string;
     version: string;
     namespace: string;
-    creator?: string;
+    creator_name?: string;
     creator_id?: number;
     desc?: string;
     insert_time?: string;
     process_config?: string;
-    process_params?: string;
+    process_params?: { timeout: number; notice_type: string; is_send: boolean };
     update_time?: string;
-    updater?: string;
+    updater_name?: string;
     updater_id?: number;
     mode?: string;
   }
@@ -34,6 +34,7 @@ export namespace Process {
     timeout: number;
     notice_type: string;
     is_send: boolean;
+    updater_name: string;
     process_id: string;
   }
 

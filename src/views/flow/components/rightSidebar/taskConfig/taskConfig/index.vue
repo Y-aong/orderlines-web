@@ -95,6 +95,9 @@ import { Task } from "@/api/orderlines/orderlinesManager/task/type";
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const flowStore = useFlowStore();
 const { nodeConfig, process_id, defaultTaskConfig } = storeToRefs(flowStore);
+import { useUserStore } from "@/stores/modules/user";
+
+let { userInfo } = storeToRefs(useUserStore());
 let dialogTableVisible = ref<boolean>(false);
 
 const getTaskConfig = async () => {
@@ -134,7 +137,8 @@ const updateTask = async (config_name: string, config_value: string) => {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
-    task_config: defaultTaskConfig.value
+    task_config: defaultTaskConfig.value,
+    updater_name: userInfo.value.login_value
   };
   // 修改流程图和节点
   await updateGraphNodeData(nodeConfig.value.task_id);
@@ -155,7 +159,8 @@ const updateTaskNoticeType = async (value: string) => {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
-    task_config: task_config
+    task_config: task_config,
+    updater_name: userInfo.value.login_value
   };
 
   await updateGraphNodeData(nodeConfig.value.task_id);
@@ -174,7 +179,8 @@ const updateTaskStrategy = async (value: string) => {
     id: nodeConfig.value.id,
     task_id: nodeConfig.value.task_id,
     process_id: process_id.value,
-    task_config: defaultTaskConfig.value
+    task_config: defaultTaskConfig.value,
+    updater_name: userInfo.value.login_value
   };
 
   let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);

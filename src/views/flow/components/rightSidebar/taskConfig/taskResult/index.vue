@@ -47,15 +47,17 @@ import { FlowNode } from "@/api/flow/flowData/type";
 import { updateTaskRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import { Task } from "@/api/orderlines/orderlinesManager/task/type";
+import { BaseResponse, BaseData } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { useUserStore } from "@/stores/modules/user";
 
+let { userInfo } = storeToRefs(useUserStore());
 let dialogTableVisible = ref<boolean>(false);
 let variableOption = ref<any>([]);
 
 const { nodeConfig, nodeResult, process_id } = storeToRefs(useFlowStore());
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const height = ref(isRunning ? "30vh" : "65vh");
-
 const getVariableOption = async () => {
   const result = await getProcessVariableOptionRequest(process_id.value);
   variableOption.value = result.data;
@@ -81,12 +83,13 @@ const updateTask = async (result_name: string, result_value: string) => {
     };
     let taskNode: Task.TaskItem = {
       id: nodeConfig.value.id,
-      task_id: nodeConfig.value.task_id,
       process_id: process_id.value,
-      result_config: result_config
+      task_id: nodeConfig.value.task_id,
+      result_config: result_config,
+      updater_name: userInfo.value.login_value
     };
-    let result: any = await updateTaskRequest(taskNode);
-    if (result.code != 200) ElMessage.error("任务配置修改失败");
+    const response: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
+    if (response.code != 200) ElMessage.error("任务配置修改失败");
   } else {
     ElMessage.error("任务配置修改失败");
   }

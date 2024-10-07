@@ -43,6 +43,11 @@
 <script setup lang="ts" name="TaskDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
+import { useUserStore } from "@/stores/modules/user";
+import { storeToRefs } from "pinia";
+import { getCurrentDate } from "@/utils/currentDateTime";
+
+let { userInfo } = storeToRefs(useUserStore());
 
 const rules = reactive({
   process_id: [{ required: true, message: "请填写流程id" }],
@@ -82,6 +87,12 @@ const handleSubmit = () => {
     try {
       for (const key in drawerProps.value.row) {
         if (key === "task_instance") delete drawerProps.value.row[key];
+      }
+      if (drawerProps.value.title === "新增") {
+        drawerProps.value.row["update_time"] = getCurrentDate();
+        drawerProps.value.row["updater_name"] = userInfo.value.login_value;
+      } else {
+        drawerProps.value.row["creator_name"] = userInfo.value.login_value;
       }
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}任务成功！` });

@@ -36,9 +36,13 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateProcessParamRequest } from "@/api/flow/flowOperator/index";
+import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { ElMessage } from "element-plus";
 import { BaseUpdateResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { useUserStore } from "@/stores/modules/user";
+
+let { userInfo } = storeToRefs(useUserStore());
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const { process_id } = storeToRefs(useFlowStore());
 
@@ -65,18 +69,12 @@ const options = [
   }
 ];
 
-interface ProcessParamType {
-  timeout: number;
-  notice_type: string;
-  is_send: boolean;
-  process_id: string;
-}
-
-let processParam = ref<ProcessParamType>({
+let processParam = ref<Process.ProcessParamType>({
   timeout: 2 * 60 * 60,
   notice_type: "FAILURE",
   is_send: true,
-  process_id: process_id.value
+  process_id: process_id.value,
+  updater_name: userInfo.value.login_value
 });
 
 // 修改流程参数

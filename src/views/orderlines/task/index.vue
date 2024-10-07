@@ -92,8 +92,8 @@ const columns = reactive<ColumnProps<Task.TaskItem>[]>([
   { prop: "task_name", label: "任务名称", search: { el: "input" } },
   { prop: "task_id", label: "任务id", search: { el: "input" } },
   { prop: "desc", label: "任务描述" },
-  { prop: "creator", label: "创建者", width: 100, search: { el: "input" } },
-  { prop: "updater", label: "修改者", width: 100, search: { el: "input" } },
+  { prop: "creator_name", label: "创建者", width: 120, search: { el: "input" } },
+  { prop: "updater_name", label: "修改者", width: 120, search: { el: "input" } },
   {
     prop: "insert_time",
     label: "插入时间",

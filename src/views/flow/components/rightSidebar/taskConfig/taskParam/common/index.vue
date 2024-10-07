@@ -71,7 +71,7 @@
           @change="updateTask(scope.row)"
           v-if="scope.row.param_type === 'select'"
         >
-          <el-option v-for="item in scope.row.default" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in scope.row.options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
         <!-- 参数为bool -->
         <el-switch
@@ -81,9 +81,6 @@
           active-text="True"
           inactive-text="False"
         />
-
-        <!-- 参数为json -->
-
         <!-- 参数为时间 -->
         <el-date-picker
           v-if="scope.row.param_type === 'datetime'"
@@ -92,18 +89,40 @@
           placeholder="请选择时间"
           @change="updateTask(scope.row)"
         />
+        <!-- 参数为uia -->
+        <el-button v-if="scope.row.param_type === 'uia'" @click="getUia">获取uia</el-button>
       </template>
     </el-table-column>
   </el-table>
   <el-button class="mt-4" style="width: 100%" type="primary" @click="cancel"> 查看变量 </el-button>
 
+  <!-- 显示任务参数 -->
   <el-dialog v-model="dialogTableVisible" :title="`${nodeConfig.task_name}——参数说明`">
     <el-table :data="nodeParam" style="width: 100%" border>
       <el-table-column prop="name" label="参数名称" min-width="120" />
-      <el-table-column prop="value" label="参数值" min-width="100" />
+      <el-table-column prop="value" label="参数值" min-width="100">
+        <template #default="scope">
+          <json-viewer
+            v-if="typeof scope.row.value === 'object'"
+            :value="scope.row.value"
+            copyable
+            boxed
+            sort
+            expanded
+          />
+          <span v-else>{{ scope.row.value }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="default" label="默认值" min-width="120">
         <template #default="scope">
-          <pre v-if="typeof scope.row.default === 'object'">{{ scope.row.default }}</pre>
+          <json-viewer
+            v-if="typeof scope.row.default === 'object' && scope.row.default !== null"
+            :value="scope.row.default"
+            copyable
+            boxed
+            sort
+            expanded
+          />
           <span v-else>{{ scope.row.default }}</span>
         </template>
       </el-table-column>
@@ -118,7 +137,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts" name="Common">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { UploadProps } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
@@ -133,15 +152,19 @@ import { FlowVariable } from "@/api/flow/variable/type";
 import EDA from "@/components/EDA/index.vue";
 import { BaseData, BaseResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { io, Socket } from "socket.io-client";
+import { useUserStore } from "@/stores/modules/user";
 
-const { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
-const { nodeParam, nodeConfig, process_id } = storeToRefs(useFlowStore());
-
+let { userInfo } = storeToRefs(useUserStore());
+let socketIo: Socket;
 let dialogTableVisible = ref<boolean>(false);
 let clearFlag = ref<boolean>(false);
 let pythonCodeVisible = ref<boolean>(false);
 let showVariable = ref<boolean>(false);
 let variableOption = ref<FlowVariable.VariableOption[]>([{ label: "", value: "" }]);
+
+const { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
+const { nodeParam, nodeConfig, process_id } = storeToRefs(useFlowStore());
 
 interface ParamItem {
   default: undefined | string;
@@ -153,6 +176,77 @@ interface ParamItem {
   value?: string;
   param_type?: string;
 }
+
+onMounted(() => {
+  init("uia");
+});
+
+onUnmounted(() => {
+  closeSocket("uia");
+});
+
+// socket io连接
+const init = (namespace: string) => {
+  socketIo = io(`http://127.0.0.1:15900/${namespace}`, { path: "/socket.io" });
+
+  // 监听连接事件
+  socketIo.on("connect", () => {
+    console.log(`websocket:: connected to ${namespace} namespace`);
+  });
+
+  // 监听关闭事件
+  socketIo.on("disconnect", () => {
+    console.log(`websocket:: disconnected to namespace ${namespace} `);
+  });
+
+  // 监听接受信息
+  socketIo.on(namespace, async data => {
+    const topic = data.topic;
+    const message = data.message;
+    console.log("uia数据已经更新", message);
+
+    const receive_process_id = data.process_id;
+    if (topic === "uia" && message && receive_process_id === process_id.value) {
+      let methodKwargs: { [key: string]: any } = {};
+      for (const item of nodeParam.value) {
+        if (item.name === "uia_info") {
+          item.value = message;
+          methodKwargs[item.name] = message;
+        } else {
+          const result = await preUpdateTask(item);
+          if (!result) return;
+          const { param_name, param_value } = result;
+          methodKwargs[param_name] = param_value;
+        }
+      }
+      await updateTaskBack(methodKwargs);
+    }
+  });
+};
+
+// socket 发送消息
+const send = (namespace: string, data: any) => {
+  socketIo.emit(namespace, data);
+  console.log(`websocket:: namespace ${namespace}发送消息:`, data);
+};
+
+// socket io关闭
+const closeSocket = (namespace: string) => {
+  if (socketIo) {
+    socketIo.close();
+    console.log(`websocket:: 关闭namespace ${namespace} `);
+  }
+};
+
+// 获取uia信息
+const getUia = () => {
+  const message = {
+    topic: "uia",
+    msg: "get_uia",
+    process_id: process_id.value
+  };
+  send("uia", message);
+};
 
 const cancel = () => {
   dialogTableVisible.value = true;
@@ -194,44 +288,73 @@ const handleChange: UploadProps["onChange"] = uploadFile => {
     if (item.param_type === "upload") item.value = uploadFile.name;
   });
 };
+
 // 修改任务参数
 const updateTask = async (row: ParamItem) => {
+  let method_kwargs: any = {};
   if (clearFlag.value) return;
+  let result = await preUpdateTask(row);
+  if (!result) return;
+  let { param_name, param_value } = result;
+
+  for (const item of nodeParam.value) {
+    if (item.name === param_name) {
+      item.value = param_value; // 修复赋值问题
+      method_kwargs[item.name] = param_value;
+    } else {
+      result = await preUpdateTask(item);
+      if (!result) return;
+      let { param_name: newName, param_value: newValue } = result;
+      method_kwargs[newName] = newValue;
+    }
+  }
+
+  await updateTaskBack(method_kwargs); // 将 await 移动到这里
+};
+
+const preUpdateTask = async (row: ParamItem) => {
+  const checkParamValue = row.value ? row.value : row.default;
+
   if (row.value !== "") {
     let param_name = row.name;
     let param_value: any;
     if (row.param_type === "bool") {
-      param_value = row.value;
+      param_value = checkParamValue;
     } else if (row.param_type === "datetime") {
-      param_value = row.value;
+      param_value = checkParamValue;
     } else if (row.param_type === "code") {
-      param_value = row.value;
+      param_value = checkParamValue;
     } else if (row.param_type === "upload") {
-      param_value = row.value;
+      param_value = checkParamValue;
     } else if (row.param_type === "select") {
-      param_value = row.value;
+      param_value = checkParamValue;
     } else if (row.param_type === "input") {
       param_value = await checkParam(row);
+    } else if (row.param_type === "uia") {
+      param_value = checkParamValue;
     } else {
-      ElMessage.error("不支持的参数类型");
+      ElMessage.error(`不支持的参数类型${row.param_type}`);
+      return undefined;
     }
-
-    let method_kwargs: any = {};
-    method_kwargs[param_name] = param_value;
-    let taskNode: Task.TaskItem = {
-      id: nodeConfig.value.id,
-      process_id: process_id.value,
-      method_kwargs: method_kwargs
-    };
-    let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
-    if (result.code !== 200) ElMessage.error("任务配置修改失败");
-    await updateGraphNodeData();
-    showVariable.value = false;
-    isEdit.value = true;
-    isSave.value = false;
+    return { param_name, param_value };
   } else {
     ElMessage.error("修改任务参数失败参数值为空");
   }
+};
+
+const updateTaskBack = async (method_kwargs: any) => {
+  let taskNode: Task.TaskItem = {
+    id: nodeConfig.value.id,
+    process_id: process_id.value,
+    method_kwargs: method_kwargs,
+    updater_name: userInfo.value.login_value
+  };
+  let result: BaseResponse<BaseData> = await updateTaskRequest(taskNode);
+  if (result.code !== 200) ElMessage.error("任务配置修改失败");
+  await updateGraphNodeData();
+  showVariable.value = false;
+  isEdit.value = true;
+  isSave.value = false;
 };
 
 // 修改流程图节点数据
@@ -248,11 +371,10 @@ const updateGraphNodeData = async () => {
 const checkParam = (row: any) => {
   let param_type: string = row.type;
   let param_value: string = row.value;
-  console.log("param_value", param_value);
 
   if (!param_value) return;
   // 使用变量
-  if (param_value.startsWith("${") && param_value.endsWith("}")) return param_value;
+  if (typeof param_value === "string" && param_value.startsWith("${") && param_value.endsWith("}")) return param_value;
   // 使用普通输入
   if (param_type.search("str") !== -1 && param_type.search("class") !== -1) {
     return param_value;

@@ -6,11 +6,11 @@ export const useUserStore = defineStore({
   id: "user",
   state: (): UserState => ({
     token: "",
-    userInfo: { name: "orderlines" }
+    userInfo: { login_type: "username", login_value: "" }
   }),
   getters: {},
   actions: {
-    // Set Token
+    // 存储token并存储用户信息
     setToken(token: string) {
       this.token = token;
     },

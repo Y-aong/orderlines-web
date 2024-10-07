@@ -28,6 +28,10 @@ export namespace Login {
   export interface ResLogin {
     token: string;
   }
+  export interface ResUserInfo {
+    login_type: string;
+    login_value: string;
+  }
   export interface ResAuthButtons {
     [key: string]: string[];
   }

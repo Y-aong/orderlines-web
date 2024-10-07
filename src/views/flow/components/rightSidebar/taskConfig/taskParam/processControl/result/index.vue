@@ -153,15 +153,17 @@ import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import "vue3-json-viewer/dist/index.css";
 import { BaseResponse } from "@/api/interface";
+import { useUserStore } from "@/stores/modules/user";
 
+let { userInfo } = storeToRefs(useUserStore());
 let { processControlOptions, processControlResult } = storeToRefs(useProcessControlStore());
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
 let depth = ref(5);
 let prevResultOption = ref<any>([]);
 let visible = ref(false);
 let updateResult = ref(false);
-const expand = ref(true);
 
+const expand = ref(true);
 const checkParam = () => {
   visible.value = true;
 };
@@ -197,6 +199,7 @@ interface TaskNodeType {
   id?: number;
   process_id: string;
   method_kwargs: any;
+  updater_name: any;
 }
 
 // 修改流程控制参数
@@ -219,7 +222,8 @@ const updateProcessControlParam = async () => {
   let taskNode: TaskNodeType = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
-    method_kwargs: nodeParam.value
+    method_kwargs: nodeParam.value,
+    updater_name: userInfo.value.login_value
   };
   await updateTaskRequest(taskNode);
   await updateFlowData();

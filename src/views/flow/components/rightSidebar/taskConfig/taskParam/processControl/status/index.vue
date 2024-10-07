@@ -70,9 +70,10 @@ import { OptionItemType } from "@/api/interface/index";
 import "vue3-json-viewer/dist/index.css";
 import { BaseResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { useUserStore } from "@/stores/modules/user";
 
+let { userInfo } = storeToRefs(useUserStore());
 let { processControlOptions, processControlStatus } = storeToRefs(useProcessControlStore());
-
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useFlowStore());
 let { isRunning } = storeToRefs(useFlowStatueStore());
 let taskIdOption = ref<OptionItemType[]>([{ label: "", value: "" }]);
@@ -134,7 +135,8 @@ const updateProcessControlParam = async () => {
   let taskNode = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
-    method_kwargs: nodeParam.value
+    method_kwargs: nodeParam.value,
+    updater_name: userInfo.value.login_value
   };
   await updateTaskRequest(taskNode);
   await updateFlowData();

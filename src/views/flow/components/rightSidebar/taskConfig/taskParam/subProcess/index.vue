@@ -70,7 +70,9 @@ import { createGraphNodeRequest } from "@/api/flow/flowData/index";
 import { FlowNode } from "@/api/flow/flowData/type";
 import { Option } from "@/api/option/type";
 import { BaseResponse } from "@/api/interface/index";
+import { useUserStore } from "@/stores/modules/user";
 
+let { userInfo } = storeToRefs(useUserStore());
 // 标记是否是编辑状态
 const isEditing = ref<any>({});
 // 子流程ID
@@ -131,7 +133,8 @@ const updateTask = async () => {
   let taskNode: Task.TaskItem = {
     id: nodeConfig.value.id,
     process_id: process_id.value,
-    method_kwargs: method_kwargs
+    method_kwargs: method_kwargs,
+    updater_name: userInfo.value.login_value
   };
   let updateTaskResponse = await updateTaskRequest(taskNode);
   if (updateTaskResponse.code != 200) ElMessage.error("更新失败");

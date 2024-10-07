@@ -26,11 +26,11 @@
       <el-form-item label="流程状态" prop="process_status" clearable>
         <el-input v-model="drawerProps.row!.process_status" clearable></el-input>
       </el-form-item>
-      <el-form-item label="开始时间" prop="start_time" clearable>
-        <el-input v-model="drawerProps.row!.start_time" clearable></el-input>
+      <el-form-item label="开始时间" prop="insert_time" clearable>
+        <el-input v-model="drawerProps.row!.insert_time" clearable></el-input>
       </el-form-item>
-      <el-form-item label="结束时间" prop="end_time" clearable>
-        <el-input v-model="drawerProps.row!.end_time" clearable></el-input>
+      <el-form-item label="结束时间" prop="update_time" clearable>
+        <el-input v-model="drawerProps.row!.update_time" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -44,6 +44,10 @@
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
 import { getCurrentDate } from "@/utils/currentDateTime";
+import { useUserStore } from "@/stores/modules/user";
+import { storeToRefs } from "pinia";
+
+let { userInfo } = storeToRefs(useUserStore());
 
 const rules = reactive({
   process_name: [{ required: true, message: "请填写流程名称" }],
@@ -78,7 +82,10 @@ const handleSubmit = () => {
     if (!valid) return;
     try {
       if (drawerProps.value.title === "编辑") {
-        drawerProps.value.row["end_time"] = getCurrentDate();
+        drawerProps.value.row["update_time"] = getCurrentDate();
+        drawerProps.value.row["updater_name"] = userInfo.value.login_value;
+      } else {
+        drawerProps.value.row["creator_name"] = userInfo.value.login_value;
       }
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}流程实例成功！` });

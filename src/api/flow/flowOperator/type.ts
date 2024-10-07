@@ -13,6 +13,7 @@ export namespace FlowOperator {
     version: string;
     namespace: string;
     version_desc: string;
+    creator_name: string;
   }
   export interface CreateProcessVersion {
     process_id: string;

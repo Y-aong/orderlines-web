@@ -32,7 +32,10 @@ export interface GlobalState {
 /* UserState */
 export interface UserState {
   token: string;
-  userInfo: { name: string };
+  userInfo: {
+    login_type: string;
+    login_value: string;
+  };
 }
 
 /* tabsMenuProps */
