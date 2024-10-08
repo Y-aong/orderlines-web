@@ -22,8 +22,8 @@ watch(props, () => {
     title: {
       text: "流程告警",
       subtext: "",
-      left: "56%",
-      top: "45%",
+      left: "64%",
+      top: "48%",
       textAlign: "center",
       textStyle: {
         fontSize: 18,
@@ -43,7 +43,7 @@ watch(props, () => {
       orient: "vertical",
       icon: "circle", //图例形状
       align: "left",
-      itemGap: 20,
+      itemGap: 18,
       textStyle: {
         fontSize: 14,
         color: "#a1a1a1",
@@ -67,7 +67,7 @@ watch(props, () => {
       {
         type: "pie",
         radius: ["70%", "40%"],
-        center: ["57%", "52%"],
+        center: ["65%", "52%"],
         silent: true,
         clockwise: true,
         startAngle: 150,

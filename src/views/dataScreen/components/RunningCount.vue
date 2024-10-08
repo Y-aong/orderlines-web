@@ -8,13 +8,12 @@
 <script setup lang="ts">
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
-import { AnnualDataType, RunningCountData } from "@/api/dataScreen/type";
 import { ref, defineProps, watch } from "vue";
 let option = ref<ECOption>({});
 const props = defineProps<Props>();
 
 interface Props {
-  data: RunningCountData;
+  data: any;
 }
 
 watch(props, () => {
@@ -128,7 +127,7 @@ watch(props, () => {
         show: false
       }
     },
-    series: props.data.data.map((val: AnnualDataType, index: number) => {
+    series: props.data.data.map((val: any, index: number) => {
       return {
         name: val.label,
         type: "line",

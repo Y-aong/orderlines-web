@@ -7,15 +7,15 @@
     "frontendDist": "../dist",
     "devUrl": "http://localhost:8848",
     "beforeDevCommand": "pnpm run dev",
-    "beforeBuildCommand": "pnpm run build"
+    "beforeBuildCommand": "pnpm run build:dev"
   },
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "orderlinesweb",
-        "width": 800,
-        "height": 600
+        "title": "orderlines",
+        "width": 1680,
+        "height": 950
       }
     ],
     "security": {

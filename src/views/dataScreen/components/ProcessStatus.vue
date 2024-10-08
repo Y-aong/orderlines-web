@@ -9,7 +9,6 @@
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
 import { ref, defineProps, watch } from "vue";
-import { RunStatusType } from "@/api/dataScreen/type";
 
 let option = ref<ECOption>({});
 
@@ -17,7 +16,7 @@ const props = defineProps<Props>();
 const colors = ["#F6C95C", "#EF7D33", "#1F9393", "#184EA1", "#81C8EF", "#9270CA"];
 
 interface Props {
-  data: RunStatusType[];
+  data: any[];
 }
 
 watch(props, () => {
@@ -36,7 +35,7 @@ watch(props, () => {
       itemWidth: 14,
       formatter: function (name: string) {
         let text = "";
-        props.data.forEach((val: RunStatusType) => {
+        props.data.forEach((val: any) => {
           if (val.name === name) text = " " + name + "　 " + val.value;
         });
         return text;
@@ -58,7 +57,7 @@ watch(props, () => {
           show: true,
           color: "#fff",
           formatter: function (params) {
-            return (params.data as RunStatusType).percentage;
+            return (params.data as any).percentage;
           },
           rich: {
             b: {
@@ -72,7 +71,7 @@ watch(props, () => {
           shadowColor: "rgba(0, 0, 0, 0.2)",
           shadowBlur: 10
         },
-        data: props.data.map((val: RunStatusType, index: number) => {
+        data: props.data.map((val: any, index: number) => {
           return {
             value: val.value,
             name: val.name,

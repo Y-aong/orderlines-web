@@ -20,8 +20,7 @@
               placeholder="使用变量"
               style="width: 100px"
               @click="getVariableOption"
-              @blur="updateTask(scope.row)"
-              @change="showVariable = !showVariable"
+              @change="updateTask(scope.row)"
             >
               <el-option v-for="(item, index) in variableOption" :key="index" :label="item.label" :value="item.value" />
             </el-select>
@@ -73,14 +72,6 @@
         >
           <el-option v-for="item in scope.row.options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
-        <!-- 参数为bool -->
-        <el-switch
-          v-model="scope.row.value"
-          v-if="scope.row.param_type === 'radio'"
-          @change="updateTask(scope.row)"
-          active-text="True"
-          inactive-text="False"
-        />
         <!-- 参数为时间 -->
         <el-date-picker
           v-if="scope.row.param_type === 'datetime'"
@@ -296,7 +287,6 @@ const updateTask = async (row: ParamItem) => {
   let result = await preUpdateTask(row);
   if (!result) return;
   let { param_name, param_value } = result;
-
   for (const item of nodeParam.value) {
     if (item.name === param_name) {
       item.value = param_value; // 修复赋值问题
@@ -318,9 +308,7 @@ const preUpdateTask = async (row: ParamItem) => {
   if (row.value !== "") {
     let param_name = row.name;
     let param_value: any;
-    if (row.param_type === "bool") {
-      param_value = checkParamValue;
-    } else if (row.param_type === "datetime") {
+    if (row.param_type === "datetime") {
       param_value = checkParamValue;
     } else if (row.param_type === "code") {
       param_value = checkParamValue;
@@ -374,7 +362,7 @@ const checkParam = (row: any) => {
 
   if (!param_value) return;
   // 使用变量
-  if (typeof param_value === "string" && param_value.startsWith("${") && param_value.endsWith("}")) return param_value;
+  if (typeof param_value === "string" && param_value.startsWith("${")) return param_value;
   // 使用普通输入
   if (param_type.search("str") !== -1 && param_type.search("class") !== -1) {
     return param_value;

@@ -6,8 +6,25 @@ orderlines 一款基于 Vue3.3、TypeScript、Vite4、Pinia、Element-Plus 开�
 
 - **Tauri 项目初始化**
 
+  [rust镜像地址](https://rsproxy.cn/#getStarted)
+
+```shell
+// rust 镜像源配置：在当前用户目录下， 找到 .cargo 打开， 新建 text 不要文件后缀 命名为; config 粘贴以下数据即可
+[source.crates-io]
+replace-with = 'rsproxy-sparse'
+[source.rsproxy]
+registry = "https://rsproxy.cn/crates.io-index"
+[source.rsproxy-sparse]
+registry = "sparse+https://rsproxy.cn/index/"
+[registries.rsproxy]
+index = "https://rsproxy.cn/crates.io-index"
+[net]
+git-fetch-with-cli = true
+```
+
 ```text
 安装 Rust 环境
+安装脚手架：cargo install tauri-cli
 安装 Tauri CLI： cargo install create-tauri-app --locked
 Tauri 项目初始化： cargo tauri android init
 启动项目： cargo tauri dev

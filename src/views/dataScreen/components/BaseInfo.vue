@@ -23,12 +23,11 @@
 
 <script setup lang="ts">
 import { ref, defineProps, watch } from "vue";
-import { BaseInfoType } from "@/api/dataScreen/type";
 
 interface Props {
-  data: BaseInfoType;
+  data: any;
 }
-let baseInfo = ref<BaseInfoType>({
+let baseInfo = ref<any>({
   alarm_count: 0,
   free_space_mb: "",
   process_failure_total: 0,

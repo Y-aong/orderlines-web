@@ -8,11 +8,10 @@
 import ECharts from "@/components/ECharts/index.vue";
 import { ECOption } from "@/components/ECharts/config";
 import { ref, defineProps, watch } from "vue";
-import { TrendDataType } from "@/api/dataScreen/type";
 
 let option = ref<ECOption>({});
 interface Props {
-  data: TrendDataType;
+  data: any;
 }
 const props = defineProps<Props>();
 
