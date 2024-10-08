@@ -4,6 +4,16 @@ orderlines 一款基于 Vue3.3、TypeScript、Vite4、Pinia、Element-Plus 开�
 
 ### 安装使用步骤 📔
 
+- **Tauri 项目初始化**
+
+```text
+安装 Rust 环境
+安装 Tauri CLI： cargo install create-tauri-app --locked
+Tauri 项目初始化： cargo tauri android init
+启动项目： cargo tauri dev
+打包项目： cargo tauri build
+```
+
 - **Install：**
 
 ```text
