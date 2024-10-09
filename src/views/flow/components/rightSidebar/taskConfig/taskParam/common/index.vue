@@ -299,35 +299,31 @@ const updateTask = async (row: ParamItem) => {
     }
   }
 
-  await updateTaskBack(method_kwargs); // 将 await 移动到这里
+  await updateTaskBack(method_kwargs);
+  ElMessage.success("任务参数修改成功");
 };
 
 const preUpdateTask = async (row: ParamItem) => {
   const checkParamValue = row.value ? row.value : row.default;
-
-  if (row.value !== "") {
-    let param_name = row.name;
-    let param_value: any;
-    if (row.param_type === "datetime") {
-      param_value = checkParamValue;
-    } else if (row.param_type === "code") {
-      param_value = checkParamValue;
-    } else if (row.param_type === "upload") {
-      param_value = checkParamValue;
-    } else if (row.param_type === "select") {
-      param_value = checkParamValue;
-    } else if (row.param_type === "input") {
-      param_value = await checkParam(row);
-    } else if (row.param_type === "uia") {
-      param_value = checkParamValue;
-    } else {
-      ElMessage.error(`不支持的参数类型${row.param_type}`);
-      return undefined;
-    }
-    return { param_name, param_value };
+  let param_name = row.name;
+  let param_value: any;
+  if (row.param_type === "datetime") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "code") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "upload") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "select") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "input") {
+    param_value = await checkParam(row);
+  } else if (row.param_type === "uia") {
+    param_value = checkParamValue;
   } else {
-    ElMessage.error("修改任务参数失败参数值为空");
+    ElMessage.error(`不支持的参数类型${row.param_type}`);
+    return undefined;
   }
+  return { param_name, param_value };
 };
 
 const updateTaskBack = async (method_kwargs: any) => {

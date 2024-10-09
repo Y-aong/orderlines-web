@@ -256,9 +256,9 @@ const init = (namespace: string) => {
     try {
       const topic = data.topic;
       const message = data.message;
-      const receive_process_id = data.process_id;
-      console.log(`websocket:: 接收到消息:`, data);
-      if (topic === "running_logger" && receive_process_id === process_id.value) {
+      const receive_process_instance_id = data.process_instance_id;
+
+      if (topic === "running_logger" && receive_process_instance_id === process_instance_id.value) {
         running_edge.value = message.running_edge;
         taskProgress.value = message.task_progress;
         graph_data.value = message.graph_data.graphData;
@@ -302,7 +302,7 @@ const sendDebugSign = async (msg: string) => {
   const message = {
     topic: "debug_sign",
     msg: msg,
-    process_id: process_id.value
+    process_instance_id: process_instance_id.value
   };
   send("running_logger", message);
 };
@@ -412,7 +412,7 @@ const startProcess = async () => {
     const message = {
       topic: "running_logger",
       msg: "process start",
-      process_id: process_id.value
+      process_instance_id: process_instance_id.value
     };
     send("running_logger", message);
   } else {

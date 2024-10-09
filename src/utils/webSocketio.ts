@@ -4,7 +4,7 @@ import useFlowStore from "@/stores/modules/flow";
 import useDebugStore from "@/stores/modules/debug";
 import { storeToRefs } from "pinia";
 
-let { process_id } = storeToRefs(useFlowStore());
+let { process_instance_id } = storeToRefs(useFlowStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
 let { debugMessage } = storeToRefs(useDebugStore());
 
@@ -28,12 +28,12 @@ export function UseSocketIo() {
       try {
         const topic = data.topic;
         const message = data.message;
-        const receive_process_id = data.process_id;
-        if (topic === "running_logger" && receive_process_id === process_id.value) {
+        const receive_process_instance_id = data.process_instance_id;
+        if (topic === "running_logger" && receive_process_instance_id === process_instance_id.value) {
           running_edge.value = message.running_edge;
           taskProgress.value = message.task_progress;
           graph_data.value = message.graph_data.graphData;
-        } else if (topic === "debug_message" && message && receive_process_id === process_id.value) {
+        } else if (topic === "debug_message" && message && receive_process_instance_id === process_instance_id.value) {
           if (!debugMessage.value.find(item => deepEqual(item, message))) {
             debugMessage.value.push(message);
           }

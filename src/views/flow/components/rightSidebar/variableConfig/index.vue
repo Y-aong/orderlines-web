@@ -182,7 +182,7 @@ const confirm = async () => {
     ElMessage.error("请设置流程参数");
     return;
   }
-  if (VariableItem.id) {
+  if (VariableItem.id !== 0) {
     // 修改变量
     let variableItem = {
       id: VariableItem.id,
@@ -197,6 +197,9 @@ const confirm = async () => {
     let result: BaseResponse<BaseData> = await updateVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {
       ElMessage.error("修改变量失败");
+    } else {
+      ElMessage.success("修改变量成功");
+      VariableItem.id = 0;
     }
   } else {
     // 创建变量
@@ -212,6 +215,8 @@ const confirm = async () => {
     let result: BaseResponse<BaseData> = await createVariableRequest(variableItem as Variable.VariableItem);
     if (result.code !== 200) {
       ElMessage.error("创建变量失败");
+    } else {
+      ElMessage.success("创建变量成功");
     }
   }
   VariableItem.variable_key = "";

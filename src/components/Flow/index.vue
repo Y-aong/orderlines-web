@@ -32,7 +32,9 @@ import { UseSocketIo } from "@/utils/webSocketio";
 import { useUserStore } from "@/stores/modules/user";
 
 let { userInfo } = storeToRefs(useUserStore());
-let { process_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(useFlowStore());
+let { process_id, process_instance_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(
+  useFlowStore()
+);
 let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
 let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());
@@ -158,10 +160,11 @@ export default {
               ElMessage.warning("该节点不是任务节点，无法逐步运行！");
               return;
             }
+            process_instance_id.value = `${process_id.value}-debug`;
             const message = {
               topic: "running_logger",
-              msg: "step debug",
-              process_id: process_id.value
+              msg: "step_debug",
+              process_instance_id: process_instance_id.value
             };
             send("running_logger", message);
             const response = await stepDebugRequest(process_id.value, node.id);
