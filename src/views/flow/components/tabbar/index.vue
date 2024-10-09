@@ -377,7 +377,6 @@ const createProcessVersion = async () => {
 
 //根据流程命名空间/版本获取流程
 const gotoTargetProcess = async (value: string) => {
-  console.log("value", value);
   const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(value);
   process_id.value = response.data.process_id;
   process_name.value = response.data.process_name;

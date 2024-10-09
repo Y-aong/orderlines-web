@@ -109,6 +109,7 @@ const confirm = async () => {
     process_id.value = requestData.process_id;
     localStorage.setItem("PROCESS_ID", requestData.process_id as string);
     localStorage.setItem("PROCESS_NAME", requestData.process_name as string);
+    window.location.reload();
   } else {
     ElMessage.error(res.message);
   }

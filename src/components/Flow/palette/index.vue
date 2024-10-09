@@ -141,19 +141,19 @@ const startDrag = async (item: MenuItem) => {
 
 // 创建流程图信息
 const createFlowNode = async (item: MenuItem, task_id: string) => {
-  let flow_data: FlowNode.GraphNode = {
+  let graphNode: FlowNode.GraphNode = {
     process_id: process_id.value,
     task_id: task_id,
     nodeResult: nodeResult.value,
     defaultTaskConfig: defaultTaskConfig.value
   };
   if (item.type !== "process-control-node") {
-    flow_data["nodeParam"] = nodeParam.value;
+    graphNode["nodeParam"] = nodeParam.value;
   } else {
-    flow_data["nodeParam"] = processControlStatusItem;
+    graphNode["nodeParam"] = processControlStatusItem;
     nodeParam.value = JSON.parse(JSON.stringify(processControlStatusItem));
   }
-  const res: BaseResponse<string> = await createGraphNodeRequest(flow_data);
+  const res: BaseResponse<string> = await createGraphNodeRequest(graphNode);
   if (res.code !== 200) ElMessage.error("存放流程数据失败");
 };
 
