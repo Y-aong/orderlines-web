@@ -13,7 +13,7 @@
         </el-button>
         &nbsp;
         <el-switch
-          v-if="!isRunning && !isSave"
+          v-if="isEdit"
           v-model="isDebug"
           type="primary"
           inline-prompt
@@ -25,7 +25,7 @@
       <div class="process_operate">
         <template v-if="isSave">
           <el-popconfirm
-            v-if="!isRunning && isSave"
+            v-if="isSave && !isRunning"
             width="220"
             confirm-button-text="启动"
             cancel-button-text="不启动"
@@ -42,7 +42,7 @@
           </el-popconfirm>
           <el-button
             v-if="isDebug && isRunning"
-            :disabled="!isDebug"
+            :disabled="!isDebug && !isDebugContinue"
             size="small"
             type="warning"
             @click="sendDebugSign('debug continue')"
@@ -51,7 +51,7 @@
           </el-button>
           <el-button
             v-if="isDebug && isRunning"
-            :disabled="!isDebug"
+            :disabled="!isDebug && !isDebugStop"
             size="small"
             type="danger"
             @click="sendDebugSign('debug stop')"
@@ -104,9 +104,8 @@
         </template>
         <el-button size="small" type="primary" @click="saveProcess" v-if="isSave">编辑</el-button>
         <el-button size="small" type="primary" @click="saveProcess" v-if="isEdit"> 保存</el-button>
-        <el-button v-if="isRedirect" size="small" type="success" @click="runningStatus"> 状态 </el-button>
         <el-select
-          v-if="!isRunning && !isSave"
+          v-if="isEdit"
           v-model="process_version"
           placeholder="选择版本"
           style="width: 120px; margin-left: 15px"
@@ -116,7 +115,7 @@
         </el-select>
 
         <el-select
-          v-if="!isRunning && !isSave"
+          v-if="isEdit"
           v-model="namespace"
           placeholder="选择命名空间"
           style="width: 120px; margin-left: 15px"
@@ -187,7 +186,6 @@ import {
 import { saveFlowRequest } from "@/api/flow/flowData/index";
 import { FlowOperator } from "@/api/flow/flowOperator/type";
 import { ElMessage } from "element-plus";
-import { setStorage } from "@/utils/storage";
 import {
   deleteProcessRequest,
   updateProcessRequest,
@@ -206,9 +204,27 @@ let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
 
 let { process_id, process_instance_id, process_name, process_version, namespace } = storeToRefs(useFlowStore());
-let { isDebug, isSave, isRunning, isEdit, isRedirect, isPause, isContinue, isStop, isComplete } = storeToRefs(
+let { isDebug, isSave, isRunning, isEdit, isPause, isStop, isComplete, isDebugContinue, isDebugStop } = storeToRefs(
   useFlowStatueStore()
 );
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const {
+  process_init_action,
+  start_process_action,
+  stop_process_action,
+  pause_process_action,
+  continue_process_action,
+  save_process_action,
+  edit_process_action,
+  debug_process_action,
+  debug_continue_process_action,
+  debug_stop_process_action,
+  update_process_mode
+} = useFlowStatueStore();
+const { gotoProcessEdit, gotoProcessRunning } = useFlowStore();
+
 let activeName = "create";
 let versionOptions = ref<Option.OptionItem[]>([]);
 let namespaceOptions = ref<Option.OptionItem[]>([]);
@@ -294,11 +310,16 @@ const getProcessNamespaceOption = async () => {
 const getProcessInfo = async () => {
   const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(process_id.value);
   processInfo = response.data;
-  isDebug.value = response.data.mode == "debug";
+  update_process_mode(response.data.mode == "debug");
 };
 
 // 发送debug信息
 const sendDebugSign = async (msg: string) => {
+  if (msg == "debug continue") {
+    debug_continue_process_action();
+  } else {
+    debug_stop_process_action();
+  }
   const message = {
     topic: "debug_sign",
     msg: msg,
@@ -354,6 +375,9 @@ const changeProcessMode = async () => {
   processInfo["updater_name"] = userInfo.value.login_value;
 
   const response: BaseResponse<BaseData> = await updateProcessRequest(processInfo);
+  if (isDebug.value) {
+    debug_process_action();
+  }
   if (response.code == 200) {
     ElMessage.success(response.message);
   } else {
@@ -366,11 +390,9 @@ const createProcessVersion = async () => {
   versionVisible.value = false;
   let response: BaseResponse<FlowOperator.CreateProcessVersion> = await createProcessVersionRequest(versionForm.value);
   if (response.code == 200) {
-    process_id.value = process_version.value;
-    process_version.value = process_version.value;
-    setStorage(response.data.process_id, "PROCESS_ID");
-    setStorage(response.data.process_id, "PROCESS_VERSION");
-    await getProcessVersionOption();
+    await gotoProcessEdit(process_id.value);
+    process_init_action();
+    router.push(`/flow/general/index`);
     window.location.reload();
   }
 };
@@ -378,37 +400,21 @@ const createProcessVersion = async () => {
 //根据流程命名空间/版本获取流程
 const gotoTargetProcess = async (value: string) => {
   const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(value);
-  process_id.value = response.data.process_id;
-  process_name.value = response.data.process_name;
-  process_version.value = response.data.version;
-  namespace.value = response.data.namespace;
-  setStorage(response.data.process_id, "PROCESS_ID");
-  setStorage(response.data.process_name, "PROCESS_NAME");
-  setStorage(response.data.version, "PROCESS_VERSION");
-  setStorage(response.data.namespace, "PROCESS_NAMESPACE");
-  isRunning.value = false;
+  await gotoProcessEdit(response.data.process_id);
+  process_init_action();
+  router.push(`/flow/general/index`);
   window.location.reload();
-};
-
-const runningStatus = () => {
-  isRunning.value = true;
-  isRedirect.value = false;
-  isSave.value = true;
 };
 
 // 启动流程
 const startProcess = async () => {
   const response: BaseResponse<OrderlinesOperator.startResponse> = await startProcessRequest(process_id.value);
-  process_instance_id.value = response.data.process_instance_id;
   if (response.code == 200) {
+    await gotoProcessRunning(process_id.value, response.data.process_instance_id);
+    start_process_action();
+    router.push(`/flow/general`);
+    window.location.reload();
     ElMessage.success(response.message);
-    isRunning.value = true;
-    isStop.value = false;
-    isPause.value = false;
-    isContinue.value = false;
-    isEdit.value = false;
-    isSave.value = true;
-    setStorage(true, "IS_RUNNING");
     const message = {
       topic: "running_logger",
       msg: "process start",
@@ -424,8 +430,8 @@ const startProcess = async () => {
 const stopProcess = async () => {
   let response: BaseResponse<OrderlinesOperator.StopResponse> = await stopProcessRequest(process_id.value);
   if (response.code == 200) {
+    stop_process_action();
     ElMessage.success(response.message);
-    isStop.value = true;
   } else {
     ElMessage.error("流程停止失败" + response.message);
   }
@@ -435,8 +441,8 @@ const stopProcess = async () => {
 const pausedProcess = async () => {
   let response: BaseResponse<null> = await pausedProcessRequest(process_id.value);
   if (response.code === 200) {
+    pause_process_action();
     ElMessage.success(response.message);
-    isPause.value = true;
   } else {
     ElMessage.error("流程暂停失败" + response.message);
   }
@@ -446,9 +452,8 @@ const pausedProcess = async () => {
 const recoverProcess = async () => {
   let response: BaseResponse<null> = await recoverProcessRequest(process_id.value);
   if (response.code == 200) {
+    continue_process_action();
     ElMessage.success("流程恢复成功");
-    isContinue.value = true;
-    isPause.value = false;
   } else {
     ElMessage.error("流程恢复失败" + response.message);
   }
@@ -457,21 +462,15 @@ const recoverProcess = async () => {
 // 保存流程
 const saveProcess = async () => {
   if (isSave.value) {
-    ElMessage.success("流程开始编辑！");
-    isSave.value = false;
-    isRunning.value = false;
-    isEdit.value = true;
+    edit_process_action();
     closeSocket("running_logger");
+    ElMessage.success("流程开始编辑！");
   } else {
     const response: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });
 
     if (response.code === 200) {
-      isSave.value = true;
-      setStorage(true, "IS_SAVE");
+      save_process_action();
       ElMessage.success(response.message);
-      isRunning.value = false;
-      isSave.value = true;
-      isEdit.value = false;
     } else {
       ElMessage.error("流程保存失败！");
     }

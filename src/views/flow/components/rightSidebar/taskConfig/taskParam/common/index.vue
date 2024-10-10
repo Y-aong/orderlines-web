@@ -154,7 +154,7 @@ let pythonCodeVisible = ref<boolean>(false);
 let showVariable = ref<boolean>(false);
 let variableOption = ref<FlowVariable.VariableOption[]>([{ label: "", value: "" }]);
 
-const { isRunning, isEdit, isSave } = storeToRefs(useFlowStatueStore());
+const { isRunning } = storeToRefs(useFlowStatueStore());
 const { nodeParam, nodeConfig, process_id } = storeToRefs(useFlowStore());
 
 interface ParamItem {
@@ -337,8 +337,6 @@ const updateTaskBack = async (method_kwargs: any) => {
   if (result.code !== 200) ElMessage.error("任务配置修改失败");
   await updateGraphNodeData();
   showVariable.value = false;
-  isEdit.value = true;
-  isSave.value = false;
 };
 
 // 修改流程图节点数据

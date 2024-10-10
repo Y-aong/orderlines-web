@@ -45,27 +45,20 @@ import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
-import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
 import useFlowStatueStore from "@/stores/modules/flowStatue";
-let { isRunning } = storeToRefs(useFlowStatueStore());
-import { setStorage } from "@/utils/storage";
 
+const { process_init_action } = useFlowStatueStore();
+const { gotoProcessEdit } = useFlowStore();
 const isCard = ref<boolean>(true);
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
 
 // 跳转到流程编辑页面
-const toProcessConfig = (row: Process.ProcessItem) => {
-  process_id.value = row.process_id;
-  process_name.value = row.process_name;
-  process_version.value = row.version;
-  setStorage(row.process_id, "PROCESS_ID");
-  setStorage(row.process_name, "PROCESS_NAME");
-  setStorage(row.version, "PROCESS_VERSION");
-
-  isRunning.value = false;
+const toProcessConfig = async (row: Process.ProcessItem) => {
+  console.log("跳转到流程编辑页面");
+  await gotoProcessEdit(row.process_id);
+  process_init_action();
   router.push(`/flow/general/index`);
 };
 

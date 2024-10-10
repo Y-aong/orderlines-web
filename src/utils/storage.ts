@@ -38,7 +38,7 @@ export const getStorage = (key: string, type: string) => {
       return 0;
     }
   } else if (type === "bool") {
-    return Boolean(item);
+    return item == "true";
   } else if (type == "str") {
     return item;
   }

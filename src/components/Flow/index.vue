@@ -30,12 +30,13 @@ import { ElMessage } from "element-plus";
 import { stepDebugRequest } from "@/api/orderlines/orderlinesOperate";
 import { UseSocketIo } from "@/utils/webSocketio";
 import { useUserStore } from "@/stores/modules/user";
+import { setStorage } from "@/utils/storage";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { process_id, process_instance_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(
   useFlowStore()
 );
-let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
+let { isDebug } = storeToRefs(useFlowStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
 let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());
 
@@ -161,6 +162,7 @@ export default {
               return;
             }
             process_instance_id.value = `${process_id.value}-debug`;
+            setStorage(`${process_id.value}-debug`, "PROCESS_INSTANCE_ID");
             const message = {
               topic: "running_logger",
               msg: "step_debug",
@@ -233,7 +235,6 @@ export default {
     this.lf.on("history:change", async () => {
       let graphData = this.lf.getGraphData();
       console.log("画布上的元素发生变化", graphData);
-      isRunning.value = false;
       const graph_data = {
         process_id: process_id.value,
         graphData: graphData

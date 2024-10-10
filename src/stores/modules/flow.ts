@@ -1,12 +1,15 @@
 import { defineStore } from "pinia";
 import { getNodeMenuRequest } from "@/api/flow/flowConfig/index";
 import { getTaskNodeRequest, getGraphNodeDataRequest } from "@/api/flow/flowData/index";
+import { getProcessDetailRequest } from "@/api/orderlines/orderlinesManager/process/index";
+import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { FlowConfig } from "@/api/flow/flowConfig/type";
-
-import { getStorage } from "@/utils/storage";
+import { getStorage, setStorage } from "@/utils/storage";
 import { FlowStoreType } from "../interface/index";
 import { BaseResponse } from "@/api/interface/index";
 import { FlowData } from "@/api/flow/flowData/type";
+import { ElMessage } from "element-plus";
+
 export interface taskNodeType {
   method_name: string;
   class_name: string;
@@ -25,7 +28,7 @@ const useFlowStore = defineStore("FlowStore", {
       // 命名空间，相当于tag
       namespace: getStorage("PROCESS_NAMESPACE", "str") as string,
       // 流程实例id
-      process_instance_id: "",
+      process_instance_id: getStorage("PROCESS_INSTANCE_ID", "str") as string,
       // 节点菜单
       nodeMenu: [],
       // 节点配置
@@ -39,6 +42,55 @@ const useFlowStore = defineStore("FlowStore", {
     };
   },
   actions: {
+    // 获取流程详情
+    async getProcessDetail(process_id: string) {
+      const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(process_id);
+      if (response.code == 200) {
+        return response.data;
+      } else {
+        ElMessage.error("获取流程详情失败");
+        throw new Error("获取流程详情失败");
+      }
+    },
+    // 前往流程编辑
+    async gotoProcessEdit(process_id: string) {
+      this.process_id = process_id;
+
+      const processDetail: Process.ProcessItem = await this.getProcessDetail(process_id);
+      if (!processDetail) return;
+      // 根据流程id获取流程信息
+      this.process_name = processDetail.process_name;
+      this.process_version = processDetail.version;
+      this.namespace = processDetail.namespace;
+      this.process_instance_id = "";
+      setStorage(process_id, "PROCESS_ID");
+      setStorage(processDetail.process_name, "PROCESS_NAME");
+      setStorage(processDetail.version, "PROCESS_VERSION");
+      setStorage(processDetail.namespace, "PROCESS_NAMESPACE");
+      setStorage("", "PROCESS_INSTANCE_ID");
+    },
+
+    // 前往流程运行
+    async gotoProcessRunning(process_id: string, process_instance_id: string) {
+      const processDetail: Process.ProcessItem = await this.getProcessDetail(process_id);
+      if (!processDetail) return;
+      this.process_id = process_id;
+      this.process_instance_id = process_instance_id;
+      this.process_name = processDetail.process_name;
+      this.process_version = processDetail.version;
+      this.namespace = processDetail.namespace;
+      setStorage(processDetail.process_id, "PROCESS_ID");
+      setStorage(processDetail.process_name, "PROCESS_NAME");
+      setStorage(processDetail.version, "PROCESS_VERSION");
+      setStorage(processDetail.namespace, "PROCESS_NAMESPACE");
+      setStorage(process_instance_id, "PROCESS_INSTANCE_ID");
+    },
+
+    // 设置流程实例ID
+    seProcessInstanceID(process_instance_id: string) {
+      this.process_instance_id = process_instance_id;
+      setStorage(process_instance_id, "PROCESS_INSTANCE_ID");
+    },
     // 获取插件节点信息
     async getNodeMenu() {
       const result: BaseResponse<FlowConfig.NodeMenuType[]> = await getNodeMenuRequest();

@@ -82,9 +82,9 @@ import { ElMessageBox } from "element-plus";
 import { useDownload } from "@/hooks/useDownload";
 import { processHtmlExport } from "@/api/orderlines/orderlinesManager/process/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
+import { setStorage } from "@/utils/storage";
 
 const { isComplete } = storeToRefs(useFlowStatueStore());
-
 const { process_instance_id, process_name } = storeToRefs(useFlowStore());
 const { clickCheckTask, taskProgress } = storeToRefs(useRunningTaskStore());
 const depth = ref<number>(5);
@@ -96,6 +96,7 @@ let taskResultError = reactive({});
 watch(taskProgress, val => {
   if (val >= 100) {
     isComplete.value = true;
+    setStorage("true", "isContinue");
   }
 });
 // 检查任务结果

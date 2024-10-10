@@ -45,28 +45,21 @@ import { storeToRefs } from "pinia";
 import { v4 as uuid } from "uuid";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import useFlowStore from "@/stores/modules/flow";
-let { process_name, process_id, process_version, namespace } = storeToRefs(useFlowStore());
+let { process_id } = storeToRefs(useFlowStore());
 import useFlowStatueStore from "@/stores/modules/flowStatue";
-let { isRunning } = storeToRefs(useFlowStatueStore());
-import { setStorage } from "@/utils/storage";
-import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/modules/user";
-
-let { userInfo } = storeToRefs(useUserStore());
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+let { userInfo } = storeToRefs(useUserStore());
+const { gotoProcessEdit } = useFlowStore();
+const { process_init_action } = useFlowStatueStore();
+
 // 跳转到流程编辑页面
 const toProcessConfig = async (row: Process.ProcessItem) => {
-  process_id.value = row.process_id;
-  process_name.value = row.process_name;
-  process_version.value = row.version;
-  namespace.value = row.namespace;
-  setStorage(row.process_id, "PROCESS_ID");
-  setStorage(row.process_name, "PROCESS_NAME");
-  setStorage(row.version, "PROCESS_VERSION");
-  setStorage(row.namespace, "PROCESS_NAMESPACE");
-  isRunning.value = false;
+  await gotoProcessEdit(row.process_id);
+  process_init_action();
   router.push(`/flow/general/index`);
 };
 

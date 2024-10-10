@@ -37,7 +37,6 @@
 </template>
 <script setup lang="tsx">
 import { reactive, ref } from "vue";
-import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -53,16 +52,16 @@ import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import ProcessInstanceDrawer from "./ProcessInstanceDrawer.vue";
 import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { PInstance } from "@/api/orderlines/orderlinesManager/processInstance/type";
-import { setStorage } from "@/utils/storage";
 import { useDownload } from "@/hooks/useDownload";
-let { process_id, process_instance_id, process_name } = storeToRefs(useFlowStore());
 import useFlowStatueStore from "@/stores/modules/flowStatue";
-let { isSave, isRedirect, isRunning } = storeToRefs(useFlowStatueStore());
+import { useRouter } from "vue-router";
+
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
+const { gotoProcessRunning } = useFlowStore();
+const { start_process_action } = useFlowStatueStore();
 
 // 导出报告
 const downloadExport = async (row: any) => {
@@ -77,17 +76,11 @@ const downloadFile = async () => {
     useDownload(processInstanceExport, "流程列表", proTable.value?.searchParam);
   });
 };
-// 跳转到流程编辑页面
+// 跳转到流程运行页面
 const toProcessRunning = (row: PInstance.ProcessInstanceItem) => {
-  process_id.value = row.process_id;
-  process_name.value = row.process_name;
-  process_instance_id.value = row.process_instance_id;
-  setStorage(row.process_id, "PROCESS_ID");
-  setStorage(row.process_name, "PROCESS_NAME");
-  isSave.value = false;
-  isRunning.value = false;
-  isRedirect.value = true;
-  router.push(`/flow/general`);
+  gotoProcessRunning(row.process_id, row.process_instance_id);
+  start_process_action();
+  router.push(`/flow/general/index`);
 };
 
 // 新增，查看，编辑
@@ -113,15 +106,8 @@ const toDetail = (row: any) => {
   if (!row.selectedList[0]) {
     ElMessage.error("请勾选行选择框后，点击详情按钮");
   } else {
-    process_id.value = row.selectedList[0].process_id;
-    process_name.value = row.selectedList[0].process_name;
-    process_instance_id.value = row.selectedList[0].process_instance_id;
-    setStorage(row.process_id, "PROCESS_ID");
-    setStorage(row.process_name, "PROCESS_NAME");
-    isSave.value = false;
-    isRunning.value = false;
-    isRedirect.value = true;
-    router.push(`/flow/general/index`);
+    gotoProcessRunning(row.process_id, row.process_instance_id);
+    start_process_action();
   }
 };
 

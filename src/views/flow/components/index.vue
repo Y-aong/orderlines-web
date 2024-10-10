@@ -52,21 +52,23 @@ import { ElMessage } from "element-plus";
 import useFlowStore from "@/stores/modules/flow";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
 import { storeToRefs } from "pinia";
-import { setStorage } from "@/utils/storage";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { BaseResponse } from "@/api/interface";
 import { BaseData } from "@/api/interface";
 import { useUserStore } from "@/stores/modules/user";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 let { userInfo } = storeToRefs(useUserStore());
-let { process_name, process_id, process_version } = storeToRefs(useFlowStore());
+let { process_name } = storeToRefs(useFlowStore());
 let { isRunning, isDebug } = storeToRefs(useFlowStatueStore());
 let dialogFormVisible = ref<boolean>(false);
+const { process_init_action } = useFlowStatueStore();
+const { gotoProcessEdit } = useFlowStore();
 
 onMounted(async () => {
-  isRunning.value = false;
   if (!process_name.value) {
-    process_version.value = "";
     dialogFormVisible.value = true;
   }
 });
@@ -96,20 +98,15 @@ const confirm = async () => {
     process_params: ProcessItem.process_params,
     process_config: ProcessItem.process_config
   };
-  setStorage(processUUID, "PROCESS_ID");
-  setStorage(ProcessItem.process_name, "PROCESS_NAME");
+
   let res: BaseResponse<BaseData> = await createProcessRequest(requestData);
   if (res.code == 200) {
+    await process_init_action();
+    await gotoProcessEdit(processUUID);
+    router.push(`/flow/general/index`);
+    window.location.reload();
     dialogFormVisible.value = false;
     ElMessage.success("添加流程配置成功");
-    process_name.value = requestData.process_name;
-    if (requestData.version) {
-      process_version.value = requestData.version;
-    }
-    process_id.value = requestData.process_id;
-    localStorage.setItem("PROCESS_ID", requestData.process_id as string);
-    localStorage.setItem("PROCESS_NAME", requestData.process_name as string);
-    window.location.reload();
   } else {
     ElMessage.error(res.message);
   }

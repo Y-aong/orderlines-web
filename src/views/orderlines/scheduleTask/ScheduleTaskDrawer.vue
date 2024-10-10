@@ -143,7 +143,7 @@ const rules = reactive({
   trigger: [{ required: true, message: "请填写定时启动类型" }]
 });
 const dateFormat = ref("YYYY-MM-DD HH:mm:ss");
-const process_id = ref<string>("");
+const process_version_id = ref<string>("");
 const intervalOption = ref([
   { label: "秒", value: "seconds" },
   { label: "分", value: "minutes" },
@@ -201,7 +201,7 @@ const acceptParams = (params: DrawerProps) => {
 const getProcessId = (version: string) => {
   processVersionOption.value.forEach((item: Option.OptionItem) => {
     if (item.label === version) {
-      process_id.value = item.value;
+      process_version_id.value = item.value;
     }
   });
 };
@@ -226,7 +226,7 @@ const handleSubmit = () => {
           drawerProps.value.row["schedule_plan"] = intervalSchedulePlan.value;
         }
         getProcessId(drawerProps.value.row["version"]);
-        drawerProps.value.row["process_id"] = process_id.value;
+        drawerProps.value.row["process_id"] = process_version_id.value;
         console.log(drawerProps.value.title, drawerProps.value.row);
       }
 
