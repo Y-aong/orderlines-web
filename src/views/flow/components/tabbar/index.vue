@@ -3,6 +3,7 @@
     <div class="tabbar_left">
       <LOGO></LOGO>
     </div>
+    {{ process_instance_id }}
     <div class="tabbar_right">
       <div class="process_info">
         <span style="font-size: 15px; font-weight: bold"> 流程名称：</span>
@@ -199,6 +200,7 @@ import { DeleteData, BaseData } from "@/api/interface";
 import { io, Socket } from "socket.io-client";
 import useRunningTaskStore from "@/stores/modules/runningTask";
 import { useUserStore } from "@/stores/modules/user";
+import useDebugStore from "@/stores/modules/debug";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -225,6 +227,7 @@ const {
 } = useFlowStatueStore();
 const { gotoProcessEdit, gotoProcessRunning } = useFlowStore();
 
+let { debugMessage } = storeToRefs(useDebugStore());
 let activeName = "create";
 let versionOptions = ref<Option.OptionItem[]>([]);
 let namespaceOptions = ref<Option.OptionItem[]>([]);
@@ -278,6 +281,10 @@ const init = (namespace: string) => {
         running_edge.value = message.running_edge;
         taskProgress.value = message.task_progress;
         graph_data.value = message.graph_data.graphData;
+      } else if (topic === "debug_message" && message) {
+        if (!debugMessage.value.find(item => deepEqual(item, message))) {
+          debugMessage.value.push(message);
+        }
       }
     } catch (error) {
       console.error("websocket:: 异常信息", data);
@@ -311,6 +318,19 @@ const getProcessInfo = async () => {
   const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(process_id.value);
   processInfo = response.data;
   update_process_mode(response.data.mode == "debug");
+};
+
+// 检查数据是否相同
+const deepEqual = (a: any, b: any) => {
+  if (a === b) return true;
+  if (a == null || typeof a != "object" || b == null || typeof b != "object") return false;
+  let keysA = Object.keys(a),
+    keysB = Object.keys(b);
+  if (keysA.length != keysB.length) return false;
+  for (let key of keysA) {
+    if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;
+  }
+  return true;
 };
 
 // 发送debug信息
@@ -412,8 +432,6 @@ const startProcess = async () => {
   if (response.code == 200) {
     await gotoProcessRunning(process_id.value, response.data.process_instance_id);
     start_process_action();
-    router.push(`/flow/general`);
-    window.location.reload();
     ElMessage.success(response.message);
     const message = {
       topic: "running_logger",

@@ -16,8 +16,9 @@ import useFlowStore from "../../stores/modules/flow";
 import useRunningTaskStore from "../../stores/modules/runningTask";
 import { storeToRefs } from "pinia";
 import { getTaskInstanceItem } from "@/api/orderlines/orderlinesManager/taskInstance/index";
+import { getGraphDataRequest } from "@/api/flow/flowData/index";
 
-let { process_instance_id } = storeToRefs(useFlowStore());
+let { process_instance_id, process_id } = storeToRefs(useFlowStore());
 let { clickCheckTask, running_edge, graph_data } = storeToRefs(useRunningTaskStore());
 
 export default {
@@ -103,6 +104,7 @@ export default {
     });
     // 获取流程图数据
     await this.getGraphData();
+    console.log(this.graphData);
     await this.lf.render(this.graphData);
     await this.runningTask(this.lf);
   },
@@ -114,7 +116,14 @@ export default {
   },
   methods: {
     async getGraphData() {
-      this.graphData = graph_data.value;
+      const response = await getGraphDataRequest({ process_id: process_id.value });
+      if (response && response.code === 200 && response.data.length !== 0) {
+        graph_data.value = response.data.graphData;
+        this.graphData = response.data.graphData;
+      } else {
+        ElMessage.warning("当前没有流程图数据");
+        return;
+      }
     },
     async runningTask(flow) {
       this.timer = setInterval(async () => {
