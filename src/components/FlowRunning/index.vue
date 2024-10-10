@@ -104,26 +104,22 @@ export default {
     });
     // 获取流程图数据
     await this.getGraphData();
-    console.log(this.graphData);
     await this.lf.render(this.graphData);
     await this.runningTask(this.lf);
   },
-  onUnmounted() {
-    clearInterval(this.timer);
-  },
-  onBeforeUnmount() {
-    clearInterval(this.timer);
-  },
+
   methods: {
     async getGraphData() {
-      const response = await getGraphDataRequest({ process_id: process_id.value });
-      if (response && response.code === 200 && response.data.length !== 0) {
-        graph_data.value = response.data.graphData;
-        this.graphData = response.data.graphData;
-      } else {
-        ElMessage.warning("当前没有流程图数据");
-        return;
+      if (!graph_data.value || graph_data.value.length === 0) {
+        const response = await getGraphDataRequest({ process_id: process_id.value });
+        if (response && response.code === 200 && response.data.length !== 0) {
+          graph_data.value = response.data.graphData;
+        } else {
+          ElMessage.warning("当前没有流程图数据");
+          return;
+        }
       }
+      this.graphData = graph_data.value;
     },
     async runningTask(flow) {
       this.timer = setInterval(async () => {

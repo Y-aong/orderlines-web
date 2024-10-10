@@ -3,7 +3,6 @@
     <div class="tabbar_left">
       <LOGO></LOGO>
     </div>
-    {{ process_instance_id }}
     <div class="tabbar_right">
       <div class="process_info">
         <span style="font-size: 15px; font-weight: bold"> 流程名称：</span>
@@ -201,6 +200,7 @@ import { io, Socket } from "socket.io-client";
 import useRunningTaskStore from "@/stores/modules/runningTask";
 import { useUserStore } from "@/stores/modules/user";
 import useDebugStore from "@/stores/modules/debug";
+import { setStorage } from "@/utils/storage";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -225,7 +225,7 @@ const {
   debug_stop_process_action,
   update_process_mode
 } = useFlowStatueStore();
-const { gotoProcessEdit, gotoProcessRunning } = useFlowStore();
+const { gotoProcessEdit, gotoProcessRunning, seProcessInstanceID } = useFlowStore();
 
 let { debugMessage } = storeToRefs(useDebugStore());
 let activeName = "create";
@@ -279,8 +279,11 @@ const init = (namespace: string) => {
 
       if (topic === "running_logger" && receive_process_instance_id === process_instance_id.value) {
         running_edge.value = message.running_edge;
+        setStorage(message.running_edge, "running_edge");
         taskProgress.value = message.task_progress;
+        setStorage(message.task_progress, "taskProgress");
         graph_data.value = message.graph_data.graphData;
+        setStorage(message.graph_data.graphData, "graph_data");
       } else if (topic === "debug_message" && message) {
         if (!debugMessage.value.find(item => deepEqual(item, message))) {
           debugMessage.value.push(message);
@@ -297,14 +300,6 @@ const init = (namespace: string) => {
 const send = (namespace: string, data: any) => {
   socketIo.emit(namespace, data);
   console.log(`websocket:: namespace ${namespace}发送消息:`, data);
-};
-
-// socket io关闭
-const closeSocket = (namespace: string) => {
-  if (socketIo) {
-    socketIo.close();
-    console.log(`websocket:: 关闭namespace ${namespace} `);
-  }
 };
 
 // 获取流程命名空间选项
@@ -481,7 +476,7 @@ const recoverProcess = async () => {
 const saveProcess = async () => {
   if (isSave.value) {
     edit_process_action();
-    closeSocket("running_logger");
+    seProcessInstanceID("");
     ElMessage.success("流程开始编辑！");
   } else {
     const response: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });

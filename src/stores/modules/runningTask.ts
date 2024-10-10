@@ -14,7 +14,6 @@ interface runningTask {
 }
 
 interface RunningInfo {
-  runningTask: runningTask[];
   taskProgress: number;
   clickCheckTask: runningTask;
   running_edge: string[];
@@ -23,8 +22,7 @@ interface RunningInfo {
 
 const useRunningTaskStore = defineStore("runningTask", {
   state: (): RunningInfo => ({
-    runningTask: getStorage("runningTask", "object") || [],
-    taskProgress: 0,
+    taskProgress: getStorage("taskProgress", "int"),
     clickCheckTask: {
       task_name: "",
       method_kwargs: {},
@@ -35,18 +33,8 @@ const useRunningTaskStore = defineStore("runningTask", {
       task_result: {},
       task_error_info: {}
     },
-    running_edge: [],
-    graph_data: []
-  }),
-  getters: {
-    getRunningTask(state) {
-      return state.runningTask;
-    }
-  },
-  actions: {
-    setRunningTask(runningTask: runningTask[]) {
-      this.runningTask = runningTask;
-    }
-  }
+    running_edge: getStorage("running_edge", "list"),
+    graph_data: getStorage("graph_data", "dict")
+  })
 });
 export default useRunningTaskStore;
