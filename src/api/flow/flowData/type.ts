@@ -23,7 +23,9 @@ export namespace FlowData {
   // 流程图查询条件
   export interface FlowDataFilter {
     process_id: string;
-    process_instance_id?: string;
+  }
+  export interface FlowInstanceFilter {
+    process_instance_id: string;
   }
   // 根据任务信息查询任务
   export interface TaskNodeParam {

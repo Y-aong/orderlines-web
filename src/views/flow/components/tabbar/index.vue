@@ -200,7 +200,6 @@ import { io, Socket } from "socket.io-client";
 import useRunningTaskStore from "@/stores/modules/runningTask";
 import { useUserStore } from "@/stores/modules/user";
 import useDebugStore from "@/stores/modules/debug";
-import { setStorage } from "@/utils/storage";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -279,11 +278,8 @@ const init = (namespace: string) => {
 
       if (topic === "running_logger" && receive_process_instance_id === process_instance_id.value) {
         running_edge.value = message.running_edge;
-        setStorage(message.running_edge, "running_edge");
         taskProgress.value = message.task_progress;
-        setStorage(message.task_progress, "taskProgress");
         graph_data.value = message.graph_data.graphData;
-        setStorage(message.graph_data.graphData, "graph_data");
       } else if (topic === "debug_message" && message) {
         if (!debugMessage.value.find(item => deepEqual(item, message))) {
           debugMessage.value.push(message);

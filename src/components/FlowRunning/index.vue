@@ -16,10 +16,10 @@ import useFlowStore from "../../stores/modules/flow";
 import useRunningTaskStore from "../../stores/modules/runningTask";
 import { storeToRefs } from "pinia";
 import { getTaskInstanceItem } from "@/api/orderlines/orderlinesManager/taskInstance/index";
-import { getGraphDataRequest } from "@/api/flow/flowData/index";
+import { getGraphInstanceRequest } from "@/api/flow/flowData/index";
 
-let { process_instance_id, process_id } = storeToRefs(useFlowStore());
-let { clickCheckTask, running_edge, graph_data } = storeToRefs(useRunningTaskStore());
+let { process_instance_id } = storeToRefs(useFlowStore());
+let { clickCheckTask, running_edge, graph_data, taskProgress } = storeToRefs(useRunningTaskStore());
 
 export default {
   name: "FlowRunning",
@@ -110,15 +110,17 @@ export default {
 
   methods: {
     async getGraphData() {
-      if (!graph_data.value || graph_data.value.length === 0) {
-        const response = await getGraphDataRequest({ process_id: process_id.value });
-        if (response && response.code === 200 && response.data.length !== 0) {
-          graph_data.value = response.data.graphData;
-        } else {
-          ElMessage.warning("当前没有流程图数据");
-          return;
-        }
+      const filter = { process_instance_id: process_instance_id.value };
+      const response = await getGraphInstanceRequest(filter);
+      if (response && response.code === 200 && response.data.length !== 0) {
+        graph_data.value = response.data.graphData;
+        taskProgress.value = response.data.taskProgress;
+        running_edge.value = response.data.running_edge;
+      } else {
+        ElMessage.warning("当前没有流程图数据");
+        return;
       }
+
       this.graphData = graph_data.value;
     },
     async runningTask(flow) {

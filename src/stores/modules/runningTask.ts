@@ -1,7 +1,5 @@
 import { defineStore } from "pinia";
 
-import { getStorage } from "@/utils/storage";
-
 interface runningTask {
   task_name: string;
   method_kwargs: any;
@@ -22,7 +20,7 @@ interface RunningInfo {
 
 const useRunningTaskStore = defineStore("runningTask", {
   state: (): RunningInfo => ({
-    taskProgress: getStorage("taskProgress", "int"),
+    taskProgress: 0,
     clickCheckTask: {
       task_name: "",
       method_kwargs: {},
@@ -33,8 +31,8 @@ const useRunningTaskStore = defineStore("runningTask", {
       task_result: {},
       task_error_info: {}
     },
-    running_edge: getStorage("running_edge", "list"),
-    graph_data: getStorage("graph_data", "dict")
+    running_edge: [],
+    graph_data: {}
   })
 });
 export default useRunningTaskStore;

@@ -6,6 +6,7 @@ enum API {
   TASK_NODE = "/flow/task_node",
   GRAPH_NODE_CONFIG = "/flow/graph_node_data",
   GRAPH_DATA = "/flow/graph_data",
+  GRAPH_INSTANCE = "/flow/graph_instance",
   FLOW_SAVE = "/orderlines/save",
   PROCESS_VERSION = "/flow/process_version",
   PROCESS_PARAM_URL = "/flow/process_param",
@@ -20,6 +21,10 @@ export const getTaskNodeRequest = (taskNode: FlowData.TaskNodeParam) =>
 // 获取流程图信息
 export const getGraphDataRequest = (graph_data: FlowData.FlowDataFilter) =>
   http.get<FlowGraphData.GraphData>(API.GRAPH_DATA, graph_data);
+
+// 获取流程图实例信息
+export const getGraphInstanceRequest = (graph_data: FlowData.FlowInstanceFilter) =>
+  http.get<FlowGraphData.GraphData>(API.GRAPH_INSTANCE, graph_data);
 
 // 创建/修改流程图信息
 export const createGraphDataRequest = (graph_data: FlowGraphData.FlowGraph) =>
