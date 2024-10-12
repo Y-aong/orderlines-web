@@ -200,6 +200,7 @@ import { io, Socket } from "socket.io-client";
 import useRunningTaskStore from "@/stores/modules/runningTask";
 import { useUserStore } from "@/stores/modules/user";
 import useDebugStore from "@/stores/modules/debug";
+import { setStorage } from "@/utils/storage";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -271,23 +272,26 @@ const init = (namespace: string) => {
 
   // 监听接受信息
   socketIo.on(namespace, data => {
-    try {
-      const topic = data.topic;
-      const message = data.message;
-      const receive_process_instance_id = data.process_instance_id;
+    const topic = data.topic;
+    const message = data.message;
+    const receive_process_instance_id = data.process_instance_id;
 
-      if (topic === "running_logger" && receive_process_instance_id === process_instance_id.value) {
-        running_edge.value = message.running_edge;
-        taskProgress.value = message.task_progress;
-        graph_data.value = message.graph_data.graphData;
-      } else if (topic === "debug_message" && message) {
-        if (!debugMessage.value.find(item => deepEqual(item, message))) {
-          debugMessage.value.push(message);
+    if (topic === "running_logger" && receive_process_instance_id === process_instance_id.value) {
+      running_edge.value = message.running_edge;
+      taskProgress.value = message.task_progress;
+      graph_data.value = message.graph_data.graphData;
+    } else if (topic === "debug_message" && message) {
+      if (!debugMessage.value.find(item => deepEqual(item, message))) {
+        const sign = message.sign;
+        if (sign) {
+          isComplete.value = true;
+          setStorage("true", "isComplete");
+
+          ElMessage.success(sign);
         }
+
+        debugMessage.value.push(message);
       }
-    } catch (error) {
-      console.error("websocket:: 异常信息", data);
-      console.error("websocket:: 处理消息时出错:", error);
     }
   });
 };

@@ -298,6 +298,7 @@ const updateTask = async (row: ParamItem) => {
       method_kwargs[newName] = newValue;
     }
   }
+  console.log("修改参数", method_kwargs);
 
   await updateTaskBack(method_kwargs);
   ElMessage.success("任务参数修改成功");
@@ -353,32 +354,48 @@ const updateGraphNodeData = async () => {
 const checkParam = (row: any) => {
   let param_type: string = row.type;
   let param_value: string = row.value;
-
-  if (!param_value) return;
   // 使用变量
   if (typeof param_value === "string" && param_value.startsWith("${")) return param_value;
   // 使用普通输入
   if (param_type.search("str") !== -1 && param_type.search("class") !== -1) {
-    return param_value;
+    if (!param_value) {
+      return "";
+    } else {
+      return param_value;
+    }
   } else if (param_type.search("int") !== -1 && param_type.search("class") !== -1) {
-    if (!isNaN(parseInt(param_value))) {
+    if (param_value === "") {
+      return 0;
+    } else if (!isNaN(parseInt(param_value))) {
       return parseInt(param_value);
     } else {
       ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else if (param_type.search("dict") !== -1 && param_type.search("class") !== -1) {
+    if (param_value === "") return {};
     try {
-      return JSON.parse(param_value);
+      if (typeof param_value === "object") {
+        return param_value;
+      } else {
+        return JSON.parse(param_value);
+      }
     } catch (e) {
+      console.log("检查dict参数异常", e);
       ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else if (param_type.search("list") !== -1 && param_type.search("class") !== -1) {
+    if (param_value === "") return [];
     try {
-      return JSON.parse(param_value);
+      if (typeof param_value === "object") {
+        return param_value;
+      } else {
+        return JSON.parse(param_value);
+      }
     } catch (e) {
       ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
     }
   } else if (param_type.search("float") !== -1 && param_type.search("class") !== -1) {
+    if (param_value === "") return 0;
     if (!isNaN(parseFloat(param_value))) {
       return parseFloat(param_value);
     } else {

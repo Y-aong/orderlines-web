@@ -27,9 +27,7 @@
       </template>
 
       <template #operation="scope">
-        <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-        <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除</el-button>
+        <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除插件</el-button>
       </template>
     </ProTable>
     <pluginDrawer ref="drawerRef" />
@@ -48,7 +46,7 @@ import {
   PluginExport
 } from "@/api/plugin/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, Download } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import pluginDrawer from "./pluginDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";

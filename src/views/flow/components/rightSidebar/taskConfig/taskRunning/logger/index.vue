@@ -25,7 +25,7 @@
 
             <div>
               <el-button
-                v-if="clickCheckTask.task_result"
+                v-if="clickCheckTask.task_status === 'SUCCESS'"
                 size="small"
                 icon="View"
                 type="primary"
@@ -34,7 +34,7 @@
               />
 
               <el-button
-                v-if="clickCheckTask.task_error_info"
+                v-else
                 size="small"
                 icon="BellFilled"
                 type="warning"
@@ -49,7 +49,7 @@
             <el-button size="small" type="primary" round @click="check('查看任务参数', clickCheckTask.method_kwargs)">
               查看参数
             </el-button>
-            <el-button size="small" type="danger" round @click="check('查看任务配置', clickCheckTask.task_config)">
+            <el-button size="small" type="warning" round @click="check('查看任务配置', clickCheckTask.task_config)">
               查看配置
             </el-button>
           </div>
@@ -60,7 +60,7 @@
     </el-collapse-item>
     <el-collapse-item title="运行报告下载" name="runningLog">
       <el-card class="box-card">
-        <el-button type="primary" :icon="Download" @click="downloadFile" :disabled="taskProgress !== 100" plain>
+        <el-button type="primary" :icon="Download" @click="downloadFile" :disabled="!isComplete" plain>
           下载报告
         </el-button>
       </el-card>
@@ -94,6 +94,8 @@ let taskResultError = reactive({});
 
 // 监听任务进度，处理流程状态
 watch(taskProgress, val => {
+  console.log(val);
+
   if (val >= 100) {
     isComplete.value = true;
     setStorage("true", "isContinue");

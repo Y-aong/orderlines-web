@@ -112,13 +112,13 @@ export default {
     async getGraphData() {
       const filter = { process_instance_id: process_instance_id.value };
       const response = await getGraphInstanceRequest(filter);
-      if (response && response.code === 200 && response.data.length !== 0) {
-        graph_data.value = response.data.graphData;
-        taskProgress.value = response.data.taskProgress;
+      if (response.code === 200 && response.data.graph_data) {
+        graph_data.value = response.data.graph_data.graphData;
+        taskProgress.value = response.data.task_progress;
         running_edge.value = response.data.running_edge;
+        this.graphData = graph_data.value;
       } else {
-        ElMessage.warning("当前没有流程图数据");
-        return;
+        this.graphData = {};
       }
 
       this.graphData = graph_data.value;

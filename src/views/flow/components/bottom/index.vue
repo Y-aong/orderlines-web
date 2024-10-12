@@ -81,6 +81,7 @@ const showDialog = () => {
   line-height: 10px;
   text-align: left;
   word-break: break-word; /* 允许单词内部换行 */
+  white-space: pre-line;
 }
 .error {
   color: red;

@@ -3,6 +3,7 @@ import useRunningTaskStore from "@/stores/modules/runningTask";
 import useFlowStore from "@/stores/modules/flow";
 import useDebugStore from "@/stores/modules/debug";
 import { storeToRefs } from "pinia";
+import { ElMessage } from "element-plus";
 
 let { process_instance_id } = storeToRefs(useFlowStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -35,6 +36,8 @@ export function UseSocketIo() {
           graph_data.value = message.graph_data.graphData;
         } else if (topic === "debug_message" && message) {
           if (!debugMessage.value.find(item => deepEqual(item, message))) {
+            const sign = message.sign;
+            if (sign) ElMessage.success(sign);
             debugMessage.value.push(message);
           }
         }

@@ -1,24 +1,41 @@
 <template>
   <el-card>
     <div :class="{ task_running_variable: isRunning, task_config_variable: !isRunning }">
-      <h3>任务变量配置</h3>
+      <h3>{{ !isRunning ? "任务变量配置" : "变量实例查看" }}</h3>
       <el-table :data="variableData" style="width: 100%">
         <el-table-column fixed prop="variable_key" label="变量名" min-width="110" />
-        <el-table-column prop="variable_value" label="变量值" min-width="100" />
-        <el-table-column prop="variable_type" label="类型" min-width="80" width="80" />
+        <el-table-column prop="variable_value" label="变量值" min-width="130" />
+        <el-table-column prop="variable_type" label="类型" min-width="50" />
         <el-table-column fixed="right" label="action" min-width="120" align="center">
           <template #default="scope">
             <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row)" circle icon="View" />
-            <el-button type="warning" size="small" @click.prevent="updateVariable(scope.row)" circle icon="Edit" />
-            <el-button type="danger" size="small" @click.prevent="deleteVariable(scope.row.id)" circle icon="Delete" />
+            <el-button
+              type="warning"
+              size="small"
+              :disabled="isRunning"
+              @click.prevent="updateVariable(scope.row)"
+              circle
+              icon="Edit"
+            />
+            <el-button
+              type="danger"
+              size="small"
+              :disabled="isRunning"
+              @click.prevent="deleteVariable(scope.row.id)"
+              circle
+              icon="Delete"
+            />
           </template>
         </el-table-column>
       </el-table>
-      <el-button style="width: 100%" type="primary" @click="createVariable"> 增加变量 </el-button>
+      <el-button style="width: 100%" type="primary" @click="createVariable" v-if="!isRunning"> 增加变量 </el-button>
     </div>
   </el-card>
 
-  <el-dialog v-model="dialogFormVisible" :title="VariableItem.id ? '变量配置修改' : '变量配置创建'">
+  <el-dialog
+    v-model="dialogFormVisible"
+    :title="VariableItem.id && VariableItem.id !== 0 ? '变量配置修改' : '变量配置创建'"
+  >
     <el-form style="width: 80%" :model="VariableItem" ref="formRef" label-width="120px" :hide-required-asterisk="true">
       <el-form-item label="变量名称：" prop="variable_key">
         <el-input placeholder="请输入变量名称，支持中文" v-model="VariableItem.variable_key"> </el-input>
@@ -42,7 +59,7 @@
     </template>
   </el-dialog>
 
-  <el-dialog v-model="detailVisible" title="查看流程变量详情">
+  <el-dialog v-model="detailVisible" :title="isRunning ? '查看变量实例详情' : '查看流程变量详情'">
     <el-table :data="variableDetail" style="width: 100%" height="240" border>
       <el-table-column fixed prop="variable_key" label="变量名" min-width="100" align="center" />
       <el-table-column prop="variable_value" label="变量值" min-width="240" align="center" />
@@ -61,7 +78,8 @@ import {
   updateVariableRequest,
   getVariableInstanceDetailRequest
 } from "@/api/orderlines/orderlinesManager/variable/index";
-import { getVariableRequest } from "@/api/flow/variable/index";
+import { getVariableRequest, getVariableInstanceRequest } from "@/api/flow/variable/index";
+import { FlowVariable } from "@/api/flow/variable/type";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
@@ -96,14 +114,6 @@ const variableTypeOption = [
     label: "小数"
   },
   {
-    value: "bool",
-    label: "bool"
-  },
-  {
-    value: "None",
-    label: "None"
-  },
-  {
     value: "list",
     label: "列表"
   },
@@ -121,9 +131,12 @@ const variableData = ref();
 let variableDetail = ref<Variable.VariableItem[]>();
 
 const getVariable = async () => {
-  let res: any = await getVariableRequest(process_id.value);
-  if (res.code == 200) {
-    variableData.value = res.data;
+  if (isRunning.value) {
+    let response: BaseResponse<FlowVariable.VariableItem[]> = await getVariableRequest(process_id.value);
+    if (response.code == 200) variableData.value = response.data;
+  } else if (process_instance_id.value) {
+    let response: BaseResponse<Variable.VariableItem[]> = await getVariableInstanceRequest(process_instance_id.value);
+    if (response.code == 200) variableData.value = response.data;
   }
 };
 const createVariable = async () => {
@@ -182,7 +195,8 @@ const confirm = async () => {
     ElMessage.error("请设置流程参数");
     return;
   }
-  if (VariableItem.id !== 0) {
+
+  if (VariableItem.id && VariableItem.id !== 0) {
     // 修改变量
     let variableItem = {
       id: VariableItem.id,

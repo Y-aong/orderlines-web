@@ -26,13 +26,6 @@
       <el-form-item label="插件描述" prop="method_desc" clearable>
         <el-input v-model="drawerProps.row!.method_desc" placeholder="请填写插件描述" clearable></el-input>
       </el-form-item>
-
-      <el-form-item label="插件参数" prop="parameters" clearable>
-        <el-input v-model="drawerProps.row!.parameters" placeholder="请填写插件参数" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="插件返回值" prop="return_value" clearable>
-        <el-input v-model="drawerProps.row!.task_config" placeholder="请填写插件返回值" clearable></el-input>
-      </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="drawerVisible = false">取消</el-button>
@@ -55,9 +48,7 @@ const rules = reactive({
   version: [{ required: true, message: "请填写插件版本" }],
   method_name: [{ required: true, message: "请填写插件方法" }],
   method_desc: [{ required: true, message: "请填写插件描述" }],
-  node_type: [{ required: true, message: "请填写插件类型" }],
-  parameters: [{ required: false, message: "请填写插件参数" }],
-  return_value: [{ required: false, message: "请填写插件返回值" }]
+  node_type: [{ required: true, message: "请填写插件类型" }]
 });
 
 interface DrawerProps {

@@ -29,9 +29,6 @@
       <el-form-item label="任务类型" prop="task_type" clearable>
         <el-input v-model="drawerProps.row!.task_type" placeholder="请填写任务类型" clearable></el-input>
       </el-form-item>
-      <el-form-item label="任务配置" prop="task_config" clearable>
-        <el-input v-model="drawerProps.row!.task_config" placeholder="请填写任务配置" clearable></el-input>
-      </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="drawerVisible = false">取消</el-button>
@@ -54,8 +51,7 @@ const rules = reactive({
   task_name: [{ required: true, message: "请填写任务名称" }],
   desc: [{ required: true, message: "请填写任务描述" }],
   method_name: [{ required: true, message: "请填写方法名称" }],
-  task_type: [{ required: true, message: "请填写任务类型" }],
-  task_config: [{ required: false, message: "请填写任务配置" }]
+  task_type: [{ required: true, message: "请填写任务类型" }]
 });
 
 interface DrawerProps {
