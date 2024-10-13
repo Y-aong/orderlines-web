@@ -2,10 +2,35 @@
   <el-card>
     <div :class="{ process_running: isRunning, process_config: !isRunning }">
       <h3>流程配置信息</h3>
-      <el-form :model="processParam" label-width="100">
+      <el-form :model="processParams" label-width="100">
+        <el-form-item label="setup">
+          <el-select
+            :disabled="isRunning"
+            v-model="processParams.setup"
+            placeholder="选择setup方法"
+            clearable
+            @change="updateProcessParam"
+            style="width: 80%"
+          >
+            <el-option v-for="item in pluginOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="teardown">
+          <el-select
+            :disabled="isRunning"
+            v-model="processParams.teardown"
+            placeholder="选择teardown方法"
+            clearable
+            @change="updateProcessParam"
+            style="width: 80%"
+          >
+            <el-option v-for="item in pluginOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="超时时间">
           <el-input
-            v-model="processParam.timeout"
+            :disabled="isRunning"
+            v-model="processParams.timeout"
             placeholder="请输入超时时间"
             style="width: 80%"
             @change="updateProcessParam"
@@ -16,37 +41,39 @@
 
         <el-form-item label="提示类型">
           <el-select
-            v-model="processParam.notice_type"
+            :disabled="isRunning"
+            v-model="processParams.notice_type"
             placeholder="选择提示类型"
             @change="updateProcessParam"
             style="width: 80%"
           >
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="发送邮件">
-          <el-switch v-model="processParam.is_send" @change="updateProcessParam" />
+          <el-switch v-model="processParams.is_send" @change="updateProcessParam" :disabled="isRunning" />
         </el-form-item>
       </el-form>
     </div>
   </el-card>
 </template>
 <script setup lang="ts" name="ProcessConfig">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
 import { updateProcessParamRequest } from "@/api/flow/flowOperator/index";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { ElMessage } from "element-plus";
-import { BaseUpdateResponse } from "@/api/interface/index";
+import { BaseResponse, BaseUpdateResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
-import { useUserStore } from "@/stores/modules/user";
+import { getSetupTearDownOptionRequest } from "@/api/option/index";
+import { Option } from "@/api/option/type";
+import { getProcessDetailRequest } from "@/api/orderlines/orderlinesManager/process/index";
 
-let { userInfo } = storeToRefs(useUserStore());
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const { process_id } = storeToRefs(useFlowStore());
 
-const options = [
+const noticeOptions = [
   {
     label: "运行成功",
     value: "SUCCESS"
@@ -68,19 +95,38 @@ const options = [
     value: "SKIP"
   }
 ];
+const pluginOptions = ref<Option.OptionItem[]>([]);
 
-let processParam = ref<Process.ProcessParamType>({
+let processParams = ref<Process.ProcessParamType>({
+  setup: "",
+  teardown: "",
   timeout: 2 * 60 * 60,
   notice_type: "FAILURE",
-  is_send: true,
-  process_id: process_id.value,
-  updater_name: userInfo.value.login_value
+  is_send: true
 });
+
+onMounted(async () => {
+  const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(process_id.value);
+  if (response.code == 200 && response.data.process_params) {
+    processParams.value = response.data.process_params;
+  }
+  await getSetupTeardownOption();
+});
+
+// 获取插件选项
+const getSetupTeardownOption = async () => {
+  const response: BaseResponse<Option.OptionResponse> = await getSetupTearDownOptionRequest();
+  if (response.code == 200) {
+    pluginOptions.value = Array.isArray(response.data) ? response.data : [];
+  } else {
+    ElMessage.error("获取插件选项失败");
+  }
+};
 
 // 修改流程参数
 const updateProcessParam = async () => {
-  processParam.value.timeout = Number(processParam.value.timeout);
-  const res: BaseUpdateResponse = await updateProcessParamRequest(processParam.value);
+  processParams.value.timeout = Number(processParams.value.timeout);
+  const res: BaseUpdateResponse = await updateProcessParamRequest(processParams.value, process_id.value);
   if (res.code === 200) {
     ElMessage.success(res.message);
   }

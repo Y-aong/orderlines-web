@@ -9,7 +9,8 @@ enum API {
   PROCESS_OPTION = "/option/process_opt",
   VARIABLE_OPTION = "/option/variable_opt",
   SUB_PROCESS_OPTION = "/option/sub_process_opt",
-  PROCESS_ID_OPTION = "/option/process_id_opt"
+  PROCESS_ID_OPTION = "/option/process_id_opt",
+  PLUGIN_OPTION = "/option/setup_teardown/options"
 }
 // 获取流程名称options
 export const getProcessNameOptionRequest = () => http.get<Option.OptionResponse>(API.PROCESS_NAME_OPTION);
@@ -31,3 +32,5 @@ export const getSubProcessOptionRequest = (process_id: string) =>
   http.get<Option.OptionResponse>(`${API.SUB_PROCESS_OPTION}?process_id=${process_id}`);
 // 获取子流程id
 export const getProcessIDOptionRequest = () => http.get<Option.OptionResponse>(`${API.PROCESS_ID_OPTION}`);
+// 获取子流程id
+export const getSetupTearDownOptionRequest = () => http.get<Option.OptionResponse>(`${API.PLUGIN_OPTION}`);

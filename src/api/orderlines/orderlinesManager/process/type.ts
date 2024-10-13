@@ -11,7 +11,7 @@ export namespace Process {
     desc?: string;
     insert_time?: string;
     process_config?: string;
-    process_params?: { timeout: number; notice_type: string; is_send: boolean };
+    process_params?: ProcessParamType;
     update_time?: string;
     updater_name?: string;
     updater_id?: number;
@@ -31,11 +31,11 @@ export namespace Process {
   }
 
   export interface ProcessParamType {
+    setup: string;
+    teardown: string;
     timeout: number;
     notice_type: string;
     is_send: boolean;
-    updater_name: string;
-    process_id: string;
   }
 
   export interface ProcessResponse extends ResPage<ProcessItem> {}

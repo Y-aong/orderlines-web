@@ -5,7 +5,7 @@ import { FlowVariable } from "./type";
 enum API {
   VARIABLE = "/orderlines/variable",
   PROCESS_VARIABLE = "/flow/process_variable",
-  PROCESS_INSTANCE_VARIABLE = "/flow/process_instance_variable"
+  PROCESS_INSTANCE_VARIABLE = "/flow/process_variable_instance"
 }
 
 // 根据流程ID获取任务变量

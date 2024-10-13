@@ -10,8 +10,8 @@ enum API {
   TASK_BREAKPOINT_URL = "/flow/task/breakpoint"
 }
 // 修改流程参数
-export const updateProcessParamRequest = (data: Process.ProcessParamType) =>
-  http.put<BaseData>(API.PROCESS_PARAM_URL, data);
+export const updateProcessParamRequest = (params: Process.ProcessParamType, process_id: string) =>
+  http.put<BaseData>(API.PROCESS_PARAM_URL, { process_id: process_id, process_params: params });
 
 // 获取子流程参数
 export const getSubProcess = (process_id: string) =>

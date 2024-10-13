@@ -130,15 +130,18 @@ onMounted(async () => {
 const variableData = ref();
 let variableDetail = ref<Variable.VariableItem[]>();
 
+// 获取变量
 const getVariable = async () => {
-  if (isRunning.value) {
+  if (!isRunning.value) {
     let response: BaseResponse<FlowVariable.VariableItem[]> = await getVariableRequest(process_id.value);
     if (response.code == 200) variableData.value = response.data;
-  } else if (process_instance_id.value) {
+  } else {
     let response: BaseResponse<Variable.VariableItem[]> = await getVariableInstanceRequest(process_instance_id.value);
     if (response.code == 200) variableData.value = response.data;
   }
 };
+
+// 变量配置对话框
 const createVariable = async () => {
   VariableItem.variable_key = "";
   VariableItem.variable_type = "";
@@ -147,6 +150,7 @@ const createVariable = async () => {
   dialogFormVisible.value = true;
 };
 
+// 变量配置对话框
 const updateVariable = async (row: Variable.VariableItem) => {
   VariableItem.id = row.id;
   VariableItem.process_id = row.process_id;
@@ -172,6 +176,7 @@ const getVariableDetail = async (row: any) => {
     if (variable_response.code === 200) variableDetail.value = [variable_response.data];
   }
 };
+
 // 删除流程变量
 const deleteVariable = async (id: number) => {
   let res: BaseResponse<DeleteData> = await deleteVariableRequest(id);
@@ -212,6 +217,7 @@ const confirm = async () => {
     if (result.code !== 200) {
       ElMessage.error("修改变量失败");
     } else {
+      await getVariable();
       ElMessage.success("修改变量成功");
       VariableItem.id = 0;
     }
@@ -230,6 +236,7 @@ const confirm = async () => {
     if (result.code !== 200) {
       ElMessage.error("创建变量失败");
     } else {
+      await getVariable();
       ElMessage.success("创建变量成功");
     }
   }
@@ -238,7 +245,6 @@ const confirm = async () => {
   VariableItem.variable_type = "str";
   VariableItem.variable_desc = "";
   dialogFormVisible.value = false;
-  await getVariable();
 };
 </script>
 
