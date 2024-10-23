@@ -10,6 +10,8 @@ export namespace FlowOperator {
   export interface ProcessVersionType {
     id?: number;
     process_id: string;
+    process_name?: string;
+    desc?: string;
     version: string;
     namespace: string;
     version_desc: string;

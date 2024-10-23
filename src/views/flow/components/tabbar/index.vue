@@ -9,7 +9,7 @@
         <el-tag>{{ process_name }}</el-tag>
         &nbsp;
         <el-button v-if="!isRunning && !isSave" size="small" type="primary" @click="getProcessVersion">
-          版本操作
+          流程操作
         </el-button>
         &nbsp;
         <el-switch
@@ -127,9 +127,28 @@
     </div>
   </div>
 
-  <el-dialog title="版本操作" width="50%" v-model="versionVisible" append-to-body lock-scroll>
+  <el-dialog title="流程操作" width="50%" v-model="versionVisible" append-to-body lock-scroll>
     <el-tabs v-model="activeName" type="border-card" class="demo-tabs">
-      <el-tab-pane label="创建版本" name="create">
+      <el-tab-pane label="创建流程" name="create_process">
+        <el-form :model="versionForm" label-width="120px" style="height: 400px">
+          <el-form-item label="流程名称" required>
+            <el-input v-model="versionForm.process_name" placeholder="请输入流程名称" />
+          </el-form-item>
+          <el-form-item label="命名空间" required>
+            <el-input v-model="versionForm.namespace" placeholder="请输入命名空间" />
+          </el-form-item>
+          <el-form-item label="流程版本" required>
+            <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
+          </el-form-item>
+          <el-form-item label="流程描述">
+            <el-input v-model="versionForm.desc" placeholder="请输入流程描述" />
+          </el-form-item>
+          <el-form-item label="版本描述">
+            <el-input v-model="versionForm.version_desc" placeholder="请输入版本描述" />
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+      <el-tab-pane label="创建版本" name="create_process_version">
         <el-form :model="versionForm" label-width="120px" style="height: 400px">
           <el-form-item label="流程版本" required>
             <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
@@ -139,7 +158,7 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="删除版本" name="delete">
+      <el-tab-pane label="删除流程" name="delete">
         <el-table :data="versionData" style="width: 100%; height: 400px">
           <el-table-column fixed prop="id" label="ID" min-width="30" />
           <el-table-column fixed prop="process_name" label="流程名称" min-width="100" />
@@ -157,7 +176,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="versionVisible = false">取消</el-button>
-        <el-button type="primary" @click="createProcessVersion"> 确认 </el-button>
+        <el-button type="primary" @click="processOperator"> 确认 </el-button>
       </span>
     </template>
   </el-dialog>
@@ -201,6 +220,8 @@ import useRunningTaskStore from "@/stores/modules/runningTask";
 import { useUserStore } from "@/stores/modules/user";
 import useDebugStore from "@/stores/modules/debug";
 import { setStorage } from "@/utils/storage";
+import { createProcessRequest } from "@/api/orderlines/orderlinesManager/process/index";
+import { v4 as uuid } from "uuid";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -228,15 +249,17 @@ const {
 const { gotoProcessEdit, gotoProcessRunning, seProcessInstanceID } = useFlowStore();
 
 let { debugMessage } = storeToRefs(useDebugStore());
-let activeName = "create";
+let activeName = ref<string>("create_process");
 let versionOptions = ref<Option.OptionItem[]>([]);
 let namespaceOptions = ref<Option.OptionItem[]>([]);
 let versionVisible = ref<boolean>(false);
 let versionForm = ref<FlowOperator.ProcessVersionType>({
   process_id: process_id.value as string,
+  process_name: "",
   version: "",
   namespace: "",
   version_desc: "",
+  desc: "",
   creator_name: userInfo.value.login_value
 });
 let versionData = ref<FlowOperator.ProcessVersionType[]>([]);
@@ -401,15 +424,33 @@ const changeProcessMode = async () => {
 };
 
 //创建流程版本
-const createProcessVersion = async () => {
-  versionVisible.value = false;
-  let response: BaseResponse<FlowOperator.CreateProcessVersion> = await createProcessVersionRequest(versionForm.value);
-  if (response.code == 200) {
-    await gotoProcessEdit(process_id.value);
+const processOperator = async () => {
+  if (activeName.value == "create_process") {
+    const new_process_id = uuid();
+    versionForm.value.process_id = new_process_id;
+    const response = await createProcessRequest(versionForm.value as Process.ProcessItem);
+    if (response.code == 200) ElMessage.success("创建流程成功");
+    await gotoProcessEdit(new_process_id);
     process_init_action();
     router.push(`/flow/general/index`);
     window.location.reload();
+  } else if (activeName.value == "create_process_version") {
+    const response: BaseResponse<FlowOperator.CreateProcessVersion> = await createProcessVersionRequest(
+      versionForm.value
+    );
+    if (response.code == 200) {
+      await gotoProcessEdit(process_id.value);
+      process_init_action();
+      router.push(`/flow/general/index`);
+      window.location.reload();
+    }
   }
+  versionForm.value.process_name = "";
+  versionForm.value.version = "";
+  versionForm.value.namespace = "";
+  versionForm.value.version_desc = "";
+  versionForm.value.desc = "";
+  versionVisible.value = false;
 };
 
 //根据流程命名空间/版本获取流程
