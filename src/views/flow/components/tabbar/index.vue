@@ -391,6 +391,9 @@ const getProcessVersion = async () => {
   let response: BaseResponse<FlowOperator.ProcessVersionType[]> = await getProcessVersionByIDRequest(process_id.value);
   if (response.code == 200 && response.data.length === 1) {
     versionForm.value = response.data[0];
+    versionForm.value.process_name = "";
+    versionForm.value.version_desc = "";
+    versionForm.value.desc = "";
   }
 };
 
@@ -425,6 +428,7 @@ const changeProcessMode = async () => {
 
 //创建流程版本
 const processOperator = async () => {
+  if (versionForm.value.id) delete versionForm.value.id;
   if (activeName.value == "create_process") {
     const new_process_id = uuid();
     versionForm.value.process_id = new_process_id;
@@ -433,7 +437,6 @@ const processOperator = async () => {
     await gotoProcessEdit(new_process_id);
     process_init_action();
     router.push(`/flow/general/index`);
-    window.location.reload();
   } else if (activeName.value == "create_process_version") {
     const response: BaseResponse<FlowOperator.CreateProcessVersion> = await createProcessVersionRequest(
       versionForm.value
@@ -442,7 +445,6 @@ const processOperator = async () => {
       await gotoProcessEdit(process_id.value);
       process_init_action();
       router.push(`/flow/general/index`);
-      window.location.reload();
     }
   }
   versionForm.value.process_name = "";
@@ -455,6 +457,15 @@ const processOperator = async () => {
 
 //根据流程命名空间/版本获取流程
 const gotoTargetProcess = async (value: string) => {
+  // 先保存流程再跳转
+  const saveResponse: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });
+  if (saveResponse.code == 200) {
+    ElMessage.success("保存流程成功");
+  } else {
+    ElMessage.error("请先保存流程再跳转");
+    return;
+  }
+
   const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(value);
   await gotoProcessEdit(response.data.process_id);
   process_init_action();

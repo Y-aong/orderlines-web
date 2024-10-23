@@ -94,8 +94,6 @@ let taskResultError = reactive({});
 
 // 监听任务进度，处理流程状态
 watch(taskProgress, val => {
-  console.log(val);
-
   if (val >= 100) {
     isComplete.value = true;
     setStorage("true", "isContinue");

@@ -24,8 +24,11 @@
       <el-form-item label="流程名称" prop="process_name" required label-width="120px">
         <el-input placeholder="请输入流程名称" v-model="ProcessItem.process_name"> </el-input>
       </el-form-item>
-      <el-form-item label="流程版本" prop="version" label-width="120px">
+      <el-form-item label="流程版本" prop="version" required label-width="120px">
         <el-input placeholder="请输入流程版本" v-model="ProcessItem.version"> </el-input>
+      </el-form-item>
+      <el-form-item label="命名空间" prop="namespace" required label-width="120px">
+        <el-input placeholder="请输入命名空间" v-model="ProcessItem.namespace"> </el-input>
       </el-form-item>
       <el-form-item label="流程描述" prop="desc" label-width="120px">
         <el-input placeholder="请输入流程描述" v-model="ProcessItem.desc"> </el-input>
@@ -80,7 +83,7 @@ let ProcessItem = reactive<Process.ProcessItem>({
   creator_name: userInfo.value.login_value,
   desc: "",
   process_config: "",
-  process_params: { timeout: 7200, notice_type: "FAILURE", is_send: true },
+  process_params: { timeout: 7200, notice_type: "FAILURE", is_send: true, setup: "", teardown: "" },
   update_time: "",
   updater_name: "",
   namespace: ""

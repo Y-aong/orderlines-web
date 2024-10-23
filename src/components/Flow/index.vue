@@ -157,8 +157,8 @@ export default {
               ElMessage.warning("请先开启调试模式！");
               return;
             }
-            if (node.type !== "function-node") {
-              ElMessage.warning("该节点不是任务节点，无法逐步运行！");
+            if (node.type !== "function-node" && node.type !== "sub-process-node") {
+              ElMessage.warning(`该节点不是任务节点为${node.type}，无法逐步运行！`);
               return;
             }
             process_instance_id.value = `${process_id.value}-debug`;

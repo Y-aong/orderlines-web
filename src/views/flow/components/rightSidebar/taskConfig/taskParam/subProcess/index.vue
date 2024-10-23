@@ -100,8 +100,9 @@ const selectSubProcessId = async (row: any) => {
     ElMessage.error("请选择子流程名称");
     return;
   }
-  await updateFlowData();
   subProcessId.value = row.value;
+  await updateTask();
+  await updateFlowData();
 };
 
 // 处理单元格点击事件
@@ -122,6 +123,7 @@ const handleEdit = async (row: any, property: string) => {
   await updateTask();
   // 修改子流程任务参数
   ElMessage.success(`更新成功: ${property} 的新值为 ${row[property]}`);
+  deliveryForm.delivery = !deliveryForm.delivery;
 };
 
 // 修改任务参数
@@ -139,8 +141,6 @@ const updateTask = async () => {
   let updateTaskResponse = await updateTaskRequest(taskNode);
   if (updateTaskResponse.code != 200) ElMessage.error("更新失败");
   await updateFlowData();
-
-  deliveryForm.delivery = !deliveryForm.delivery;
 };
 
 // 获取参数类型
