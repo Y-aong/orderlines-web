@@ -1,6 +1,6 @@
 <template>
   <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
-    <el-table-column fixed prop="desc" label="参数名" min-width="80" />
+    <el-table-column fixed prop="desc" label="参数名" min-width="65" />
     <el-table-column prop="desc" label="参数值" min-width="240" required>
       <template #default="scope">
         <!-- 参数类型为input的 -->
@@ -82,16 +82,96 @@
         />
         <!-- 参数为uia -->
         <el-button v-if="scope.row.param_type === 'uia'" @click="getUia">获取uia</el-button>
+        <!-- 参数为连续点击 -->
+        <el-table
+          v-if="scope.row.param_type === 'continue_click'"
+          :data="scope.row.value"
+          style="width: 100%"
+          border
+          stripe
+          show-header
+          size="small"
+          max-height="200"
+        >
+          <el-table-column fixed prop="selector" label="xpath" align="center">
+            <template #default="selector">
+              <el-input v-model="selector.row.selector" :placeholder="`请输入xpath`" :disabled="isRunning">
+                <template #prepend v-if="!showVariable">
+                  <el-button :icon="Search" @click="useVariable" size="small" circle v-if="!showVariable" />
+                </template>
+                <template #append v-if="showVariable">
+                  <el-select
+                    v-model="selector.row.selector"
+                    placeholder="变量"
+                    style="width: 80px"
+                    @change="showVariable = false"
+                    @click="getVariableOption"
+                  >
+                    <el-option
+                      v-for="(item, index) in variableOption"
+                      :key="index"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </template>
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column width="70" align="center" fixed>
+            <template #default="data">
+              <el-button link type="primary" size="small" @click="addSelector(data.$index)" :icon="Plus" />
+              <el-button link type="primary" size="small" @click="deleteRow(data.$index)" :icon="Delete" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 参数为连续输入 -->
+        <el-table
+          v-if="scope.row.param_type === 'continue_input'"
+          :data="scope.row.value"
+          style="width: 100%"
+          border
+          stripe
+          show-header
+          size="small"
+          max-height="200"
+        >
+          <el-table-column fixed prop="selector" label="xpath" align="center">
+            <template #default="xpath">
+              <el-input v-model="xpath.row.selector" placeholder="请输入xpath" :disabled="isRunning" />
+            </template>
+          </el-table-column>
+          <el-table-column fixed prop="text" label="text" align="center" width="100">
+            <template #default="text">
+              <el-input v-model="text.row.text" placeholder="请输入文字" :disabled="isRunning" />
+            </template>
+          </el-table-column>
+
+          <el-table-column width="70" align="center" fixed>
+            <template #default="scope">
+              <el-button link type="primary" size="small" @click="addSelector(scope.$index)" :icon="Plus" />
+              <el-button link type="primary" size="small" @click="deleteRow(scope.$index)" :icon="Delete" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-button
+          v-if="scope.row.param_type === 'continue_click' || scope.row.param_type === 'continue_input'"
+          style="width: 100%"
+          type="success"
+          @click="updateTask(scope.row)"
+        >
+          保存xpath
+        </el-button>
       </template>
     </el-table-column>
   </el-table>
-  <el-button class="mt-4" style="width: 100%" type="primary" @click="cancel"> 查看变量 </el-button>
+  <el-button style="width: 100%" type="primary" @click="cancel"> 查看变量 </el-button>
 
   <!-- 显示任务参数 -->
-  <el-dialog v-model="dialogTableVisible" :title="`${nodeConfig.task_name}——参数说明`">
+  <el-dialog v-model="dialogTableVisible" :title="`${nodeConfig.task_name}——参数说明`" style="width: 80%">
     <el-table :data="nodeParam" style="width: 100%" border>
-      <el-table-column prop="name" label="参数名称" min-width="120" />
-      <el-table-column prop="value" label="参数值" min-width="100">
+      <el-table-column prop="name" label="参数名称" min-width="60" align="center" />
+      <el-table-column prop="value" label="参数值" min-width="180">
         <template #default="scope">
           <json-viewer
             v-if="typeof scope.row.value === 'object'"
@@ -104,7 +184,7 @@
           <span v-else>{{ scope.row.value }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="default" label="默认值" min-width="120">
+      <el-table-column prop="default" label="默认值" min-width="150">
         <template #default="scope">
           <json-viewer
             v-if="typeof scope.row.default === 'object' && scope.row.default !== null"
@@ -118,8 +198,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="desc" label="描述信息" min-width="80" />
-      <el-table-column prop="required" label="是否必填" min-width="80" />
-      <el-table-column prop="type" label="参数类型" min-width="140" />
+      <el-table-column prop="required" label="是否必填" min-width="50" />
+      <el-table-column prop="type" label="参数类型" min-width="60" />
     </el-table>
   </el-dialog>
 
@@ -145,6 +225,7 @@ import { BaseData, BaseResponse } from "@/api/interface/index";
 import useFlowStatueStore from "@/stores/modules/flowStatue";
 import { io, Socket } from "socket.io-client";
 import { useUserStore } from "@/stores/modules/user";
+import { Delete, Plus } from "@element-plus/icons-vue";
 
 let { userInfo } = storeToRefs(useUserStore());
 let socketIo: Socket;
@@ -228,6 +309,24 @@ const closeSocket = (namespace: string) => {
     console.log(`websocket:: 关闭namespace ${namespace} `);
   }
 };
+const addSelector = (index: number) => {
+  nodeParam.value.forEach((item: any) => {
+    if (item.param_type === "continue_click") {
+      item.value.splice(index + 1, 0, { selector: "", param_type: "input" });
+    } else if (item.param_type === "continue_input") {
+      item.value.splice(index + 1, 0, { selector: "", text: "", param_type: "input" });
+    }
+  });
+};
+const deleteRow = (index: number) => {
+  nodeParam.value.forEach((item: any) => {
+    console.log(item);
+
+    if (item.param_type === "continue_click" || item.param_type === "continue_input") {
+      item.value.splice(index, 1);
+    }
+  });
+};
 
 // 获取uia信息
 const getUia = () => {
@@ -305,10 +404,12 @@ const updateTask = async (row: ParamItem) => {
 };
 
 const preUpdateTask = async (row: ParamItem) => {
-  const checkParamValue = row.value ? row.value : row.default;
+  const checkParamValue: any = row.value ? row.value : row.default;
   let param_name = row.name;
   let param_value: any;
-  if (row.param_type === "datetime") {
+  if (row.param_type === "input") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "datetime") {
     param_value = checkParamValue;
   } else if (row.param_type === "code") {
     param_value = checkParamValue;
@@ -319,6 +420,10 @@ const preUpdateTask = async (row: ParamItem) => {
   } else if (row.param_type === "input") {
     param_value = await checkParam(row);
   } else if (row.param_type === "uia") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "continue_click") {
+    param_value = checkParamValue;
+  } else if (row.param_type === "continue_input") {
     param_value = checkParamValue;
   } else {
     ElMessage.error(`不支持的参数类型${row.param_type}`);
