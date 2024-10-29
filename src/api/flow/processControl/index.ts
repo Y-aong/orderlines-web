@@ -2,8 +2,8 @@ import http from "@/api";
 import { ProcessControl } from "./type";
 
 enum API {
-  PROCESS_CONTROL = "/flow/process_control/next_node",
-  PREV_NODE_RESULT = "/flow/prev_node_result"
+  PROCESS_CONTROL = "/graph/process_control/next_node",
+  PREV_NODE_RESULT = "/graph/prev_node_result"
 }
 
 // 获取流程控制的后续节点

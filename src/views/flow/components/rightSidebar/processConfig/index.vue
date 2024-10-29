@@ -6,26 +6,33 @@
         <el-form-item label="setup">
           <el-select
             :disabled="isRunning"
-            v-model="processParams.setup"
+            v-model="processParams.setup.name"
             placeholder="选择setup方法"
             clearable
-            @change="updateProcessParam"
+            @change="getSetupTeardownParams('setup', processParams.setup.name)"
             style="width: 80%"
           >
             <el-option v-for="item in pluginOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
+        <el-form-item v-for="(key, val) in processParams.setup.method_kwargs" :key="`${key}${val}`" :label="val">
+          <el-input v-model="processParams.setup.method_kwargs[val]" placeholder="请输入参数" style="width: 80%" />
+        </el-form-item>
+
         <el-form-item label="teardown">
           <el-select
             :disabled="isRunning"
-            v-model="processParams.teardown"
+            v-model="processParams.teardown.name"
             placeholder="选择teardown方法"
             clearable
-            @change="updateProcessParam"
+            @change="getSetupTeardownParams('teardown', processParams.teardown.name)"
             style="width: 80%"
           >
             <el-option v-for="item in pluginOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
+        </el-form-item>
+        <el-form-item v-for="(key, val) in processParams.teardown.method_kwargs" :key="`${key}${val}`" :label="val">
+          <el-input v-model="processParams.teardown.method_kwargs[val]" placeholder="请输入参数" style="width: 80%" />
         </el-form-item>
         <el-form-item label="超时时间">
           <el-input
@@ -53,6 +60,9 @@
         <el-form-item label="发送邮件">
           <el-switch v-model="processParams.is_send" @change="updateProcessParam" :disabled="isRunning" />
         </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="updateProcessParam" style="width: 80%">保存配置 </el-button>
+        </el-form-item>
       </el-form>
     </div>
   </el-card>
@@ -61,7 +71,7 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useFlowStore from "@/stores/modules/flow";
-import { updateProcessParamRequest } from "@/api/flow/flowOperator/index";
+import { updateProcessParamRequest, getSetupTearDownParamRequest } from "@/api/flow/flowOperator/index";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { ElMessage } from "element-plus";
 import { BaseResponse, BaseUpdateResponse } from "@/api/interface/index";
@@ -72,7 +82,8 @@ import { getProcessDetailRequest } from "@/api/orderlines/orderlinesManager/proc
 
 const { isRunning } = storeToRefs(useFlowStatueStore());
 const { process_id } = storeToRefs(useFlowStore());
-
+const setupVisible = ref<boolean>(false);
+const teardownVisible = ref<boolean>(false);
 const noticeOptions = [
   {
     label: "运行成功",
@@ -98,8 +109,8 @@ const noticeOptions = [
 const pluginOptions = ref<Option.OptionItem[]>([]);
 
 let processParams = ref<Process.ProcessParamType>({
-  setup: "",
-  teardown: "",
+  setup: { name: "", method_kwargs: {} },
+  teardown: { name: "", method_kwargs: {} },
   timeout: 2 * 60 * 60,
   notice_type: "FAILURE",
   is_send: true
@@ -124,6 +135,25 @@ const getSetupTeardownOption = async () => {
 };
 
 // 修改流程参数
+const getSetupTeardownParams = async (param_type: string, param_name: string) => {
+  if (param_type === "setup") {
+    setupVisible.value = !setupVisible.value;
+    const response: any = await getSetupTearDownParamRequest(param_name);
+    if (response.code == 200) {
+      processParams.value[param_type].method_kwargs = response.data;
+    } else {
+      ElMessage.error("获取插件选项失败");
+    }
+  } else if (param_type === "teardown") {
+    teardownVisible.value = !teardownVisible.value;
+    const response: any = await getSetupTearDownParamRequest(param_name);
+    if (response.code == 200) {
+      processParams.value[param_type].method_kwargs = response.data;
+    } else {
+      ElMessage.error("获取插件选项失败");
+    }
+  }
+};
 const updateProcessParam = async () => {
   processParams.value.timeout = Number(processParams.value.timeout);
   const res: BaseUpdateResponse = await updateProcessParamRequest(processParams.value, process_id.value);

@@ -2,16 +2,16 @@ import http from "@/api";
 import { FlowData, FlowNode, FlowGraphData } from "./type";
 
 enum API {
-  PLUGIN_NODE = "/flow/node_menu",
-  TASK_NODE = "/flow/task_node",
-  GRAPH_NODE_CONFIG = "/flow/graph_node_data",
-  GRAPH_DATA = "/flow/graph_data",
-  GRAPH_INSTANCE = "/flow/graph_instance",
+  PLUGIN_NODE = "/graph/node_menu",
+  TASK_NODE = "/graph/task_node",
+  GRAPH_NODE_CONFIG = "/graph/graph_node_data",
+  GRAPH_DATA = "/graph/graph_data",
+  GRAPH_INSTANCE = "/graph/graph_instance",
   FLOW_SAVE = "/orderlines/save",
-  PROCESS_VERSION = "/flow/process_version",
-  PROCESS_PARAM_URL = "/flow/process_param",
-  SUB_PROCESS_PARAM_URL = "/flow/sub_process/param",
-  TASK_BREAKPOINT_URL = "/flow/task/breakpoint"
+  PROCESS_VERSION = "/graph/process_version",
+  PROCESS_PARAM_URL = "/graph/process_param",
+  SUB_PROCESS_PARAM_URL = "/graph/sub_process/param",
+  TASK_BREAKPOINT_URL = "/graph/task/breakpoint"
 }
 
 // 获取节点参数

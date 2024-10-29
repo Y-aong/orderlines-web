@@ -4,10 +4,11 @@ import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { FlowOperator } from "./type";
 
 enum API {
-  PROCESS_VERSION = "/flow/process_version",
-  PROCESS_PARAM_URL = "/flow/process_param",
-  SUB_PROCESS_PARAM_URL = "/flow/sub_process/param",
-  TASK_BREAKPOINT_URL = "/flow/task/breakpoint"
+  PROCESS_VERSION = "/graph/process_version",
+  SETUP_TEARDOWN_PARAM = "/graph/setup_teardown_params",
+  PROCESS_PARAM_URL = "/graph/process_param",
+  SUB_PROCESS_PARAM_URL = "/graph/sub_process/param",
+  TASK_BREAKPOINT_URL = "/graph/task/breakpoint"
 }
 // 修改流程参数
 export const updateProcessParamRequest = (params: Process.ProcessParamType, process_id: string) =>
@@ -36,3 +37,7 @@ export const getProcessVersionByIDRequest = (process_id: string) =>
 // 根据流程名称获取流程版本
 export const getProcessVersionByNameRequest = (process_name: string) =>
   http.get<FlowOperator.ProcessVersionType[]>(`${API.PROCESS_VERSION}?process_name=${process_name}`);
+
+// 获取setup/teardown参数
+export const getSetupTearDownParamRequest = (name: string) =>
+  http.get<FlowOperator.ProcessVersionType[]>(`${API.SETUP_TEARDOWN_PARAM}?name=${name}`);

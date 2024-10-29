@@ -29,10 +29,13 @@ export namespace Process {
   export interface ProcessHtmlFilter extends ReqPage {
     process_instance_id: string;
   }
-
+  export interface setupItem {
+    name: string;
+    method_kwargs: any;
+  }
   export interface ProcessParamType {
-    setup: string;
-    teardown: string;
+    setup: setupItem;
+    teardown: setupItem;
     timeout: number;
     notice_type: string;
     is_send: boolean;

@@ -1,7 +1,7 @@
 import http from "@/api";
 import { FlowConfig } from "@/api/flow/flowConfig/type";
 enum API {
-  NODE_MENU = "/flow/node_menu"
+  NODE_MENU = "/graph/node_menu"
 }
 
 // 获取节点菜单
