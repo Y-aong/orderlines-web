@@ -8,7 +8,6 @@ enum API {
   GRAPH_INSTANCE = "/graph/graph_instance",
   FLOW_SAVE = "/orderlines/save",
   PROCESS_VERSION = "/graph/process_version",
-  PROCESS_PARAM_URL = "/graph/process_param",
   SUB_PROCESS_PARAM_URL = "/graph/sub_process/param",
   TASK_BREAKPOINT_URL = "/graph/task/breakpoint",
   NODE_MENU_URL = "/graph/node_menu"
@@ -42,4 +41,4 @@ export const createGraphNodeRequest = (graph_node_data: GraphNode.GraphNode) =>
   http.post<string>(API.GRAPH_NODE_CONFIG, graph_node_data);
 
 // 保存流程
-export const saveFlowRequest = (data: any) => http.post<string>(API.FLOW_SAVE, data);
+export const saveFlowRequest = (data: GraphData.ProcessSave) => http.post<string>(API.FLOW_SAVE, data);

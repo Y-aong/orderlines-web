@@ -10,8 +10,8 @@ export namespace Process {
     creator_id?: number;
     desc?: string;
     insert_time?: string;
-    process_config?: string;
-    process_params?: ProcessParam;
+    process_config: ProcessConfig;
+    process_params?: any;
     update_time?: string;
     updater_name?: string;
     updater_id?: number;
@@ -34,7 +34,7 @@ export namespace Process {
     name: string;
     method_kwargs: any;
   }
-  export interface ProcessParam {
+  export interface ProcessConfig {
     setup: SetupTearDownItem;
     teardown: SetupTearDownItem;
     timeout: number;

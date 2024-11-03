@@ -27,6 +27,10 @@ export namespace GraphData {
     title: string;
     icon: string;
   }
+  // 流程图保存
+  export interface ProcessSave {
+    process_id: string;
+  }
 
   // 流程图查询条件
   export interface FlowDataFilter {

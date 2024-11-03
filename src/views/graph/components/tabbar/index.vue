@@ -143,9 +143,6 @@
           <el-form-item label="流程描述">
             <el-input v-model="versionForm.desc" placeholder="请输入流程描述" />
           </el-form-item>
-          <el-form-item label="版本描述">
-            <el-input v-model="versionForm.version_desc" placeholder="请输入版本描述" />
-          </el-form-item>
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="创建版本" name="create_process_version">
@@ -153,8 +150,8 @@
           <el-form-item label="流程版本" required>
             <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
           </el-form-item>
-          <el-form-item label="版本描述">
-            <el-input v-model="versionForm.version_desc" placeholder="请输入版本描述" />
+          <el-form-item label="流程描述">
+            <el-input v-model="versionForm.desc" placeholder="请输入流程描述" />
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -225,7 +222,6 @@ import { v4 as uuid } from "uuid";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
-
 let { process_id, process_instance_id, process_name, process_version, namespace } = storeToRefs(useGraphStore());
 let { isDebug, isSave, isRunning, isEdit, isPause, isStop, isComplete, isDebugContinue, isDebugStop } = storeToRefs(
   useGraphStatueStore()
@@ -253,21 +249,34 @@ let activeName = ref<string>("create_process");
 let versionOptions = ref<Option.OptionItem[]>([]);
 let namespaceOptions = ref<Option.OptionItem[]>([]);
 let versionVisible = ref<boolean>(false);
-let versionForm = ref<GraphOperator.ProcessVersionType>({
+let versionForm = ref<Process.ProcessItem>({
   process_id: process_id.value as string,
   process_name: "",
   version: "",
   namespace: "",
-  version_desc: "",
   desc: "",
-  creator_name: userInfo.value.login_value
+  creator_name: userInfo.value.login_value,
+  process_config: {
+    setup: { name: "", method_kwargs: {} },
+    teardown: { name: "", method_kwargs: {} },
+    timeout: 0,
+    notice_type: "",
+    is_send: false
+  }
 });
 let versionData = ref<GraphOperator.ProcessVersionType[]>([]);
 let processInfo = reactive<Process.ProcessItem>({
   process_id: process_id.value,
   process_name: process_name.value,
   namespace: "default",
-  version: "default"
+  version: "default",
+  process_config: {
+    setup: { name: "", method_kwargs: {} },
+    teardown: { name: "", method_kwargs: {} },
+    timeout: 7200,
+    notice_type: "FAILURE",
+    is_send: false
+  }
 });
 let socketIo: Socket;
 
@@ -392,7 +401,6 @@ const getProcessVersion = async () => {
   if (response.code == 200 && response.data.length === 1) {
     versionForm.value = response.data[0];
     versionForm.value.process_name = "";
-    versionForm.value.version_desc = "";
     versionForm.value.desc = "";
   }
 };
@@ -432,11 +440,11 @@ const processOperator = async () => {
   if (activeName.value == "create_process") {
     const new_process_id = uuid();
     versionForm.value.process_id = new_process_id;
-    const response = await createProcessRequest(versionForm.value as Process.ProcessItem);
+    const response = await createProcessRequest(versionForm.value);
     if (response.code == 200) ElMessage.success("创建流程成功");
     await gotoProcessEdit(new_process_id);
     process_init_action();
-    router.push(`/flow/general/index`);
+    router.push(`/graph/general/index`);
   } else if (activeName.value == "create_process_version") {
     const response: BaseResponse<GraphOperator.CreateProcessVersion> = await createProcessVersionRequest(
       versionForm.value
@@ -444,13 +452,12 @@ const processOperator = async () => {
     if (response.code == 200) {
       await gotoProcessEdit(process_id.value);
       process_init_action();
-      router.push(`/flow/general/index`);
+      router.push(`/graph/general/index`);
     }
   }
   versionForm.value.process_name = "";
   versionForm.value.version = "";
   versionForm.value.namespace = "";
-  versionForm.value.version_desc = "";
   versionForm.value.desc = "";
   versionVisible.value = false;
 };

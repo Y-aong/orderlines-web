@@ -97,7 +97,7 @@ const downloadFile = async () => {
 const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
   { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70 },
-  { prop: "task_name", label: "任务名称" },
+  { prop: "task_name", label: "任务名称", search: { el: "input" } },
   { prop: "method_name", label: "插件方法" },
   {
     prop: "task_status",
