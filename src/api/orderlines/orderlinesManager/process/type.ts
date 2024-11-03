@@ -11,7 +11,7 @@ export namespace Process {
     desc?: string;
     insert_time?: string;
     process_config?: string;
-    process_params?: ProcessParamType;
+    process_params?: ProcessParam;
     update_time?: string;
     updater_name?: string;
     updater_id?: number;
@@ -29,13 +29,14 @@ export namespace Process {
   export interface ProcessHtmlFilter extends ReqPage {
     process_instance_id: string;
   }
-  export interface setupItem {
+
+  export interface SetupTearDownItem {
     name: string;
     method_kwargs: any;
   }
-  export interface ProcessParamType {
-    setup: setupItem;
-    teardown: setupItem;
+  export interface ProcessParam {
+    setup: SetupTearDownItem;
+    teardown: SetupTearDownItem;
     timeout: number;
     notice_type: string;
     is_send: boolean;

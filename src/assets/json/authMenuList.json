@@ -16,9 +16,9 @@
       }
     },
     {
-      "path": "/flow/general/index",
-      "name": "flow",
-      "component": "/flow/general/index",
+      "path": "/graph/general/index",
+      "name": "graph",
+      "component": "/graph/general/index",
       "meta": {
         "icon": "MessageBox",
         "title": "配置流程",

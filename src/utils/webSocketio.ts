@@ -1,11 +1,11 @@
 import { io, Socket } from "socket.io-client";
 import useRunningTaskStore from "@/stores/modules/runningTask";
-import useFlowStore from "@/stores/modules/flow";
+import useGraphStore from "@/stores/modules/graph";
 import useDebugStore from "@/stores/modules/debug";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 
-let { process_instance_id } = storeToRefs(useFlowStore());
+let { process_instance_id } = storeToRefs(useGraphStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
 let { debugMessage } = storeToRefs(useDebugStore());
 

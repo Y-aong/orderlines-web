@@ -45,11 +45,11 @@ import { useHandleData } from "@/hooks/useHandleData";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
-import useFlowStore from "@/stores/modules/flow";
-import useFlowStatueStore from "@/stores/modules/flowStatue";
+import useGraphStore from "@/stores/modules/graph";
+import useGraphStatueStore from "@/stores/modules/graphStatue";
 
-const { process_init_action } = useFlowStatueStore();
-const { gotoProcessEdit } = useFlowStore();
+const { process_init_action } = useGraphStatueStore();
+const { gotoProcessEdit } = useGraphStore();
 const isCard = ref<boolean>(true);
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
@@ -59,7 +59,7 @@ const toProcessConfig = async (row: Process.ProcessItem) => {
   console.log("跳转到流程编辑页面");
   await gotoProcessEdit(row.process_id);
   process_init_action();
-  router.push(`/flow/general/index`);
+  router.push(`/graph/general/index`);
 };
 
 // 新增，查看，编辑

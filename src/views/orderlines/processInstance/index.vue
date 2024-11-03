@@ -37,7 +37,7 @@
 </template>
 <script setup lang="tsx">
 import { reactive, ref } from "vue";
-import useFlowStore from "@/stores/modules/flow";
+import useGraphStore from "@/stores/modules/graph";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import {
@@ -55,13 +55,13 @@ import { useHandleData } from "@/hooks/useHandleData";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { PInstance } from "@/api/orderlines/orderlinesManager/processInstance/type";
 import { useDownload } from "@/hooks/useDownload";
-import useFlowStatueStore from "@/stores/modules/flowStatue";
+import useGraphStatueStore from "@/stores/modules/graphStatue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 const proTable = ref<ProTableInstance>();
-const { gotoProcessRunning } = useFlowStore();
-const { start_process_action } = useFlowStatueStore();
+const { gotoProcessRunning } = useGraphStore();
+const { start_process_action } = useGraphStatueStore();
 
 // 导出报告
 const downloadExport = async (row: any) => {

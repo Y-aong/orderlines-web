@@ -1,5 +1,4 @@
-import { FlowData, DefaultTaskConfig, NodeResultItem } from "@/api/flow/flowData/type";
-import { FlowConfig } from "@/api/flow/flowConfig/type";
+import { GraphData, DefaultTaskConfig, NodeResultItem } from "@/api/graph/graphData/type";
 
 export type LayoutType = "vertical" | "classic" | "transverse" | "columns";
 
@@ -73,8 +72,8 @@ export interface FlowStoreType {
   process_version: string;
   namespace: string;
   process_instance_id: string;
-  nodeMenu: FlowConfig.NodeMenuType[];
-  nodeConfig: FlowData.NodeConfig;
+  nodeMenu: GraphData.NodeMenuType[];
+  nodeConfig: GraphData.NodeConfig;
   nodeParam: any;
   nodeResult: NodeResultItem[];
   defaultTaskConfig: DefaultTaskConfig[];

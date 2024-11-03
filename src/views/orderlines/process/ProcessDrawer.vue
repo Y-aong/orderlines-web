@@ -44,23 +44,23 @@ import { getCurrentDate } from "@/utils/currentDateTime";
 import { storeToRefs } from "pinia";
 import { v4 as uuid } from "uuid";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
-import useFlowStore from "@/stores/modules/flow";
-let { process_id } = storeToRefs(useFlowStore());
-import useFlowStatueStore from "@/stores/modules/flowStatue";
+import useGraphStore from "@/stores/modules/graph";
+let { process_id } = storeToRefs(useGraphStore());
+import useGraphStatueStore from "@/stores/modules/graphStatue";
 import { useUserStore } from "@/stores/modules/user";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 let { userInfo } = storeToRefs(useUserStore());
-const { gotoProcessEdit } = useFlowStore();
-const { process_init_action } = useFlowStatueStore();
+const { gotoProcessEdit } = useGraphStore();
+const { process_init_action } = useGraphStatueStore();
 
 // 跳转到流程编辑页面
 const toProcessConfig = async (row: Process.ProcessItem) => {
   await gotoProcessEdit(row.process_id);
   process_init_action();
-  router.push(`/flow/general/index`);
+  router.push(`/graph/general/index`);
 };
 
 const rules = reactive({
