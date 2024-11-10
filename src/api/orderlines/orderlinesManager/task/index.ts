@@ -6,9 +6,13 @@ enum API {
   TASK_URL = "/orderlines/task",
   TASK_DETAIL_URL = "/orderlines/task/detail",
   TASK_EXPORT_URL = "/orderlines/task/export",
-  TASK_GROUP_URL = "/orderlines/task_group"
+  TASK_GROUP_URL = "/orderlines/task_group",
+  TASK_BREAKPOINT_URL = "/orderlines/task/breakpoint"
 }
 
+// 设置任务断点
+export const taskBreakpointRequest = (task_id: string, breakpoint: number) =>
+  http.put<BaseData>(`${API.TASK_BREAKPOINT_URL}`, { task_id, breakpoint });
 //导出任务配置信息
 export const taskExport = (data: Task.TaskFilter) => http.download(API.TASK_EXPORT_URL, data);
 // 获取任务配置详情

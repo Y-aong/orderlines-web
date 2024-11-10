@@ -6,8 +6,12 @@ enum API {
   PROCESS_URL = "/orderlines/process",
   PROCESS_DETAIL_URL = "/orderlines/process/detail",
   PROCESS_EXPORT_URL = "/orderlines/export/process",
+  PROCESS_CONFIG_URL = "/orderlines/process_config",
   PROCESS_HTML_EXPORT_URL = "/orderlines/process_export"
 }
+// 修改流程参数
+export const updateProcessConfigRequest = (params: Process.ProcessConfig, process_id: string) =>
+  http.put<BaseData>(API.PROCESS_CONFIG_URL, { process_id: process_id, process_config: params });
 // 导出流程报告
 export const processHtmlExport = (data: Process.ProcessHtmlFilter) => http.download(API.PROCESS_HTML_EXPORT_URL, data);
 // 导出流程信息

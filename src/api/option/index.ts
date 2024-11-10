@@ -2,17 +2,17 @@ import http from "@/api";
 import { Option } from "./type";
 
 enum API {
-  PROCESS_NAME_OPTION = "/option/process_name_opt",
-  PROCESS_VERSION_OPTION = "/option/process_version_opt",
-  GROUP_OWNER_OPTION = "/option/group_owner_opt",
-  PROCESS_NAMESPACE_OPTION = "/option/namespace_process_opt",
-  PROCESS_OPTION = "/option/process_opt",
-  VARIABLE_OPTION = "/option/variable_opt",
-  SUB_PROCESS_OPTION = "/option/sub_process_opt",
-  PROCESS_ID_OPTION = "/option/process_id_opt",
-  PLUGIN_OPTION = "/option/setup_teardown/options",
-  PROCESS_CONTROL = "/option/next_node_opt",
-  PREV_NODE_RESULT = "/graph/prev_node_opt"
+  PROCESS_NAME_OPTION = "/option/process_name",
+  PROCESS_VERSION_OPTION = "/option/process_version",
+  GROUP_OWNER_OPTION = "/option/group_owner",
+  PROCESS_NAMESPACE_OPTION = "/option/namespace_process",
+  PROCESS_OPTION = "/option/process",
+  VARIABLE_OPTION = "/option/variable",
+  SUB_PROCESS_OPTION = "/option/sub_process",
+  PROCESS_ID_OPTION = "/option/process_id",
+  PLUGIN_OPTION = "/option/setup_teardown",
+  PROCESS_CONTROL = "/option/next_node",
+  PREV_NODE_RESULT = "/option/prev_node"
 }
 // 获取流程名称options
 export const getProcessNameOptionRequest = () => http.get<Option.OptionResponse>(API.PROCESS_NAME_OPTION);

@@ -25,7 +25,7 @@ import {
   updateGroupTaskRequest
 } from "@/api/orderlines/orderlinesManager/task/index";
 import { getGraphDataRequest, getGraphNodeDataRequest, createGraphDataRequest } from "@/api/graph/graphData/index";
-import { taskBreakpointRequest } from "@/api/graph/graphOperator/index";
+import { taskBreakpointRequest } from "@/api/orderlines/orderlinesManager/task/index";
 import { ElMessage } from "element-plus";
 import { stepDebugRequest } from "@/api/orderlines/orderlinesOperate";
 import { UseSocketIo } from "@/utils/webSocketio";

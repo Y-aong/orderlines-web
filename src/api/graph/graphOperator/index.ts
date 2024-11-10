@@ -6,13 +6,8 @@ import { GraphOperator } from "./type";
 enum API {
   PROCESS_VERSION = "/graph/process_version",
   SETUP_TEARDOWN_PARAM = "/graph/setup_teardown/params",
-  PROCESS_CONFIG_URL = "/graph/process_config",
-  SUB_PROCESS_PARAM_URL = "/graph/sub_process/param",
-  TASK_BREAKPOINT_URL = "/graph/task/breakpoint"
+  SUB_PROCESS_PARAM_URL = "/graph/sub_process/params"
 }
-// 修改流程参数
-export const updateProcessConfigRequest = (params: Process.ProcessConfig, process_id: string) =>
-  http.put<BaseData>(API.PROCESS_CONFIG_URL, { process_id: process_id, process_config: params });
 
 // 获取子流程参数
 export const getSubProcess = (process_id: string) =>
@@ -21,10 +16,6 @@ export const getSubProcess = (process_id: string) =>
 // 修改子流程参数
 export const updateSubProcess = (sub_process: GraphOperator.SubprocessParmaType) =>
   http.post<BaseData>(API.SUB_PROCESS_PARAM_URL, sub_process);
-
-// 设置任务断点
-export const taskBreakpointRequest = (task_id: string, breakpoint: number) =>
-  http.put<BaseData>(`${API.TASK_BREAKPOINT_URL}`, { task_id, breakpoint });
 
 // 创建流程版本
 export const createProcessVersionRequest = (data: Process.ProcessItem) =>

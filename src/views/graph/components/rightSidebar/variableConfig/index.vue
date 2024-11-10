@@ -5,7 +5,7 @@
       <el-table :data="variableData" style="width: 100%">
         <el-table-column fixed prop="variable_key" label="变量名" min-width="110" />
         <el-table-column prop="variable_value" label="变量值" min-width="130" />
-        <el-table-column prop="variable_type" label="类型" min-width="50" />
+        <el-table-column prop="variable_type" label="类型" min-width="60" />
         <el-table-column fixed="right" label="action" min-width="120" align="center">
           <template #default="scope">
             <el-button type="success" size="small" @click.prevent="getVariableDetail(scope.row)" circle icon="View" />

@@ -1,6 +1,10 @@
 <template>
   <el-table :data="nodeParam" max-height="65vh" stripe show-header style="width: 100%">
-    <el-table-column fixed prop="desc" label="参数名" min-width="65" />
+    <el-table-column fixed prop="desc" label="参数名" min-width="72">
+      <template #default="scope">
+        <p>{{ scope.row.required ? "*" : "" }}{{ scope.row.desc }}</p>
+      </template>
+    </el-table-column>
     <el-table-column prop="desc" label="参数值" min-width="240" required>
       <template #default="scope">
         <!-- 参数类型为input的 -->
@@ -82,9 +86,9 @@
         />
         <!-- 参数为uia -->
         <el-button v-if="scope.row.param_type === 'uia'" @click="getUia">获取uia</el-button>
-        <!-- 参数为连续点击 -->
+        <!-- 参数为列表 -->
         <el-table
-          v-if="scope.row.param_type === 'continue_click'"
+          v-if="scope.row.param_type === 'value_list'"
           :data="scope.row.value"
           style="width: 100%"
           border
@@ -93,15 +97,15 @@
           size="small"
           max-height="200"
         >
-          <el-table-column fixed prop="selector" label="xpath" align="center">
-            <template #default="selector">
-              <el-input v-model="selector.row.selector" :placeholder="`请输入xpath`" :disabled="isRunning">
+          <el-table-column fixed prop="values" label="元素" align="center">
+            <template #default="temp">
+              <el-input v-model="temp.row.item" placeholder="请输入值" :disabled="isRunning">
                 <template #prepend v-if="!showVariable">
                   <el-button :icon="Search" @click="useVariable" size="small" circle v-if="!showVariable" />
                 </template>
                 <template #append v-if="showVariable">
                   <el-select
-                    v-model="selector.row.selector"
+                    v-model="temp.row.item"
                     placeholder="变量"
                     style="width: 80px"
                     @change="showVariable = false"
@@ -125,9 +129,9 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- 参数为连续输入 -->
+        <!-- 参数为两个元素 -->
         <el-table
-          v-if="scope.row.param_type === 'continue_input'"
+          v-if="scope.row.param_type === 'double_value'"
           :data="scope.row.value"
           style="width: 100%"
           border
@@ -155,7 +159,7 @@
           </el-table-column>
         </el-table>
         <el-button
-          v-if="scope.row.param_type === 'continue_click' || scope.row.param_type === 'continue_input'"
+          v-if="scope.row.param_type === 'value_list' || scope.row.param_type === 'double_value'"
           style="width: 100%"
           type="success"
           @click="updateTask(scope.row)"
@@ -311,10 +315,10 @@ const closeSocket = (namespace: string) => {
 };
 const addSelector = (index: number) => {
   nodeParam.value.forEach((item: any) => {
-    if (item.param_type === "continue_click") {
-      item.value.splice(index + 1, 0, { selector: "", param_type: "input" });
-    } else if (item.param_type === "continue_input") {
-      item.value.splice(index + 1, 0, { selector: "", text: "", param_type: "input" });
+    if (item.param_type === "value_list") {
+      item.value.splice(index + 1, 0, { item: "", param_type: "input" });
+    } else if (item.param_type === "double_value") {
+      item.value.splice(index + 1, 0, { item: "", text: "", param_type: "input" });
     }
   });
 };
@@ -322,7 +326,7 @@ const deleteRow = (index: number) => {
   nodeParam.value.forEach((item: any) => {
     console.log(item);
 
-    if (item.param_type === "continue_click" || item.param_type === "continue_input") {
+    if (item.param_type === "value_list" || item.param_type === "double_value") {
       item.value.splice(index, 1);
     }
   });
@@ -421,9 +425,9 @@ const preUpdateTask = async (row: ParamItem) => {
     param_value = await checkParam(row);
   } else if (row.param_type === "uia") {
     param_value = checkParamValue;
-  } else if (row.param_type === "continue_click") {
+  } else if (row.param_type === "value_list") {
     param_value = checkParamValue;
-  } else if (row.param_type === "continue_input") {
+  } else if (row.param_type === "double_value") {
     param_value = checkParamValue;
   } else {
     ElMessage.error(`不支持的参数类型${row.param_type}`);
@@ -511,3 +515,14 @@ const checkParam = (row: any) => {
   }
 };
 </script>
+
+<style scoped>
+.required {
+  margin-right: 4px;
+  color: red;
+}
+.input-with-label {
+  display: flex;
+  align-items: center;
+}
+</style>

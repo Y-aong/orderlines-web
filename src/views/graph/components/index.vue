@@ -82,14 +82,14 @@ let ProcessItem = reactive<Process.ProcessItem>({
   version: "",
   creator_name: userInfo.value.login_value,
   desc: "",
-  process_config: "",
-  process_params: {
+  process_config: {
     timeout: 7200,
     notice_type: "FAILURE",
     is_send: true,
     setup: { name: "", method_kwargs: "" },
     teardown: { name: "", method_kwargs: "" }
   },
+  process_params: {},
   update_time: "",
   updater_name: "",
   namespace: ""

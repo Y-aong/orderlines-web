@@ -47,11 +47,11 @@ const useProcessControlStore = defineStore("processControl", {
     processControlOptions: [],
     // 流程控制参数
     processControlStatus: {
-      pc_type: "",
+      pc_type: "status",
       conditions: []
     },
     processControlResult: {
-      pc_type: "",
+      pc_type: "result",
       conditions: []
     }
   })

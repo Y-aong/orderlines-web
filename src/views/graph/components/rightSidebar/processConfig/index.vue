@@ -71,14 +71,14 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import useGraphStore from "@/stores/modules/graph";
-import { updateProcessConfigRequest, getSetupTearDownParamRequest } from "@/api/graph/graphOperator/index";
+import { getSetupTearDownParamRequest } from "@/api/graph/graphOperator/index";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import { ElMessage } from "element-plus";
 import { BaseResponse, BaseUpdateResponse } from "@/api/interface/index";
 import useGraphStatueStore from "@/stores/modules/graphStatue";
 import { getSetupTearDownOptionRequest } from "@/api/option/index";
 import { Option } from "@/api/option/type";
-import { getProcessDetailRequest } from "@/api/orderlines/orderlinesManager/process/index";
+import { getProcessDetailRequest, updateProcessConfigRequest } from "@/api/orderlines/orderlinesManager/process/index";
 
 const { isRunning } = storeToRefs(useGraphStatueStore());
 const { process_id } = storeToRefs(useGraphStore());
