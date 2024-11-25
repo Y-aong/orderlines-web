@@ -29,7 +29,6 @@
         <!-- 表格操作 -->
         <template #operation="scope">
           <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
-          <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
           <el-button type="primary" link :icon="Delete" @click="deleteTaskInstance(scope.row)">删除</el-button>
         </template>
       </ProTable>
@@ -48,13 +47,11 @@ import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import SelectFilter from "@/components/SelectFilter/index.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
-import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
+import { Delete, Download, View } from "@element-plus/icons-vue";
 import taskInstanceDrawer from "./taskInstanceDrawer.vue";
 import { getProcessOptionRequest } from "@/api/option/index";
 import {
   getTaskInstanceRequest,
-  createTaskInstanceRequest,
-  updateTaskInstanceRequest,
   deleteTaskInstanceRequest,
   TaskInstanceExport
 } from "@/api/orderlines/orderlinesManager/taskInstance/index";
@@ -134,7 +131,7 @@ const columns = reactive<ColumnProps<TaskInstance.TaskInstanceItem>[]>([
       );
     }
   },
-  { prop: "operation", label: "操作", width: 240, fixed: "right" }
+  { prop: "operation", label: "操作", width: 160, fixed: "right" }
 ]);
 
 // selectFilter
@@ -179,7 +176,6 @@ const openDrawer = (title: string, row: Partial<TaskInstance.TaskInstanceItem> =
     title,
     isView: title === "查看",
     row: { ...row },
-    api: title === "新增" ? createTaskInstanceRequest : title === "编辑" ? updateTaskInstanceRequest : undefined,
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value?.acceptParams(params);

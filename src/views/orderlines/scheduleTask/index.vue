@@ -89,25 +89,37 @@ const getTableList = (params: ScheduleTask.ScheduleTaskFilter) => {
 const triggerType: any = {
   date: "定时执行",
   interval: "间隔执行",
-  crontab: "周期执行"
+  cron: "周期执行"
 };
 
 const triggerTagType: any = {
   date: "primary",
   interval: "warning",
-  crontab: "danger"
+  cron: "danger"
 };
 
 const columns = reactive<ColumnProps<ScheduleTask.ScheduleTaskItem>[]>([
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "schedule_task_name", label: "定时任务名称", width: 120, search: { el: "input" } },
-  { prop: "process_name", label: "流程名称", width: 120, search: { el: "input" } },
+
+  { prop: "process_name", label: "流程名称", width: 100, search: { el: "input" } },
   { prop: "process_id", label: "流程id", width: 100, search: { el: "input" } },
   { prop: "version", label: "流程版本", width: 100, search: { el: "input" } },
-  { prop: "invalid_start_time", label: "可用开始时间", width: 120, search: { el: "input" } },
-  { prop: "invalid_end_time", label: "可用结束时间", width: 120, search: { el: "input" } },
-  { prop: "creator_name", label: "创建者", width: 120, search: { el: "input" } },
-  { prop: "updater_name", label: "更新者", width: 120, search: { el: "input" } },
+  {
+    prop: "trigger",
+    label: "定时类型",
+    width: 100,
+    search: { el: "input" },
+    render: scope => {
+      return <el-tag type={triggerTagType[scope.row.trigger]}>{triggerType[scope.row.trigger]}</el-tag>;
+    }
+  },
+  { prop: "invalid_start_time", label: "可用开始时间", width: 170, search: { el: "input" } },
+  { prop: "invalid_end_time", label: "可用结束时间", width: 170, search: { el: "input" } },
+  { prop: "creator_name", label: "创建者", width: 95, search: { el: "input" } },
+
+  { prop: "update_time", label: "下次运行时间", width: 180 },
+
   {
     prop: "insert_time",
     label: "插入时间",
@@ -118,26 +130,6 @@ const columns = reactive<ColumnProps<ScheduleTask.ScheduleTaskItem>[]>([
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
-  {
-    prop: "update_time",
-    label: "修改时间",
-    width: 170,
-    search: {
-      el: "date-picker",
-      span: 2,
-      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
-    }
-  },
-  {
-    prop: "trigger",
-    label: "定时类型",
-    width: 100,
-    search: { el: "input" },
-    render: scope => {
-      return <el-tag type={triggerTagType[scope.row.trigger]}>{triggerType[scope.row.trigger]}</el-tag>;
-    }
-  },
-  { prop: "update_time", label: "下次运行时间", width: 180 },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

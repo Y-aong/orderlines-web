@@ -20,11 +20,5 @@ export const getProcessInstanceDetailRequest = (id: string) =>
 // 获取流程实例列表
 export const getProcessInstanceRequest = (data: PInstance.ProcessInstanceFilter) =>
   http.get<PInstance.ProcessInstanceItem>(API.PROCESS_INSTANCE_URL, data);
-// 创建流程实例
-export const createProcessInstanceRequest = (data: PInstance.ProcessInstanceItem) =>
-  http.post(API.PROCESS_INSTANCE_URL, data);
-// 更新流程实例
-export const updateProcessInstanceRequest = (data: PInstance.ProcessInstanceItem) =>
-  http.put(API.PROCESS_INSTANCE_URL, data);
 // 删除流程实例
 export const deleteProcessInstanceRequest = (id: string) => http.delete(`${API.PROCESS_INSTANCE_URL}?id=${id}`);

@@ -27,7 +27,6 @@
         >
           报告
         </el-button>
-        <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">归档</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteProcess(scope.row)">删除</el-button>
       </template>
     </ProTable>
@@ -42,15 +41,13 @@ import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import {
   getProcessInstanceRequest,
-  createProcessInstanceRequest,
-  updateProcessInstanceRequest,
   deleteProcessInstanceRequest,
   processInstanceExport,
   downExport
 } from "@/api/orderlines/orderlinesManager/processInstance/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import ProcessInstanceDrawer from "./ProcessInstanceDrawer.vue";
-import { Delete, EditPen, Download, View } from "@element-plus/icons-vue";
+import { Delete, Download, View } from "@element-plus/icons-vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { PInstance } from "@/api/orderlines/orderlinesManager/processInstance/type";
@@ -85,16 +82,6 @@ const toProcessRunning = (row: PInstance.ProcessInstanceItem) => {
 
 // 新增，查看，编辑
 const drawerRef = ref<InstanceType<typeof ProcessInstanceDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<PInstance.ProcessInstanceItem> = {}) => {
-  const params = {
-    title,
-    isView: title === "查看",
-    row: { ...row },
-    api: title === "新增" ? createProcessInstanceRequest : title === "编辑" ? updateProcessInstanceRequest : undefined,
-    getTableList: proTable.value?.getTableList
-  };
-  drawerRef.value?.acceptParams(params);
-};
 
 // 删除流程信息
 const deleteProcess = async (params: PInstance.ProcessInstanceItem) => {
@@ -192,7 +179,7 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
-  { prop: "operation", label: "操作", fixed: "right", width: 320 }
+  { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 
 const initParam = reactive({ pageNum: 1, pageSize: 10 });

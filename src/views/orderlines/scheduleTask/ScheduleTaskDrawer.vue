@@ -101,7 +101,7 @@
       </el-form>
 
       <!-- 周期执行配置 -->
-      <CronTab v-if="trigger === 'crontab'" />
+      <CronTab v-if="trigger === 'cron'" />
     </el-form>
     <template #footer>
       <el-button @click="drawerVisible = false">取消</el-button>
@@ -124,13 +124,23 @@ import { storeToRefs } from "pinia";
 let { userInfo } = storeToRefs(useUserStore());
 let dataSchedulePlan = ref({ run_date: "" });
 let intervalSchedulePlan = ref({ interval_type: "", interval_val: 0, start_date: "", end_date: "" });
+let cronSchedulePlan = ref({
+  year: "*",
+  month: "*",
+  day: "*",
+  week: "*",
+  day_of_week: "*",
+  hour: "*",
+  minute: "*",
+  second: "10"
+});
 let trigger = ref<string>("");
 let processNameOption = ref<Option.OptionItem[]>([]);
 let processVersionOption = ref<Option.OptionItem[]>([]);
 let triggerOption = ref<Option.OptionItem[]>([
   { label: "定时执行", value: "date" },
   { label: "间隔执行", value: "interval" },
-  { label: "周期执行", value: "crontab" }
+  { label: "周期执行", value: "cron" }
 ]);
 
 const rules = reactive({
@@ -224,6 +234,8 @@ const handleSubmit = () => {
           drawerProps.value.row["schedule_plan"] = dataSchedulePlan.value;
         } else if (trigger.value == "interval") {
           drawerProps.value.row["schedule_plan"] = intervalSchedulePlan.value;
+        } else if (trigger.value == "cron") {
+          drawerProps.value.row["schedule_plan"] = cronSchedulePlan.value;
         }
         getProcessId(drawerProps.value.row["version"]);
         drawerProps.value.row["process_id"] = process_version_id.value;
