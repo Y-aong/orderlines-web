@@ -12,7 +12,12 @@ enum API {
   PROCESS_ID_OPTION = "/option/process_id",
   PLUGIN_OPTION = "/option/setup_teardown",
   PROCESS_CONTROL = "/option/next_node",
-  PREV_NODE_RESULT = "/option/prev_node"
+  PREV_NODE_RESULT = "/option/prev_node",
+  PROMETHEUS_JOB_URL = "/option/prometheus/job",
+  PROMETHEUS_INSTANCE_URL = "/option/prometheus/instance",
+  ALARM_NOTICE_NAME_URL = "/option/notice_name",
+  ALARM_NOTICE_GROUP_URL = "/option/notice_group",
+  USER_NAME_URL = "/option/user"
 }
 // 获取流程名称options
 export const getProcessNameOptionRequest = () => http.get<Option.OptionResponse>(API.PROCESS_NAME_OPTION);
@@ -52,3 +57,14 @@ export const getPCNextNodeOptionRequest = (task_id: string, process_id: string) 
 // 获取前一个流程节点的结果选项
 export const getPrevNodeResultOptionRequest = (task_id: string, process_id: string) =>
   http.get<Option.PrevNodeResult>(`${API.PREV_NODE_RESULT}?task_id=${task_id}&process_id=${process_id}`);
+
+// 获取告警job名称
+export const getAlarmJobOptRequest = () => http.get<Option.OptionResponse>(`${API.PROMETHEUS_JOB_URL}`);
+// 获取告警instance名称
+export const getAlarmInstanceOptRequest = () => http.get<Option.OptionResponse>(`${API.PROMETHEUS_INSTANCE_URL}`);
+// 获取告警job名称
+export const getAlarmNoticeOptRequest = () => http.get<Option.OptionResponse>(`${API.ALARM_NOTICE_NAME_URL}`);
+// 获取告警instance名称
+export const getAlarmNoticeGroupOptRequest = () => http.get<Option.OptionResponse>(`${API.ALARM_NOTICE_GROUP_URL}`);
+// 获取用户名称选项
+export const getUserNameOptRequest = () => http.get<Option.OptionResponse>(`${API.USER_NAME_URL}`);

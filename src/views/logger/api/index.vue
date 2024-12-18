@@ -24,18 +24,18 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getLoggerRequest, deleteLoggerRequest } from "@/api/notice/index";
+import { getApiLoggerRequest, deleteApiLoggerRequest } from "@/api/logger/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { Delete } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
-import { Notice } from "@/api/notice/type";
+import { Logger } from "@/api/logger/type";
 
 const proTable = ref<ProTableInstance>();
 
 // 删除日志信息
-const deletePlugin = async (params: Notice.AlarmItem) => {
-  await useHandleData(deleteLoggerRequest, params.id, `删除【${params.task_name}】日志`);
+const deletePlugin = async (params: Logger.ApiLoggerItem) => {
+  await useHandleData(deleteApiLoggerRequest, params.id, `删除【${params.api_path}】API日志`);
   proTable.value?.getTableList();
 };
 
@@ -46,7 +46,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: Notice.AlarmResponse) => {
+const dataCallback = (data: Logger.ApiLoggerResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -55,12 +55,12 @@ const dataCallback = (data: Notice.AlarmResponse) => {
   };
 };
 
-const getTableList = (params: Notice.AlarmFilter) => {
+const getTableList = (params: Logger.ApiLoggerItem) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  return getLoggerRequest(newParams);
+  return getApiLoggerRequest(newParams);
 };
 
-const columns = reactive<ColumnProps<Notice.AlarmItem>[]>([
+const columns = reactive<ColumnProps<Logger.ApiLoggerItem>[]>([
   {
     prop: "id",
     label: "序号",

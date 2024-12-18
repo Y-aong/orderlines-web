@@ -20,7 +20,7 @@
       "name": "graph",
       "component": "/graph/general/index",
       "meta": {
-        "icon": "MessageBox",
+        "icon": "Platform",
         "title": "配置流程",
         "isLink": "",
         "isHide": false,
@@ -48,8 +48,8 @@
       "name": "orderlines",
       "redirect": "/orderlines/process",
       "meta": {
-        "icon": "MessageBox",
-        "title": "流程管理",
+        "icon": "Menu",
+        "title": "运维中心",
         "isLink": "",
         "isHide": false,
         "isFull": false,
@@ -256,16 +256,44 @@
             "isAffix": false,
             "isKeepAlive": true
           }
+        },
+        {
+          "path": "/jenkins/info",
+          "name": "jenkinsInfo",
+          "component": "/jenkins/jenkinsInfo/index",
+          "meta": {
+            "icon": "Tickets",
+            "title": "jenkins信息",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/jenkins/jenkinsInstance",
+          "name": "jenkinsInstance",
+          "component": "/jenkins/jenkinsInstance/index",
+          "meta": {
+            "icon": "Setting",
+            "title": "jenkins实例",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
         }
       ]
     },
     {
-      "path": "/notice",
-      "name": "notice",
-      "redirect": "/alarm",
+      "path": "/gitlab",
+      "name": "gitlab",
+      "redirect": "/gitlab/project",
       "meta": {
-        "icon": "Tickets",
-        "title": "消息通知",
+        "icon": "UploadFilled",
+        "title": "代码中心",
         "isLink": "",
         "isHide": false,
         "isFull": false,
@@ -274,26 +302,129 @@
       },
       "children": [
         {
-          "path": "/alarm/detail/:id",
-          "name": "alarmDetail",
-          "component": "/alarm/detail",
+          "path": "/gitlab/project",
+          "name": "gitlabProject",
+          "component": "/gitlab/project/index",
           "meta": {
-            "icon": "Menu",
-            "title": "告警详情",
-            "activeMenu": "/alarm",
+            "icon": "Tickets",
+            "title": "仓库管理",
             "isLink": "",
-            "isHide": true,
+            "isHide": false,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
           }
         },
         {
-          "path": "/alarm",
-          "name": "alarm",
-          "component": "/alarm/index",
+          "path": "/gitlab/branch",
+          "name": "gitlabBranch",
+          "component": "/gitlab/branch/index",
           "meta": {
-            "icon": "WarnTriangleFilled",
+            "icon": "Setting",
+            "title": "分支管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/gitlab/commit",
+          "name": "gitlabCommit",
+          "component": "/gitlab/commit/index",
+          "meta": {
+            "icon": "Operation",
+            "title": "提交管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    },
+    {
+      "path": "/alarm",
+      "name": "alarm",
+      "redirect": "/alarm",
+      "meta": {
+        "icon": "WarnTriangleFilled",
+        "title": "监控中心",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/alarm/monitor",
+          "name": "alarmMonitor",
+          "component": "/alarm/monitor/index",
+          "meta": {
+            "icon": "Monitor",
+            "title": "监控实例",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          },
+          "children": [
+            {
+              "path": "/alarm/metrics/:instance_name",
+              "name": "nodeDetail",
+              "component": "/alarm/metrics/index",
+              "meta": {
+                "icon": "Menu",
+                "title": "节点实例详情",
+                "activeMenu": "/alarm/monitor",
+                "isLink": "",
+                "isHide": true,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
+        },
+        {
+          "path": "/alarm/notice",
+          "name": "alarmNotice",
+          "component": "/alarm/notice/index",
+          "meta": {
+            "icon": "Bell",
+            "title": "通知配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+
+        {
+          "path": "/alarm/Rules",
+          "name": "alarmRules",
+          "component": "/alarm/rules/index",
+          "meta": {
+            "icon": "Setting",
+            "title": "告警规则",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/alarm/process",
+          "name": "processAlarm",
+          "component": "/alarm/process/index",
+          "meta": {
+            "icon": "Warning",
             "title": "流程告警",
             "isLink": "",
             "isHide": false,
@@ -303,9 +434,53 @@
           }
         },
         {
-          "path": "/loggerInfo",
-          "name": "loggerInfo",
-          "component": "/loggerInfo/index",
+          "path": "/alarm/history",
+          "name": "historyAlarm",
+          "component": "/alarm/history/index",
+          "meta": {
+            "icon": "Cpu",
+            "title": "系统告警",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
+    },
+    {
+      "path": "/product",
+      "name": "product",
+      "component": "/product/index",
+      "meta": {
+        "icon": "StarFilled",
+        "title": "制品中心",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      }
+    },
+    {
+      "path": "/logger",
+      "name": "logger",
+      "redirect": "/logger/api",
+      "meta": {
+        "icon": "Comment",
+        "title": "日志中心",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/logger/api",
+          "name": "loggerAPi",
+          "component": "/logger/api/index",
           "meta": {
             "icon": "Tickets",
             "title": "API日志",
@@ -323,7 +498,7 @@
       "name": "plugin",
       "redirect": "/plugin/info",
       "meta": {
-        "icon": "Paperclip",
+        "icon": "Grid",
         "title": "插件管理",
         "isLink": "",
         "isHide": false,
@@ -362,12 +537,13 @@
         }
       ]
     },
+
     {
       "path": "/auth",
       "name": "auth",
       "redirect": "/auth/menu",
       "meta": {
-        "icon": "Lock",
+        "icon": "Avatar",
         "title": "权限管理",
         "isLink": "",
         "isHide": false,
@@ -381,7 +557,7 @@
           "name": "authUser",
           "component": "/auth/user/index",
           "meta": {
-            "icon": "Avatar",
+            "icon": "User",
             "title": "用户管理",
             "isLink": "",
             "isHide": false,
@@ -395,7 +571,7 @@
           "name": "authRole",
           "component": "/auth/role/index",
           "meta": {
-            "icon": "UserFilled",
+            "icon": "Lock",
             "title": "角色管理",
             "isLink": "",
             "isHide": false,
@@ -409,7 +585,7 @@
           "name": "authPermission",
           "component": "/auth/permission/index",
           "meta": {
-            "icon": "Lock",
+            "icon": "View",
             "title": "权限管理",
             "isLink": "",
             "isHide": false,
@@ -423,7 +599,7 @@
           "name": "authGroup",
           "component": "/auth/group/index",
           "meta": {
-            "icon": "User",
+            "icon": "ChatSquare",
             "title": "群组管理",
             "isLink": "",
             "isHide": false,
@@ -449,12 +625,12 @@
       },
       "children": [
         {
-          "path": "/system/systemConfig",
-          "name": "config",
-          "component": "/system/systemConfig/index",
+          "path": "/system/host",
+          "name": "systemHost",
+          "component": "/system/host/index",
           "meta": {
-            "icon": "Setting",
-            "title": "系统配置",
+            "icon": "Star",
+            "title": "主机清单",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -463,12 +639,12 @@
           }
         },
         {
-          "path": "/system/systemLog",
-          "name": "systemLog",
-          "component": "/system/systemLog/index",
+          "path": "/system/systemConfig",
+          "name": "config",
+          "component": "/system/systemConfig/index",
           "meta": {
-            "icon": "Menu",
-            "title": "系统日志",
+            "icon": "Setting",
+            "title": "系统配置",
             "isLink": "",
             "isHide": false,
             "isFull": false,

@@ -1,5 +1,5 @@
 import http from "@/api";
-import { Conf } from "./type";
+import { Conf } from "./setting/type";
 
 //项目用户相关的请求地址
 enum API {

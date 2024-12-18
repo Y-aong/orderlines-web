@@ -127,7 +127,7 @@ const columns = reactive<ColumnProps<User.UserItem>[]>([
     label: "用户头像",
     width: 120,
     render: (scope: any) => {
-      return <el-image style="width: 60px; height: 60px;border-radius: 50%" src={scope.row.img_url} lazy />;
+      return <el-image style="width: 30px; height: 30px;border-radius: 50%" src={scope.row.img_url} lazy />;
     }
   },
   { prop: "insert_time", label: "创建时间" },
@@ -136,7 +136,7 @@ const columns = reactive<ColumnProps<User.UserItem>[]>([
 ]);
 
 const cardLayout = ref<cardLayoutProps>({ xs: 24, sm: 24, md: 12, lg: 12, xl: 8, height: "320px", width: "100%" });
-const initParam = reactive({ pageNum: 1, pageSize: 10 });
+const initParam = reactive({ pageNum: 1, pageSize: 9 });
 // 切换卡片布局
 const changeCard = () => {
   isCard.value = !isCard.value;

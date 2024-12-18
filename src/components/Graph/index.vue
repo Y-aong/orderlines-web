@@ -31,11 +31,9 @@ import { stepDebugRequest } from "@/api/orderlines/orderlinesOperate";
 import { UseSocketIo } from "@/utils/webSocketio";
 import { useUserStore } from "@/stores/modules/user";
 import { setStorage } from "@/utils/storage";
-
 let { userInfo } = storeToRefs(useUserStore());
-let { process_id, process_instance_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } = storeToRefs(
-  useGraphStore()
-);
+let { process_id, process_instance_id, nodeConfig, nodeParam, nodeResult, defaultTaskConfig } =
+  storeToRefs(useGraphStore());
 let { isDebug } = storeToRefs(useGraphStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
 let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());

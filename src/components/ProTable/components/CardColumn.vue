@@ -19,23 +19,26 @@
           <el-card class="box-card">
             <template #header>
               <div class="card-header">
-                <span> {{ row?.cardTitle }}</span>
+                <span v-if="props.cardTitle">{{ row[props.cardTitle] }}</span>
+                <span v-else>标题未定义</span>
                 <div>
-                  <el-button size="small" :icon="View" @click="props.selectItem('查看', row)" />
-                  <el-button size="small" :icon="Edit" @click="props.updateItem('编辑', row)" />
-                  <el-button size="small" :icon="Delete" @click="deleteItem(row)" />
+                  <el-button size="small" :icon="View" @click="props.selectItem('查看', row)" v-if="props.selectItem" />
+                  <el-button size="small" :icon="Edit" @click="props.updateItem('编辑', row)" v-if="props.updateItem" />
+                  <el-button size="small" :icon="Delete" @click="deleteItem(row)" v-if="props.deleteItem" />
                 </div>
               </div>
             </template>
             <div class="card-context">
               <div>
-                <div v-for="(card, i) in props.cardColumn" :key="i">
-                  <el-text truncated>{{ card.label + "：" }}{{ row[card.value] ? row[card.value] : "" }}</el-text>
+                <div v-for="(card, i) in props.cardColumn" :key="i" style="width: 240px">
+                  <el-text class="w-270px mb-2" line-clamp="2" truncated>
+                    {{ card.label + "：" }}{{ row[card.value] ? row[card.value] : "" }}
+                  </el-text>
                 </div>
               </div>
 
-              <UploadImg v-if="row.img_url" v-model:image-url="row.img_url" width="180px" height="180px" :file-size="3">
-                <template #tip> 图片大小不能超过 3M </template>
+              <UploadImg v-if="row.img_url" v-model:image-url="row.img_url" width="100px" height="100px" :file-size="3">
+                <template #tip> </template>
               </UploadImg>
             </div>
           </el-card>
@@ -55,9 +58,9 @@ interface Props {
   cardColumn?: cardProps[];
   cardTitle?: string;
   cardLayout?: cardLayoutProps;
-  selectItem: any;
-  updateItem: any;
-  deleteItem: any;
+  selectItem?: any;
+  updateItem?: any;
+  deleteItem?: any;
 }
 const props = defineProps<Props>();
 </script>
@@ -75,7 +78,7 @@ const props = defineProps<Props>();
   font-size: 15px;
 }
 .cards {
-  max-height: 90%;
+  height: 90%;
   overflow: auto;
 }
 .cards::-webkit-scrollbar {

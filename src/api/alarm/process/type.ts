@@ -1,5 +1,6 @@
 import { ReqPage, ResPage } from "@/api/interface/index";
-export namespace Notice {
+
+export namespace ProcessAlarm {
   export interface AlarmItem {
     id: number;
     process_name: string;

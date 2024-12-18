@@ -26,7 +26,7 @@
         <el-button type="primary" link :icon="Delete" @click="deletePlugin(scope.row)">删除</el-button>
       </template>
     </ProTable>
-    <alarmDrawer ref="drawerRef" />
+    <historyDrawer ref="drawerRef" />
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
@@ -34,13 +34,17 @@
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import { getAlarmRequest, updateAlarmRequest, deleteAlarmRequest } from "@/api/notice/index";
+import {
+  getAlarmHistoryRequest,
+  updateAlarmHistoryRequest,
+  deleteAlarmHistoryRequest
+} from "@/api/alarm/history/index";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import alarmDrawer from "./alarmDrawer.vue";
+import historyDrawer from "./historyDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { Notice } from "@/api/notice/type";
+import { AlarmHistory } from "@/api/alarm/history/type";
 import { getCurrentDate } from "@/utils/currentDateTime";
 import { BaseUpdateResponse } from "@/api/interface";
 import { useGlobalStore } from "@/stores/modules/global";
@@ -54,20 +58,20 @@ let { refreshMessage } = storeToRefs(useGlobalStore());
 const proTable = ref<ProTableInstance>();
 
 // 新增，查看，编辑
-const drawerRef = ref<InstanceType<typeof alarmDrawer> | null>(null);
-const openDrawer = (title: string, row: Partial<Notice.AlarmItem> = {}) => {
+const drawerRef = ref<InstanceType<typeof historyDrawer> | null>(null);
+const openDrawer = (title: string, row: Partial<AlarmHistory.AlarmHistoryItem> = {}) => {
   const params = {
     title,
     isView: title === "查看",
     row: { ...row },
-    api: updateAlarmRequest,
+    api: updateAlarmHistoryRequest,
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value?.acceptParams(params);
 };
 
-const updateAlarm = async (row: Notice.AlarmItem) => {
-  if (row.people_confirm) {
+const updateAlarm = async (row: AlarmHistory.AlarmHistoryItem) => {
+  if (row.confirm) {
     ElMessage.warning("告警已经确认");
     return;
   }
@@ -75,7 +79,7 @@ const updateAlarm = async (row: Notice.AlarmItem) => {
   row["people_confirm"] = true;
   row["updater_name"] = userInfo.value.login_value;
 
-  const response: BaseUpdateResponse = await updateAlarmRequest(row);
+  const response: BaseUpdateResponse = await updateAlarmHistoryRequest(row);
   if (response.code == 200) {
     ElMessage.success("告警确认成功");
     refreshMessage.value = true;
@@ -85,8 +89,8 @@ const updateAlarm = async (row: Notice.AlarmItem) => {
 };
 
 // 删除告警信息
-const deletePlugin = async (params: Notice.AlarmItem) => {
-  await useHandleData(deleteAlarmRequest, params.id, `删除【${params.task_name}】告警`);
+const deletePlugin = async (params: AlarmHistory.AlarmHistoryItem) => {
+  await useHandleData(deleteAlarmHistoryRequest, params.id, `删除【${params.instance_name}】告警`);
   proTable.value?.getTableList();
 };
 
@@ -97,7 +101,7 @@ const sortTable = ({ newIndex, oldIndex }: { newIndex?: number; oldIndex?: numbe
   ElMessage.success("修改列表排序成功");
 };
 
-const dataCallback = (data: Notice.AlarmResponse) => {
+const dataCallback = (data: AlarmHistory.AlarmNoticeResponse) => {
   return {
     list: data.list,
     total: data.total,
@@ -106,12 +110,12 @@ const dataCallback = (data: Notice.AlarmResponse) => {
   };
 };
 
-const getTableList = (params: Notice.AlarmFilter) => {
+const getTableList = (params: AlarmHistory.Filter) => {
   let newParams = JSON.parse(JSON.stringify(params));
-  return getAlarmRequest(newParams);
+  return getAlarmHistoryRequest(newParams);
 };
 
-const columns = reactive<ColumnProps<Notice.AlarmItem>[]>([
+const columns = reactive<ColumnProps<AlarmHistory.AlarmHistoryItem>[]>([
   { type: "expand", label: "Expand", width: 100 },
   {
     prop: "id",
@@ -120,37 +124,27 @@ const columns = reactive<ColumnProps<Notice.AlarmItem>[]>([
     width: 80
   },
   {
-    prop: "process_name",
-    label: "流程名称",
-    search: { el: "input" },
-    width: 140
-  },
-  {
-    prop: "process_instance_id",
-    label: "流程实例ID",
-    search: { el: "input" },
-    width: 160
-  },
-  {
-    prop: "task_name",
+    prop: "job_name",
     label: "任务名称",
+    search: { el: "input" }
+  },
+  {
+    prop: "instance_name",
+    label: "监控实例",
+    search: { el: "input" }
+  },
+  {
+    prop: "job_status",
+    label: "任务状态",
     search: { el: "input" },
     width: 140
   },
+  { prop: "alert_start_time", label: "开始时间", width: 120 },
+  { prop: "alert_end_time", label: "结束时间", width: 120 },
+  { prop: "duration_time", label: "持续时间", width: 120 },
+  { prop: "annotations", label: "告警描述" },
   {
-    prop: "error_info",
-    label: "异常信息",
-    width: 120,
-    render: () => {
-      return (
-        <el-button type="danger" link onClick={() => ElMessage.error("查看告警请点击Expand")}>
-          {"任务异常"}
-        </el-button>
-      );
-    }
-  },
-  {
-    prop: "people_confirm",
+    prop: "confirm",
     label: "是否确认",
     search: { el: "input" },
     width: 120,
@@ -162,9 +156,8 @@ const columns = reactive<ColumnProps<Notice.AlarmItem>[]>([
       );
     }
   },
-  { prop: "updater_name", label: "处理人" },
-  { prop: "insert_time", label: "创建时间" },
-  { prop: "update_time", label: "修改时间" },
+  { prop: "updater_name", label: "处理人", width: 120 },
+
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);
 

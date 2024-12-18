@@ -23,7 +23,7 @@
       <el-form-item label="流程版本" prop="version">
         <el-input v-model="drawerProps.row!.version" placeholder="请填写流程版本" clearable></el-input>
       </el-form-item>
-      <el-form-item label="命名空间" prop="version">
+      <el-form-item label="命名空间" prop="namespace">
         <el-input v-model="drawerProps.row!.namespace" placeholder="请填写命名空间" clearable></el-input>
       </el-form-item>
       <el-form-item label="流程描述" prop="desc" clearable>
@@ -47,12 +47,11 @@ import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import useGraphStore from "@/stores/modules/graph";
 let { process_id } = storeToRefs(useGraphStore());
 import useGraphStatueStore from "@/stores/modules/graphStatue";
-import { useUserStore } from "@/stores/modules/user";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/modules/user";
 
+const { userInfo } = storeToRefs(useUserStore());
 const router = useRouter();
-
-let { userInfo } = storeToRefs(useUserStore());
 const { gotoProcessEdit } = useGraphStore();
 const { process_init_action } = useGraphStatueStore();
 
@@ -110,7 +109,20 @@ const handleSubmit = () => {
         namespace: drawerProps.value.row.namespace,
         desc: drawerProps.value.row.desc,
         update_time: getCurrentDate(),
-        updater_name: userInfo.value.login_value
+        updater_name: userInfo.value.login_value,
+        process_config: {
+          setup: {
+            name: "",
+            method_kwargs: {}
+          },
+          is_send: true,
+          timeout: 7200,
+          teardown: {
+            name: "",
+            method_kwargs: {}
+          },
+          notice_type: "FAILURE"
+        }
       };
 
       drawerProps.value.row = processItem;

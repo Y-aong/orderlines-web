@@ -41,14 +41,14 @@ import {
   updateSystemSettingRequest,
   deleteSystemSettingRequest,
   SystemSettingExport
-} from "@/api/system/setting/index";
+} from "@/api/system/systemConfig/index";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, View } from "@element-plus/icons-vue";
 import systemSettingDrawer from "./systemSettingDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
 import { ElMessageBox } from "element-plus";
-import { Conf } from "@/api/system/setting/type";
+import { Conf } from "@/api/system/systemConfig/type";
 
 const proTable = ref<ProTableInstance>();
 

@@ -132,6 +132,10 @@ const RunningCountData = ref({
   data: [{ label: "", value: [] }],
   unit: []
 });
+// Assuming the missing opening brace is here
+{
+  // ... (rest of the code)
+}
 const RunningTrendData = ref<DataScreen.RunTrendType>({
   date: [],
   value: [],

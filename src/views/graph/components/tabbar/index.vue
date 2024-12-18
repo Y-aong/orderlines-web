@@ -223,9 +223,8 @@ import { v4 as uuid } from "uuid";
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
 let { process_id, process_instance_id, process_name, process_version, namespace } = storeToRefs(useGraphStore());
-let { isDebug, isSave, isRunning, isEdit, isPause, isStop, isComplete, isDebugContinue, isDebugStop } = storeToRefs(
-  useGraphStatueStore()
-);
+let { isDebug, isSave, isRunning, isEdit, isPause, isStop, isComplete, isDebugContinue, isDebugStop } =
+  storeToRefs(useGraphStatueStore());
 import { useRouter } from "vue-router";
 
 const router = useRouter();
