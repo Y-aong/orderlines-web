@@ -9,14 +9,19 @@
       :model="drawerProps.row"
       :hide-required-asterisk="drawerProps.isView"
     >
+      <el-form-item label="告警组" prop="group_name">
+        <el-select v-model="drawerProps.row!.notice_group" placeholder="请选择告警组">
+          <el-option v-for="item in alarmOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="实例名称" prop="instance_name">
         <el-select v-model="drawerProps.row!.instance_name" placeholder="请选择实例名称">
-          <el-option v-for="item in jobNameOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in instanceNameOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="任务名称" prop="job_name">
         <el-select v-model="drawerProps.row!.job_name" placeholder="请选择任务名称">
-          <el-option v-for="item in instanceNameOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in jobNameOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="告警名称" prop="alert_name">
@@ -24,6 +29,14 @@
       </el-form-item>
       <el-form-item label="告警规则" prop="alert_rule">
         <el-input v-model="drawerProps.row!.alert_rule" placeholder="请填写告警规则" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警阈值" prop="threshold">
+        <el-input v-model="drawerProps.row!.threshold" placeholder="请填写告警阈值" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="比较方式" prop="comparison_mode">
+        <el-select v-model="drawerProps.row!.comparison_mode" placeholder="请选择比较方式">
+          <el-option v-for="item in comparisonModeOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
       </el-form-item>
       <el-form-item label="持续时间" prop="duration_time">
         <el-input v-model="drawerProps.row!.duration_time" placeholder="请填写持续时间" clearable></el-input>
@@ -42,21 +55,6 @@
           <el-radio value="false" size="large">不抑制</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="通知人" prop="notice_name" clearable>
-        <el-select v-model="drawerProps.row!.notice_name" placeholder="请选择通知人">
-          <el-option v-for="item in noticeOptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="通知组" prop="notice_group" clearable>
-        <el-select v-model="drawerProps.row!.notice_group" placeholder="请选择通知组">
-          <el-option v-for="item in noticeGroupOptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="通知方式" prop="notice_type" clearable>
-        <el-select v-model="drawerProps.row!.notice_type" placeholder="请选择通知方式">
-          <el-option v-for="item in noticeTypeOption" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="drawerVisible = false">取消</el-button>
@@ -68,29 +66,26 @@
 <script setup lang="ts" name="taskInstanceDrawer">
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import {
-  getAlarmJobOptRequest,
-  getAlarmInstanceOptRequest,
-  getAlarmNoticeOptRequest,
-  getAlarmNoticeGroupOptRequest
-} from "@/api/option/index";
+import { getAlarmJobOptRequest, getAlarmInstanceOptRequest, getAlarmGroupOptRequest } from "@/api/option/index";
 import { useUserStore } from "@/stores/modules/user";
 import { storeToRefs } from "pinia";
 
 const { userInfo } = storeToRefs(useUserStore());
 const jobNameOptions = ref<any>([]);
 const instanceNameOptions = ref<any>([]);
-const noticeOptions = ref<any>([]);
-const noticeGroupOptions = ref<any>([]);
+const alarmOptions = ref<any>([]);
 const alarmLevelOptions = [
   { label: "致命", value: "deadly" },
   { label: "严重", value: "severity" },
   { label: "警告", value: "warning" }
 ];
-const noticeTypeOption = [
-  { label: "邮件", value: "email" },
-  { label: "手机", value: "phone" },
-  { label: "钉钉", value: "dingDing" }
+
+const comparisonModeOptions = [
+  { label: "大于", value: ">" },
+  { label: "小于", value: "<" },
+  { label: "等于", value: "=" },
+  { label: "大于等于", value: ">=" },
+  { label: "小于等于", value: "<=" }
 ];
 
 onMounted(async () => {
@@ -98,10 +93,8 @@ onMounted(async () => {
   jobNameOptions.value = jobResponse.data;
   const instanceResponse = await getAlarmInstanceOptRequest();
   instanceNameOptions.value = instanceResponse.data;
-  const noticeResponse = await getAlarmNoticeOptRequest();
-  noticeOptions.value = noticeResponse.data;
-  const noticeGroupResponse = await getAlarmNoticeGroupOptRequest();
-  noticeGroupOptions.value = noticeGroupResponse.data;
+  const alarmGroupResponse = await getAlarmGroupOptRequest();
+  alarmOptions.value = alarmGroupResponse.data;
 });
 
 const drawerVisible = ref(false);
@@ -111,15 +104,17 @@ const drawerProps = ref<DrawerProps>({
   row: {}
 });
 const rules = reactive({
+  group_name: [{ required: true, message: "告警组" }],
   instance_name: [{ required: true, message: "实例名称" }],
   job_name: [{ required: true, message: "任务名称" }],
   alert_name: [{ required: true, message: "告警名称" }],
   alert_rule: [{ required: true, message: "告警规则" }],
+  threshold: [{ required: true, message: "告警阈值" }],
+  comparison_mode: [{ required: true, message: "比较方式" }],
   duration_time: [{ required: true, message: "持续时间" }],
   alarm_lever: [{ required: true, message: "告警等级" }],
   notice_name: [{ required: true, message: "通知人" }],
-  notice_group: [{ required: true, message: "通知组" }],
-  notice_type: [{ required: true, message: "通知方式" }]
+  notice_group: [{ required: false, message: "通知组" }]
 });
 
 interface DrawerProps {

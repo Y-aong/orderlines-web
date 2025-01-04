@@ -3,27 +3,39 @@
     <el-row :gutter="10">
       <!-- CPU占用 -->
       <el-col :span="3">
-        <div class="pie"><gauge-chart :chart-size="'150px'" :refresh-interval="5" :option="CPUGaugeOption" /></div>
+        <div class="pie">
+          <gauge-chart :chart-size="'150px'" :refresh-interval="5" :api="getNodeMetricsGaugeCpuRequest" />
+        </div>
       </el-col>
       <!-- 内存占用 -->
       <el-col :span="3">
-        <div class="pie"><gauge-chart :chart-size="'150px'" :refresh-interval="5" :option="MemoryGaugeOption" /></div>
+        <div class="pie">
+          <gauge-chart :chart-size="'150px'" :refresh-interval="5" :api="getNodeMetricsGaugeMemoryRequest" />
+        </div>
       </el-col>
       <!-- 磁盘占用 -->
       <el-col :span="3">
-        <div class="pie"><gauge-chart :chart-size="'150px'" :refresh-interval="5" :option="DiskGaugeOption" /></div>
+        <div class="pie">
+          <gauge-chart :chart-size="'150px'" :refresh-interval="5" :api="getNodeMetricsGaugeDiskRequest" />
+        </div>
       </el-col>
       <!-- 内存占比 -->
       <el-col :span="3">
-        <div class="pie"><PieChart :refresh-interval="0" chart-size="150px" :option="memoryOption" /></div>
+        <div class="pie">
+          <PieChart :refresh-interval="0" chart-size="150px" :api="getNodeMetricsPieMemoryRequest" />
+        </div>
       </el-col>
       <!-- 磁盘占比 -->
       <el-col :span="3">
-        <div class="pie"><PieChart :refresh-interval="0" chart-size="150px" :option="diskOption" /></div>
+        <div class="pie">
+          <PieChart :refresh-interval="0" chart-size="150px" :api="getNodeMetricsPieDiskRequest" />
+        </div>
       </el-col>
       <!-- SWAP占比 -->
       <el-col :span="3">
-        <div class="pie"><PieChart :refresh-interval="0" chart-size="150px" :option="swapOption" /></div>
+        <div class="pie">
+          <PieChart :refresh-interval="0" chart-size="150px" :api="getNodeMetricsPieSwapRequest" />
+        </div>
       </el-col>
       <el-col :span="6">
         <el-row :gutter="5">
@@ -63,11 +75,11 @@
         <el-card class="line-card">
           <template #header>
             <div class="card-title">
-              <el-form :inline="true" :model="formInline" class="demo-form-inline">
+              <el-form :inline="true" :model="cpuInline" class="demo-form-inline">
                 <el-form-item label="start time">
                   <el-date-picker
-                    v-model="formInline.date"
-                    type="date"
+                    v-model="cpuInline.start_time"
+                    type="datetime"
                     placeholder="开始时间"
                     style="width: 150px"
                     clearable
@@ -76,8 +88,8 @@
                 </el-form-item>
                 <el-form-item label="end time">
                   <el-date-picker
-                    v-model="formInline.date"
-                    type="date"
+                    v-model="cpuInline.end_time"
+                    type="datetime"
                     placeholder="结束时间"
                     style="width: 150px"
                     clearable
@@ -85,159 +97,170 @@
                   />
                 </el-form-item>
                 <el-form-item label="step">
-                  <el-input v-model="formInline.user" placeholder="步长" clearable size="small" style="width: 100px" />
+                  <el-input v-model="cpuInline.step" placeholder="步长" clearable size="small" style="width: 100px" />
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" size="small">查询</el-button>
+                  <el-button type="primary" size="small" @click="handleQuery(cpuInline)"> 查询 </el-button>
                 </el-form-item>
               </el-form>
             </div>
           </template>
           <div class="line">
-            <LineChart :refresh-interval="60" chart-size="100%" :option="CPUlineOption" />
+            <LineChart
+              :refresh-interval="60"
+              chart-size="100%"
+              :api="getNodeMetricsCpuLineRequest"
+              :query="cpuInline"
+            />
           </div>
         </el-card>
       </el-col>
+      <!-- 内存图表 -->
       <el-col :span="12">
         <el-card class="line-card">
           <template #header>
-            <div class="card-header">
-              <div class="card-title">
-                <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                  <el-form-item label="start time">
-                    <el-date-picker
-                      v-model="formInline.date"
-                      type="date"
-                      placeholder="开始时间"
-                      style="width: 150px"
-                      clearable
-                      size="small"
-                    />
-                  </el-form-item>
-                  <el-form-item label="end time">
-                    <el-date-picker
-                      v-model="formInline.date"
-                      type="date"
-                      placeholder="结束时间"
-                      style="width: 150px"
-                      clearable
-                      size="small"
-                    />
-                  </el-form-item>
-                  <el-form-item label="step">
-                    <el-input
-                      v-model="formInline.user"
-                      placeholder="步长"
-                      clearable
-                      size="small"
-                      style="width: 100px"
-                    />
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" size="small">查询</el-button>
-                  </el-form-item>
-                </el-form>
-              </div>
+            <div class="card-title">
+              <el-form :inline="true" :model="memoryInline" class="demo-form-inline">
+                <el-form-item label="start time">
+                  <el-date-picker
+                    v-model="memoryInline.start_time"
+                    type="datetime"
+                    placeholder="开始时间"
+                    style="width: 150px"
+                    clearable
+                    size="small"
+                  />
+                </el-form-item>
+                <el-form-item label="end time">
+                  <el-date-picker
+                    v-model="memoryInline.end_time"
+                    type="datetime"
+                    placeholder="结束时间"
+                    style="width: 150px"
+                    clearable
+                    size="small"
+                  />
+                </el-form-item>
+                <el-form-item label="step">
+                  <el-input
+                    v-model="memoryInline.step"
+                    placeholder="步长"
+                    clearable
+                    size="small"
+                    style="width: 100px"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="small" @click="handleQuery(memoryInline)"> 查询 </el-button>
+                </el-form-item>
+              </el-form>
             </div>
           </template>
           <div class="line">
-            <LineChart :refresh-interval="60" chart-size="100%" :option="lineOption" />
+            <LineChart
+              :refresh-interval="60"
+              chart-size="100%"
+              :api="getNodeMetricsMemoryLineRequest"
+              :query="memoryInline"
+            />
           </div>
         </el-card>
       </el-col>
     </el-row>
     <el-row :gutter="10">
+      <!-- 网络图表 -->
       <el-col :span="12">
         <el-card class="line-card">
           <template #header>
-            <div class="card-header">
-              <div class="card-title">
-                <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                  <el-form-item label="start time">
-                    <el-date-picker
-                      v-model="formInline.date"
-                      type="date"
-                      placeholder="开始时间"
-                      style="width: 150px"
-                      clearable
-                      size="small"
-                    />
-                  </el-form-item>
-                  <el-form-item label="end time">
-                    <el-date-picker
-                      v-model="formInline.date"
-                      type="date"
-                      placeholder="结束时间"
-                      style="width: 150px"
-                      clearable
-                      size="small"
-                    />
-                  </el-form-item>
-                  <el-form-item label="step">
-                    <el-input
-                      v-model="formInline.user"
-                      placeholder="步长"
-                      clearable
-                      size="small"
-                      style="width: 100px"
-                    />
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" size="small">查询</el-button>
-                  </el-form-item>
-                </el-form>
-              </div>
+            <div class="card-title">
+              <el-form :inline="true" :model="networkInline" class="demo-form-inline">
+                <el-form-item label="start time">
+                  <el-date-picker
+                    v-model="networkInline.start_time"
+                    type="datetime"
+                    placeholder="开始时间"
+                    style="width: 150px"
+                    clearable
+                    size="small"
+                  />
+                </el-form-item>
+                <el-form-item label="end time">
+                  <el-date-picker
+                    v-model="networkInline.end_time"
+                    type="datetime"
+                    placeholder="结束时间"
+                    style="width: 150px"
+                    clearable
+                    size="small"
+                  />
+                </el-form-item>
+                <el-form-item label="step">
+                  <el-input
+                    v-model="networkInline.step"
+                    placeholder="步长"
+                    clearable
+                    size="small"
+                    style="width: 100px"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="small" @click="handleQuery(networkInline)"> 查询 </el-button>
+                </el-form-item>
+              </el-form>
             </div>
           </template>
           <div class="line">
-            <LineChart :refresh-interval="60" chart-size="100%" :option="CPUlineOption" />
+            <LineChart
+              :refresh-interval="60"
+              chart-size="100%"
+              :api="getNodeMetricsNetworkLineRequest"
+              :query="networkInline"
+            />
           </div>
         </el-card>
       </el-col>
+      <!-- 磁盘图表 -->
       <el-col :span="12">
         <el-card class="line-card">
           <template #header>
-            <div class="card-header">
-              <div class="card-title">
-                <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                  <el-form-item label="start time">
-                    <el-date-picker
-                      v-model="formInline.date"
-                      type="date"
-                      placeholder="开始时间"
-                      style="width: 150px"
-                      clearable
-                      size="small"
-                    />
-                  </el-form-item>
-                  <el-form-item label="end time">
-                    <el-date-picker
-                      v-model="formInline.date"
-                      type="date"
-                      placeholder="结束时间"
-                      style="width: 150px"
-                      clearable
-                      size="small"
-                    />
-                  </el-form-item>
-                  <el-form-item label="step">
-                    <el-input
-                      v-model="formInline.user"
-                      placeholder="步长"
-                      clearable
-                      size="small"
-                      style="width: 100px"
-                    />
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" size="small">查询</el-button>
-                  </el-form-item>
-                </el-form>
-              </div>
+            <div class="card-title">
+              <el-form :inline="true" :model="diskInline" class="demo-form-inline">
+                <el-form-item label="start time">
+                  <el-date-picker
+                    v-model="diskInline.start_time"
+                    type="datetime"
+                    placeholder="开始时间"
+                    style="width: 150px"
+                    clearable
+                    size="small"
+                  />
+                </el-form-item>
+                <el-form-item label="end time">
+                  <el-date-picker
+                    v-model="diskInline.end_time"
+                    type="datetime"
+                    placeholder="结束时间"
+                    style="width: 150px"
+                    clearable
+                    size="small"
+                  />
+                </el-form-item>
+                <el-form-item label="step">
+                  <el-input v-model="diskInline.step" placeholder="步长" clearable size="small" style="width: 100px" />
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="small" @click="handleQuery(diskInline)"> 查询 </el-button>
+                </el-form-item>
+              </el-form>
             </div>
           </template>
           <div class="line">
-            <LineChart :refresh-interval="60" chart-size="100%" :option="lineOption" />
+            <LineChart
+              :refresh-interval="5"
+              chart-size="100%"
+              :api="getNodeMetricsDiskLineRequest"
+              :query="diskInline"
+            />
           </div>
         </el-card>
       </el-col>
@@ -246,207 +269,101 @@
 </template>
 
 <script setup lang="ts">
+import { ref, reactive } from "vue";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc"; // 导入 UTC 插件
+import timezone from "dayjs/plugin/timezone"; // 导入时区插件
 import GaugeChart from "./components/GaugeChart.vue";
 import LineChart from "./components/LineChart.vue";
 import PieChart from "./components/PieChart.vue";
-import {
-  getPrometheusNodeMetricsRequest,
-  getPrometheusNodeMetricsNetworkRequest,
-  getPrometheusNodeMetricsCPURequest,
-  getPrometheusNodeMetricsMemoryRequest
-} from "@/api/alarm/alarmInstance/index";
-import { PrometheusNodeMetrics } from "@/api/alarm/alarmInstance/type";
 
-import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
-const fontSize = ref(15);
-const formInline = reactive({
-  user: "",
-  region: "",
-  date: ""
+// 使用插件
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+// 引入 API 请求方法
+import {
+  getNodeMetricsMemoryLineRequest,
+  getNodeMetricsCpuLineRequest,
+  getNodeMetricsNetworkLineRequest,
+  getNodeMetricsDiskLineRequest,
+  getNodeMetricsPieMemoryRequest,
+  getNodeMetricsPieSwapRequest,
+  getNodeMetricsPieDiskRequest,
+  getNodeMetricsGaugeMemoryRequest,
+  getNodeMetricsGaugeCpuRequest,
+  getNodeMetricsGaugeDiskRequest
+} from "@/api/alarm/instance/index";
+
+// 创建一个方法来处理日期格式转换
+const formatDateTime = (
+  dateTime?: string | null,
+  targetTimeZone: string = "Asia/Shanghai",
+  format: string = "YYYY-MM-DD HH:mm:ss"
+) => {
+  if (!dateTime) return "";
+  return dayjs(dateTime).tz(targetTimeZone).format(format);
+};
+
+// 处理查询逻辑的方法
+const handleQuery = async (inlineData: any) => {
+  // 格式化日期并更新到 inlineData 中
+  const formattedStartTime = formatDateTime(inlineData.start_time);
+  const formattedEndTime = formatDateTime(inlineData.end_time);
+
+  Object.assign(inlineData, {
+    start_time: formattedStartTime,
+    end_time: formattedEndTime
+  });
+};
+
+// 定义各个表单的数据模型
+const cpuInline = reactive({
+  start_time: "",
+  end_time: "",
+  step: "",
+  instance_name: ""
 });
 
-let nodeMetics = ref<PrometheusNodeMetrics.PrometheusNodeMetrics>({
-  cpu_usage: 70,
-  memory_usage: 60,
-  disk_usage: 9,
-  disk_used_data: [
-    { value: 2143, name: "已用内存" },
-    { value: 1541, name: "未用内存" }
-  ],
-  memory_used_data: [
-    { value: 1548, name: "已用磁盘" },
-    { value: 4345, name: "未用磁盘" }
-  ],
-  swap_used_data: [
-    { value: 542, name: "已用磁盘" },
-    { value: 4345, name: "未用磁盘" }
-  ],
+const memoryInline = reactive({
+  start_time: "",
+  end_time: "",
+  step: "",
+  instance_name: ""
+});
+
+const networkInline = reactive({
+  start_time: "",
+  end_time: "",
+  step: "",
+  instance_name: ""
+});
+
+const diskInline = reactive({
+  start_time: "",
+  end_time: "",
+  step: "",
+  instance_name: ""
+});
+
+let nodeMetics = ref({
   cpu_total: "8",
   boot_time: "12",
   memory_total_gb: "16GB",
   disk_total_gb: "500GB",
   swap_total_gb: "4GB"
 });
-// 定时器
-const timer = ref();
-
-// 获取数据
-const getMetricsData = async () => {
-  const nodeMetricsResponse = await getPrometheusNodeMetricsRequest("ubantu-node", "15m");
-  console.log(nodeMetricsResponse.data);
-  // nodeMetics.value = nodeMetricsResponse.data;
-  console.log("nodeMetics", nodeMetics);
-
-  const nodeMetricsNetworkResponse = await getPrometheusNodeMetricsNetworkRequest();
-  console.log(nodeMetricsNetworkResponse);
-
-  const nodeMetricsCpuResponse = await getPrometheusNodeMetricsCPURequest();
-  console.log(nodeMetricsCpuResponse);
-  const nodeMetricsMemoryResponse = await getPrometheusNodeMetricsMemoryRequest();
-  console.log(nodeMetricsMemoryResponse);
-
-  function _timer() {
-    timer.value = setTimeout(() => {
-      getMetricsData();
-    }, 5000);
-  }
-  // 启动定时器
-  _timer();
-};
-
-// 定义仪表盘配置
-const CPUGaugeOption = ref({ series: [{ data: [{ value: nodeMetics.value.cpu_usage, name: "CPU" }] }] });
-const MemoryGaugeOption = ref({ series: [{ data: [{ value: nodeMetics.value.memory_usage, name: "内存" }] }] });
-const DiskGaugeOption = ref({ series: [{ data: [{ value: nodeMetics.value.disk_usage, name: "磁盘" }] }] });
-
-// 饼图配置
-const memoryOption = ref({
-  title: { text: "内存占比", textStyle: { fontSize: fontSize } },
-  series: [
-    {
-      type: "pie",
-      data: [
-        { value: 1548, name: "已用磁盘" },
-        { value: 4345, name: "未用磁盘" }
-      ]
-    }
-  ]
-});
-
-const diskOption = ref({
-  title: { text: "磁盘占比", textStyle: { fontSize: fontSize } },
-  series: [{ type: "pie", data: nodeMetics.value.memory_used_data }]
-});
-const swapOption = {
-  title: {
-    text: "SWAP占比",
-    textStyle: {
-      fontSize: fontSize
-    }
-  },
-  series: [
-    {
-      type: "pie",
-      data: nodeMetics.value.memory_used_data
-    }
-  ]
-};
-// 折线图配置
-const CPUlineOption = {
-  title: {
-    text: "CPU折线图标题",
-    textStyle: {
-      fontSize: fontSize
-    }
-  },
-  series: [{ name: "销量", showSymbol: false, type: "line", data: [150, 230, 224, 218, 135, 147, 260, 41] }]
-};
-const lineOption = {
-  title: {
-    text: "折线图标题",
-    textStyle: {
-      fontSize: fontSize
-    }
-  },
-
-  xAxis: [
-    {
-      type: "category",
-      boundaryGap: false,
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    }
-  ],
-
-  series: [
-    {
-      name: "Email",
-      type: "line",
-      stack: "Total",
-      showSymbol: false,
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [120, 132, 101, 134, 90, 230, 210]
-    },
-    {
-      name: "Union Ads",
-      type: "line",
-      stack: "Total",
-      showSymbol: false,
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [220, 182, 191, 234, 290, 330, 310]
-    },
-    {
-      name: "Video Ads",
-      type: "line",
-      showSymbol: false,
-      stack: "Total",
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [150, 232, 201, 154, 190, 330, 410]
-    },
-    {
-      name: "Direct",
-      type: "line",
-      stack: "Total",
-      showSymbol: false,
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [320, 332, 301, 334, 390, 330, 320]
-    },
-    {
-      name: "Search Engine",
-      type: "line",
-      stack: "Total",
-      showSymbol: false,
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
-    }
-  ]
-};
-
-// 在组件销毁前清除定时器(离开页面)
-onBeforeUnmount(() => {
-  // 关闭定时器
-  clearTimeout(timer.value);
-  console.log("定时器已清除");
-});
-
-onMounted(async () => {
-  await getMetricsData();
-});
 </script>
+
+<style scoped>
+.table-box {
+  width: 100%;
+}
+.line-chat {
+  width: 100%;
+  height: 100%;
+}
+</style>
 
 <style scoped>
 .line-card {
@@ -461,7 +378,7 @@ onMounted(async () => {
 .line {
   display: flex;
   justify-content: center; /* 水平居中 */
-  height: 25vh;
+  height: 26vh;
 }
 .pie {
   display: flex;

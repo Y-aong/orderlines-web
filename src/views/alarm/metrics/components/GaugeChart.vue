@@ -3,14 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, defineProps } from "vue";
+import { ref, onMounted, onUnmounted, defineProps } from "vue";
 import * as echarts from "echarts";
 
 // 定义 props 接收外部配置
 const props = defineProps<{
   refreshInterval?: number;
   chartSize?: string;
-  option?: Record<string, any>;
+  api?: any;
 }>();
 
 // 生成唯一的图表 ID
@@ -38,16 +38,21 @@ const mergeSeries = (defaultSeries: any[], customSeries?: any[]): any[] => {
 };
 
 // 初始化图表方法
-const initChart = () => {
+const initChart = async () => {
   if (!chartInstance) {
     chartInstance = echarts.init(document.getElementById(chartId.value)!);
   }
+  const getApiOption = async () => {
+    const response = await props.api();
+    return response.data;
+  };
+  const apiOption = await getApiOption();
 
   // 使用传入的option或默认option
   const finalOption = {
     ...defaultOption,
-    ...(props.option || {}),
-    series: mergeSeries(defaultOption.series, props.option?.series)
+    ...(apiOption || {}),
+    series: mergeSeries(defaultOption.series, apiOption?.series)
   };
 
   chartInstance.setOption(finalOption);
@@ -109,9 +114,6 @@ const setTimer = () => {
     timer = setInterval(initChart, props.refreshInterval * 1000);
   }
 };
-
-// 监听属性变化并刷新图表
-watch(() => props.option, initChart, { deep: true });
 
 // 组件挂载时初始化图表并设置定时器
 onMounted(() => {

@@ -106,7 +106,7 @@ const columns = reactive<ColumnProps<GitlabProject.GitlabProjectItem>[]>([
   { type: "expand", label: "展开", width: 70 },
   { prop: "id", label: "ID", width: 60 },
   { prop: "project_id", label: "仓库ID", search: { el: "input" }, width: 80 },
-  { prop: "project_name", label: "仓库名称", search: { el: "input" }, width: 150 },
+  { prop: "project_name", label: "仓库名称", search: { el: "input" } },
   { prop: "description", label: "仓库描述", search: { el: "input" } },
   { prop: "default_branch", label: "默认分支", width: 100 },
   { prop: "owner_id", label: "拥有者ID", width: 100 },
@@ -124,9 +124,8 @@ const columns = reactive<ColumnProps<GitlabProject.GitlabProjectItem>[]>([
       );
     }
   },
-  { prop: "create_time", label: "创建时间", width: 170 },
-  { prop: "insert_time", label: "创建时间", width: 170 },
-  { prop: "update_time", label: "修改时间", width: 170 },
+  { prop: "insert_time", label: "创建时间", width: 180 },
+  { prop: "update_time", label: "修改时间", width: 180 },
   { prop: "operation", label: "操作", fixed: "right", width: 200 }
 ]);
 

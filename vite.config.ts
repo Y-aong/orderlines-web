@@ -1,7 +1,6 @@
 import { defineConfig, loadEnv, ConfigEnv, UserConfig } from "vite";
 import { resolve } from "path";
 import { wrapperEnv } from "./build/getEnv";
-// import { createProxy } from "./build/proxy";
 import { createVitePlugins } from "./build/plugins";
 import pkg from "./package.json";
 import dayjs from "dayjs";
@@ -17,7 +16,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
   const viteEnv = wrapperEnv(env);
-
   return {
     base: viteEnv.VITE_PUBLIC_PATH,
     root,
@@ -46,12 +44,12 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       // proxy: createProxy(viteEnv.VITE_PROXY)
       proxy: {
         "/api": {
-          target: "http://127.0.0.1:15900",
+          target: viteEnv.VITE_API_URL,
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, "")
         },
         "/socket.io": {
-          target: "ws://127.0.0.1:15900",
+          target: "ws://192.168.2.108:15900",
           ws: true
         }
       }

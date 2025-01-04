@@ -103,7 +103,6 @@ const downloadFile = async () => {
 
 const columns = reactive<ColumnProps<GitlabBranch.GitlabBranchItem>[]>([
   { type: "selection", fixed: "left", width: 60 },
-  { type: "expand", label: "展开", width: 70 },
   { prop: "id", label: "ID", width: 60 },
   { prop: "project_id", label: "仓库ID", search: { el: "input" }, width: 80 },
   { prop: "project_name", label: "仓库名称", search: { el: "input" }, width: 120 },

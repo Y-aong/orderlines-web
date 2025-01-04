@@ -111,7 +111,7 @@ const columns = reactive<ColumnProps<Jenkins.JenkinsInfoFilter>[]>([
     search: { el: "input" },
     width: 140
   },
-  { prop: "description", label: "jenkins描述", width: 180 },
+  { prop: "description", label: "jenkins描述" },
   {
     prop: "url",
     label: "jenkins链接",
@@ -131,16 +131,26 @@ const columns = reactive<ColumnProps<Jenkins.JenkinsInfoFilter>[]>([
     prop: "build_able",
     label: "是否可构建",
     search: { el: "input" },
-    width: 160,
+    width: 120,
     render: (scope: any) => {
       const build_able = scope.row.build_able === true ? "可以构建" : "不可构建";
       const build_able_type = scope.row.build_able ? "success" : "danger";
       return <el-tag type={build_able_type}>{build_able}</el-tag>;
     }
   },
-  { prop: "color", label: "jenkins颜色", width: 120 },
-  { prop: "insert_time", label: "创建时间" },
-  { prop: "update_time", label: "修改时间" },
+  {
+    prop: "color",
+    label: "jenkins状态",
+    width: 120,
+    render: (scope: any) => {
+      const build_able = scope.row.color === "blue" ? "正常" : "异常";
+      const build_able_type = scope.row.color === "blue" ? "success" : "danger";
+      return <el-tag type={build_able_type}>{build_able}</el-tag>;
+    }
+  },
+  { prop: "insert_time", label: "创建时间", width: 180 },
+  { prop: "insert_time", label: "创建时间", width: 180 },
+  { prop: "creator_name", label: "创建者" },
   { prop: "operation", label: "操作", fixed: "right", width: 280 }
 ]);
 

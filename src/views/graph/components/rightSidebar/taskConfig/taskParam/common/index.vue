@@ -238,7 +238,7 @@ let clearFlag = ref<boolean>(false);
 let pythonCodeVisible = ref<boolean>(false);
 let showVariable = ref<boolean>(false);
 let variableOption = ref<GraphVariable.VariableOption[]>([{ label: "", value: "" }]);
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const { isRunning } = storeToRefs(useGraphStatueStore());
 const { nodeParam, nodeConfig, process_id } = storeToRefs(useGraphStore());
 
@@ -263,7 +263,7 @@ onUnmounted(() => {
 
 // socket io连接
 const init = (namespace: string) => {
-  socketIo = io(`http://127.0.0.1:15900/${namespace}`, { path: "/socket.io" });
+  socketIo = io(`${apiUrl}/${namespace}`, { path: "/socket.io" });
 
   // 监听连接事件
   socketIo.on("connect", () => {

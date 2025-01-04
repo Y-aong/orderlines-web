@@ -14,20 +14,41 @@
           <el-input v-model="drawerProps.row!.id" clearable></el-input>
         </el-form-item>
       </template>
-      <el-form-item label="流程名称" prop="process_name">
-        <el-input v-model="drawerProps.row!.process_name" placeholder="请填写流程名称" clearable></el-input>
+      <el-form-item label="告警组名称" prop="group_name">
+        <el-input v-model="drawerProps.row!.group_name" placeholder="告警组名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="流程实例ID" prop="process_instance_id">
-        <el-input v-model="drawerProps.row!.process_instance_id" placeholder="请填写流程实例ID" clearable></el-input>
+      <el-form-item label="任务名称" prop="job_name">
+        <el-input v-model="drawerProps.row!.job_name" placeholder="请填写任务名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="任务名称" prop="task_name" clearable>
-        <el-input v-model="drawerProps.row!.task_name" placeholder="请填写任务名称" clearable></el-input>
+      <el-form-item label="实例名称" prop="instance_name" clearable>
+        <el-input v-model="drawerProps.row!.instance_name" placeholder="请填写实例名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="任务id" prop="task_id" clearable>
-        <el-input v-model="drawerProps.row!.task_id" placeholder="请填写任务id" clearable></el-input>
+      <el-form-item label="任务状态" prop="job_status" clearable>
+        <el-input v-model="drawerProps.row!.job_status" placeholder="请填写任务状态" clearable></el-input>
       </el-form-item>
-      <el-form-item label="是否确认" prop="people_confirm" clearable>
-        <el-input v-model="drawerProps.row!.people_confirm" placeholder="是否确认" clearable></el-input>
+      <el-form-item label="是否确认" prop="confirm" clearable>
+        <el-input v-model="drawerProps.row!.confirm" placeholder="是否确认" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警开始时间" prop="alert_start_time" clearable>
+        <el-input v-model="drawerProps.row!.alert_start_time" placeholder="告警开始时间" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警结束时间" prop="alert_end_time" clearable>
+        <el-input v-model="drawerProps.row!.alert_end_time" placeholder="告警结束时间" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="持续时间" prop="duration_time" clearable>
+        <el-input v-model="drawerProps.row!.duration_time" placeholder="持续时间" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警数据" prop="alert_data" clearable>
+        <el-input v-model="drawerProps.row!.alert_data" placeholder="告警数据" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警注解" prop="annotations" clearable>
+        <el-input v-model="drawerProps.row!.annotations" placeholder="告警注解" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="确认人" prop="handler_name" clearable>
+        <el-input v-model="drawerProps.row!.handler_name" placeholder="确认人" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警备注" prop="alarm_remarks" clearable>
+        <el-input v-model="drawerProps.row!.alarm_remarks" placeholder="告警备注" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -47,13 +68,7 @@ const drawerProps = ref<DrawerProps>({
   title: "",
   row: {}
 });
-const rules = reactive({
-  process_name: [{ required: false, message: "流程名称" }],
-  process_instance_id: [{ required: false, message: "流程实例ID" }],
-  task_name: [{ required: false, message: "任务名称" }],
-  task_id: [{ required: false, message: "任务id" }],
-  people_confirm: [{ required: true, message: "是否确认" }]
-});
+const rules = reactive({});
 
 interface DrawerProps {
   title: string;
@@ -77,7 +92,7 @@ const handleSubmit = () => {
     try {
       if (!drawerProps.value.row.node_type) drawerProps.value.row.node_type = "function-node";
       await drawerProps.value.api!(drawerProps.value.row);
-      ElMessage.success({ message: `${drawerProps.value.title}流程成功！` });
+      ElMessage.success({ message: `${drawerProps.value.title}告警确认成功！` });
       drawerProps.value.getTableList!();
       drawerVisible.value = false;
     } catch (error) {

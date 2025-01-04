@@ -17,7 +17,8 @@ enum API {
   PROMETHEUS_INSTANCE_URL = "/option/prometheus/instance",
   ALARM_NOTICE_NAME_URL = "/option/notice_name",
   ALARM_NOTICE_GROUP_URL = "/option/notice_group",
-  USER_NAME_URL = "/option/user"
+  USER_NAME_URL = "/option/user",
+  USER_ALARM_GROUP_URL = "/option/alarm_group"
 }
 // 获取流程名称options
 export const getProcessNameOptionRequest = () => http.get<Option.OptionResponse>(API.PROCESS_NAME_OPTION);
@@ -68,3 +69,5 @@ export const getAlarmNoticeOptRequest = () => http.get<Option.OptionResponse>(`$
 export const getAlarmNoticeGroupOptRequest = () => http.get<Option.OptionResponse>(`${API.ALARM_NOTICE_GROUP_URL}`);
 // 获取用户名称选项
 export const getUserNameOptRequest = () => http.get<Option.OptionResponse>(`${API.USER_NAME_URL}`);
+// 获取用户告警组选项
+export const getAlarmGroupOptRequest = () => http.get<Option.OptionResponse>(`${API.USER_ALARM_GROUP_URL}`);

@@ -54,7 +54,7 @@ onMounted(async () => {
 });
 const getAlarmMessage = async () => {
   const res: any = await getAlarmMessageRequest();
-  if (res.code === 200) {
+  if (res.code === 200 && res.data) {
     activeMessage.value = res.data.alarm_message;
     total.value = res.data.total;
   }

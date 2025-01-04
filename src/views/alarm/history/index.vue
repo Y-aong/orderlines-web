@@ -115,18 +115,34 @@ const getTableList = (params: AlarmHistory.Filter) => {
   return getAlarmHistoryRequest(newParams);
 };
 
+const alarmLevelOptions = { deadly: "致命", severity: "严重", warning: "警告" };
+const alarmLevelTypeOptions = { deadly: "danger", severity: "warning", warning: "warning" };
+
 const columns = reactive<ColumnProps<AlarmHistory.AlarmHistoryItem>[]>([
-  { type: "expand", label: "Expand", width: 100 },
+  { type: "expand", label: "展开", width: 60 },
   {
     prop: "id",
     label: "序号",
     search: { el: "input" },
-    width: 80
+    width: 60
+  },
+  {
+    prop: "group_name",
+    label: "任务组名称",
+    search: { el: "input" },
+    width: 110
+  },
+  {
+    prop: "alert_name",
+    label: "告警名称",
+    search: { el: "input" },
+    width: 100
   },
   {
     prop: "job_name",
     label: "任务名称",
-    search: { el: "input" }
+    search: { el: "input" },
+    width: 100
   },
   {
     prop: "instance_name",
@@ -137,17 +153,21 @@ const columns = reactive<ColumnProps<AlarmHistory.AlarmHistoryItem>[]>([
     prop: "job_status",
     label: "任务状态",
     search: { el: "input" },
-    width: 140
+    width: 90,
+    render: (scope: any) => {
+      return (
+        <el-tag type={alarmLevelTypeOptions[scope.row.job_status]}>{alarmLevelOptions[scope.row.job_status]}</el-tag>
+      );
+    }
   },
-  { prop: "alert_start_time", label: "开始时间", width: 120 },
-  { prop: "alert_end_time", label: "结束时间", width: 120 },
-  { prop: "duration_time", label: "持续时间", width: 120 },
+  { prop: "insert_time", label: "插入时间", width: 165 },
+  { prop: "duration_time", label: "持续时间", width: 90 },
   { prop: "annotations", label: "告警描述" },
   {
     prop: "confirm",
     label: "是否确认",
     search: { el: "input" },
-    width: 120,
+    width: 90,
     render: (scope: any) => {
       return (
         <el-tag type={scope.row.people_confirm ? "success" : "danger"}>
@@ -156,7 +176,7 @@ const columns = reactive<ColumnProps<AlarmHistory.AlarmHistoryItem>[]>([
       );
     }
   },
-  { prop: "updater_name", label: "处理人", width: 120 },
+  { prop: "updater_name", label: "处理人", width: 100 },
 
   { prop: "operation", label: "操作", fixed: "right", width: 240 }
 ]);

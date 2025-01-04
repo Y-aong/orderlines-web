@@ -15,7 +15,11 @@
             <el-option v-for="item in pluginOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item v-for="(key, val) in processConfig.setup.method_kwargs" :key="`${key}${val}`" :label="val">
+        <el-form-item
+          v-for="(key, val) in processConfig.setup.method_kwargs"
+          :key="`${key}${val}`"
+          :label="String(val)"
+        >
           <el-input v-model="processConfig.setup.method_kwargs[val]" placeholder="请输入参数" style="width: 80%" />
         </el-form-item>
 
@@ -31,7 +35,11 @@
             <el-option v-for="item in pluginOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item v-for="(key, val) in processConfig.teardown.method_kwargs" :key="`${key}${val}`" :label="val">
+        <el-form-item
+          v-for="(key, val) in processConfig.teardown.method_kwargs"
+          :key="`${key}${val}`"
+          :label="String(val)"
+        >
           <el-input v-model="processConfig.teardown.method_kwargs[val]" placeholder="请输入参数" style="width: 80%" />
         </el-form-item>
         <el-form-item label="超时时间">
@@ -118,8 +126,10 @@ let processConfig = ref<Process.ProcessConfig>({
 
 onMounted(async () => {
   const response: BaseResponse<Process.ProcessItem> = await getProcessDetailRequest(process_id.value);
-  if (response.code == 200 && response.data.process_params) {
-    processConfig.value = response.data.process_params;
+  if (response.code == 200 && response.data.process_config) {
+    console.log(response.data.process_config);
+
+    processConfig.value = response.data.process_config;
   }
   await getSetupTeardownOption();
 });

@@ -89,10 +89,11 @@ const getTableList = (params: AlarmNotice.Filter) => {
 };
 const columns = reactive<ColumnProps<AlarmNotice.AlarmNoticeItem>[]>([
   { type: "expand", label: "展开", width: 60 },
+  { prop: "group_name", label: "告警组名", search: { el: "input" } },
   { prop: "notice_name", label: "告警接收人", search: { el: "input" } },
   { prop: "notice_id", label: "接收人ID", search: { el: "input" } },
   { prop: "notice_group_name", label: "告警接收组", search: { el: "input" } },
-  { prop: "notice_group_id", label: "告警接收组ID", search: { el: "input" } },
+  { prop: "notice_group_id", label: "告警接收组", search: { el: "input" } },
   { prop: "notice_type", label: "通知类型", search: { el: "input" } },
   { prop: "creator_name", label: "创建者", width: 120, search: { el: "input" } },
   { prop: "updater_name", label: "修改者", width: 120, search: { el: "input" } },

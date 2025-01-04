@@ -3,6 +3,7 @@ import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace AlarmNotice {
   export interface AlarmNoticeItem {
     id: number;
+    group_name: string;
     alarm_type: string;
     notice_group_id: number;
     notice_group_name: string;

@@ -10,7 +10,7 @@ import * as echarts from "echarts";
 const props = defineProps<{
   refreshInterval?: number;
   chartSize?: string;
-  option?: Record<string, any>;
+  api?: any;
 }>();
 
 // 生成唯一的图表 ID
@@ -34,21 +34,14 @@ const mergeSeries = (defaultSeries: any[], customSeries?: any[]): any[] => {
   }
 
   return mergedSeries;
-};
-// 初始化图表方法
-const initChart = () => {
+}; // 初始化图表方法
+const initChart = async () => {
   if (!chartInstance) {
     chartInstance = echarts.init(document.getElementById(chartId.value)!);
   }
   // 默认配置项与用户提供的配置合并
   const defaultOption = {
     color: ["#5cb85c", "#fca106"],
-    title: {
-      text: "内存占比",
-      textStyle: {
-        fontSize: 10 // 设置字体大小
-      }
-    },
 
     tooltip: {
       trigger: "item"
@@ -73,20 +66,23 @@ const initChart = () => {
           show: false,
           position: "center"
         },
-        radius: ["40%", "70%"],
-        data: [
-          { value: 1548, name: "已用内存" },
-          { value: 735, name: "未用内存" }
-        ]
+        radius: ["40%", "70%"]
       }
     ]
   };
+  const getFinalOption = async () => {
+    const response = await props.api();
+    return response.data;
+  };
+  const apiOption = await getFinalOption();
 
   const finalOption = {
     ...defaultOption,
-    ...(props.option || {}),
-    series: mergeSeries(defaultOption.series, props.option?.series)
+    ...(defaultOption || {}),
+    series: mergeSeries(defaultOption.series, apiOption?.series),
+    title: apiOption?.title
   };
+
   chartInstance.setOption(finalOption);
 };
 
@@ -100,12 +96,6 @@ const setTimer = () => {
 
 // 监听属性变化
 watch(() => props.refreshInterval, setTimer);
-watch(
-  () => props.option,
-  (val: any) => {
-    console.log("option changed", val);
-  }
-);
 
 // 组件挂载时初始化图表并设置定时器
 onMounted(() => {

@@ -62,7 +62,7 @@
           "name": "process",
           "component": "/orderlines/process/index",
           "meta": {
-            "icon": "Menu",
+            "icon": "Aim",
             "title": "流程配置",
             "isLink": "",
             "isHide": false,
@@ -76,7 +76,7 @@
               "name": "orderlinesProcessDetail",
               "component": "/orderlines/process/detail",
               "meta": {
-                "icon": "Menu",
+                "icon": "Operation",
                 "title": "流程详情",
                 "activeMenu": "/orderlines/process",
                 "isLink": "",
@@ -93,7 +93,7 @@
           "name": "processInstance",
           "component": "/orderlines/processInstance/index",
           "meta": {
-            "icon": "Histogram",
+            "icon": "Discount",
             "title": "流程实例",
             "isLink": "",
             "isHide": false,
@@ -107,7 +107,7 @@
               "name": "orderlinesProcessInstanceDetail",
               "component": "/orderlines/processInstance/detail",
               "meta": {
-                "icon": "Menu",
+                "icon": "SetUp",
                 "title": "流程实例详情",
                 "activeMenu": "/orderlines/processInstance",
                 "isLink": "",
@@ -124,7 +124,7 @@
           "name": "task",
           "component": "/orderlines/task/index",
           "meta": {
-            "icon": "HelpFilled",
+            "icon": "ScaleToOriginal",
             "title": "任务配置",
             "isLink": "",
             "isHide": false,
@@ -155,7 +155,7 @@
           "name": "taskInstance",
           "component": "/orderlines/taskInstance/index",
           "meta": {
-            "icon": "StarFilled",
+            "icon": "Star",
             "title": "任务实例",
             "isLink": "",
             "isHide": false,
@@ -262,8 +262,8 @@
           "name": "jenkinsInfo",
           "component": "/jenkins/jenkinsInfo/index",
           "meta": {
-            "icon": "Tickets",
-            "title": "jenkins信息",
+            "icon": "FolderOpened",
+            "title": "jenkins任务",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -276,7 +276,7 @@
           "name": "jenkinsInstance",
           "component": "/jenkins/jenkinsInstance/index",
           "meta": {
-            "icon": "Setting",
+            "icon": "Files",
             "title": "jenkins实例",
             "isLink": "",
             "isHide": false,
@@ -396,7 +396,7 @@
           "component": "/alarm/notice/index",
           "meta": {
             "icon": "Bell",
-            "title": "通知配置",
+            "title": "告警通知",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -440,6 +440,20 @@
           "meta": {
             "icon": "Cpu",
             "title": "系统告警",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/alarm/audit",
+          "name": "alarmAudit",
+          "component": "/alarm/audit/index",
+          "meta": {
+            "icon": "Aim",
+            "title": "告警审计",
             "isLink": "",
             "isHide": false,
             "isFull": false,

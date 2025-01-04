@@ -23,7 +23,13 @@
                 <span v-else>标题未定义</span>
                 <div>
                   <el-button size="small" :icon="View" @click="props.selectItem('查看', row)" v-if="props.selectItem" />
-                  <el-button size="small" :icon="Edit" @click="props.updateItem('编辑', row)" v-if="props.updateItem" />
+                  <el-button
+                    size="small"
+                    :icon="Edit"
+                    @click="props.updateItem('编辑', row)"
+                    v-if="props.updateItem"
+                    :disabled="row.job_status && (row.confirm || row.job_status !== '存在告警')"
+                  />
                   <el-button size="small" :icon="Delete" @click="deleteItem(row)" v-if="props.deleteItem" />
                 </div>
               </div>
@@ -32,7 +38,8 @@
               <div>
                 <div v-for="(card, i) in props.cardColumn" :key="i" style="width: 240px">
                   <el-text class="w-270px mb-2" line-clamp="2" truncated>
-                    {{ card.label + "：" }}{{ row[card.value] ? row[card.value] : "" }}
+                    {{ card.label + "：" }}
+                    {{ row[card.value] !== null || row[card.value] !== undefined ? row[card.value] : "" }}
                   </el-text>
                 </div>
               </div>

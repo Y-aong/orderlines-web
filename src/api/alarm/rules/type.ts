@@ -2,10 +2,13 @@ import { ReqPage, ResPage } from "@/api/interface/index";
 export namespace AlarmRules {
   export interface RuleItem {
     id: string;
+    group_name: string;
     instance_name: string;
     job_name: string;
     alert_name: string;
     alert_rule: string;
+    threshold: string;
+    comparison_mode: string;
     duration_time: string;
     alarm_lever: string;
     annotations: string;

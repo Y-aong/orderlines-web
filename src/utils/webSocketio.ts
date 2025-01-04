@@ -4,6 +4,7 @@ import useGraphStore from "@/stores/modules/graph";
 import useDebugStore from "@/stores/modules/debug";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 let { process_instance_id } = storeToRefs(useGraphStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
@@ -12,7 +13,7 @@ let { debugMessage } = storeToRefs(useDebugStore());
 export function UseSocketIo() {
   let socketIo: Socket;
   const init = (namespace: string) => {
-    socketIo = io(`http://127.0.0.1:15900/${namespace}`, { path: "/socket.io" });
+    socketIo = io(`${apiUrl}/${namespace}`, { path: "/socket.io" });
 
     // 监听连接事件
     socketIo.on("connect", () => {

@@ -88,10 +88,12 @@ const getTableList = (params: AlarmRules.Filter) => {
   return getAlarmRuleRequest(newParams);
 };
 const columns = reactive<ColumnProps<AlarmRules.RuleItem>[]>([
-  { type: "expand", label: "展开", width: 60 },
-  { prop: "instance_name", label: "实例名称", search: { el: "input" }, width: 140 },
-  { prop: "job_name", label: "任务名称", search: { el: "input" } },
-  { prop: "alert_name", label: "告警名称", search: { el: "input" } },
+  { type: "expand", label: "展开", width: 80 },
+  { prop: "id", label: "序号", search: { el: "input" }, width: 80 },
+  { prop: "group_name", label: "告警组", search: { el: "input" }, width: 120 },
+  { prop: "instance_name", label: "实例名称", search: { el: "input" }, width: 120 },
+  { prop: "job_name", label: "任务名称", search: { el: "input" }, width: 120 },
+  { prop: "alert_name", label: "告警名称", search: { el: "input" }, width: 100 },
   { prop: "alert_rule", label: "告警规则", search: { el: "input" } },
   { prop: "duration_time", label: "持续时间", width: 90 },
   { prop: "annotations", label: "告警描述" },
@@ -100,9 +102,6 @@ const columns = reactive<ColumnProps<AlarmRules.RuleItem>[]>([
     label: "限制告警",
     width: 90
   },
-  { prop: "notice_name", label: "通知人", width: 100 },
-  { prop: "notice_group", label: "通知组", width: 120 },
-  { prop: "notice_type", label: "通知方式", width: 100 },
   { prop: "creator_name", label: "创建者", search: { el: "input" } },
   { prop: "updater_name", label: "修改者", search: { el: "input" } },
   { prop: "operation", label: "操作", fixed: "right", width: 240 }

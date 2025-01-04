@@ -71,7 +71,7 @@ const { process_init_action } = useGraphStatueStore();
 const { gotoProcessEdit } = useGraphStore();
 
 onMounted(async () => {
-  if (!process_name.value) {
+  if (!process_name.value || process_name.value == "null") {
     dialogFormVisible.value = true;
   }
 });
@@ -79,7 +79,7 @@ onMounted(async () => {
 let ProcessItem = reactive<Process.ProcessItem>({
   process_id: "",
   process_name: "",
-  version: "",
+  version: "0.0.1",
   creator_name: userInfo.value.login_value,
   desc: "",
   process_config: {
@@ -92,7 +92,7 @@ let ProcessItem = reactive<Process.ProcessItem>({
   process_params: {},
   update_time: "",
   updater_name: "",
-  namespace: ""
+  namespace: "default"
 });
 
 // 确定

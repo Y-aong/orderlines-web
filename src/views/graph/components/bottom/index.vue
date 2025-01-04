@@ -4,7 +4,6 @@
       运行日志
       <el-button :icon="View" circle @click="showDialog" plain size="small" />
     </div>
-
     <div class="card-context" style="height: 60%">
       <el-scrollbar>
         <pre v-for="log in debugMessage" :key="log.time" class="scrollbar-demo-item" :class="log.level">

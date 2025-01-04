@@ -1,5 +1,5 @@
 import http from "@/api";
-import { AlarmNotice } from "./type.js";
+import { AlarmNotice } from "./type";
 import { BaseData, DeleteData } from "@/api/interface";
 
 //项目用户相关的请求地址

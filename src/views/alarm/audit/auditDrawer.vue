@@ -9,24 +9,44 @@
       :model="drawerProps.row"
       :hide-required-asterisk="drawerProps.isView"
     >
-      <el-form-item label="告警组名" prop="group_name">
-        <el-input v-model="drawerProps.row!.group_name" placeholder="请填写告警组名" clearable></el-input>
+      <el-form-item label="告警名称" prop="alarm_name">
+        <el-input v-model="drawerProps.row!.notice_group_name" placeholder="请填写告警名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="告警接收人" prop="notice_id">
-        <el-select v-model="drawerProps.row!.notice_id" placeholder="请选择告警接收人" style="width: 240px">
-          <el-option v-for="item in userNameOptions" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
+      <el-form-item label="告警标签" prop="alarm_label" clearable>
+        <el-input v-model="drawerProps.row!.alarm_label" placeholder="请填写告警标签" clearable></el-input>
       </el-form-item>
-      <el-form-item label="通知方式" prop="notice_type" clearable>
-        <el-select v-model="drawerProps.row!.notice_type" placeholder="请选择告警通知类型" style="width: 240px">
-          <el-option v-for="item in noticeTypeOption" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
+      <el-form-item label="告警等级" prop="alarm_level">
+        <el-input v-model="drawerProps.row!.alarm_level" placeholder="请填写告警等级" clearable></el-input>
       </el-form-item>
-      <el-form-item label="告警接收组" prop="notice_group_name">
-        <el-input v-model="drawerProps.row!.notice_group_name" placeholder="请填写告警接收组" clearable></el-input>
+      <el-form-item label="告警处理人" prop="handle_name">
+        <el-input v-model="drawerProps.row!.handle_name" placeholder="请填写告警处理人" clearable></el-input>
       </el-form-item>
-      <el-form-item label="告警组值" prop="notice_group_id">
-        <el-input v-model="drawerProps.row!.notice_group_id" placeholder="请填写告警接收组ID" clearable></el-input>
+      <el-form-item label="告警持续时间" prop="duration_time">
+        <el-input v-model="drawerProps.row!.duration_time" placeholder="请填写告警持续时间" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警状态" prop="status">
+        <el-input v-model="drawerProps.row!.status" placeholder="请填写告警状态" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警来源" prop="source">
+        <el-input v-model="drawerProps.row!.source" placeholder="请填写告警来源" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="创建时间" prop="created_at">
+        <el-input v-model="drawerProps.row!.created_at" placeholder="请填写告警创建时间" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="更新时间" prop="updated_at">
+        <el-input v-model="drawerProps.row!.updated_at" placeholder="请填写告警最后更新时间" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="相关链接" prop="link">
+        <el-input v-model="drawerProps.row!.link" placeholder="请填写相关链接" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警备注" prop="comments">
+        <el-input v-model="drawerProps.row!.comments" placeholder="请填写告警备注" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="软件版本" prop="version">
+        <el-input v-model="drawerProps.row!.version" placeholder="请填写软件版本" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="告警分类" prop="category">
+        <el-input v-model="drawerProps.row!.category" placeholder="请填写告警分类" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -57,19 +77,7 @@ const drawerProps = ref<DrawerProps>({
   title: "",
   row: {}
 });
-const rules = reactive({
-  group_name: [{ required: true, message: "告警组名" }],
-  notice_name: [{ required: true, message: "告警接收人" }],
-  notice_id: [{ required: true, message: "告警接收人ID" }],
-  notice_group_id: [{ required: false, message: "告警接收组值" }],
-  notice_group_name: [{ required: false, message: "告警接收组" }],
-  notice_type: [{ required: true, message: "告警通知类型" }]
-});
-const noticeTypeOption = [
-  { label: "邮件", value: "email" },
-  { label: "手机", value: "note" },
-  { label: "钉钉", value: "dingDing" }
-];
+const rules = reactive({});
 
 interface DrawerProps {
   title: string;

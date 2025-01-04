@@ -242,6 +242,7 @@ const {
   update_process_mode
 } = useGraphStatueStore();
 const { gotoProcessEdit, gotoProcessRunning, seProcessInstanceID } = useGraphStore();
+const apiUrl = import.meta.env.VITE_API_URL;
 
 let { debugMessage } = storeToRefs(useDebugStore());
 let activeName = ref<string>("create_process");
@@ -289,7 +290,7 @@ onMounted(async () => {
 
 // socket io连接
 const init = (namespace: string) => {
-  socketIo = io(`http://127.0.0.1:15900/${namespace}`, { path: "/socket.io" });
+  socketIo = io(`${apiUrl}/${namespace}`, { path: "/socket.io" });
 
   // 监听连接事件
   socketIo.on("connect", () => {

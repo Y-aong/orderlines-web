@@ -10,7 +10,8 @@ import * as echarts from "echarts";
 const props = defineProps<{
   refreshInterval?: number;
   chartSize?: string;
-  option?: Record<string, any>;
+  api: any;
+  query: any;
 }>();
 
 // 生成唯一的图表 ID
@@ -18,36 +19,24 @@ const chartId = ref(`line-chart-${Math.random().toString(36).substr(2, 8)}`);
 let chartInstance: echarts.ECharts | null = null;
 let timer: NodeJS.Timeout | null = null;
 
+// 获取最终的图表配置选项
+const getFinalOption = async (data: any) => {
+  const response = await props.api(data);
+  return response.data;
+};
+
 // 初始化图表方法
-const initChart = () => {
+const initChart = async () => {
   if (!chartInstance) {
     chartInstance = echarts.init(document.getElementById(chartId.value)!);
   }
-  // 默认配置项与用户提供的配置合并
-  const defaultOption = {
-    title: { text: "折线图示例", textStyle: { frontSize: 8 } },
-    grid: {
-      left: "3%",
-      right: "2%",
-      bottom: "3%",
-      top: "14%",
-      containLabel: true
-    },
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "cross",
-        label: {
-          backgroundColor: "#6a7985"
-        }
-      }
-    },
-    xAxis: { type: "category", data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
-    yAxis: { type: "value" },
-    series: [{ name: "销量", type: "line", data: [120, 200, 150, 80, 70, 110, 130] }]
-  };
-  const finalOption = { ...defaultOption, ...(props.option || {}) };
-  chartInstance.setOption(finalOption);
+  const finalOption = await getFinalOption(props.query);
+  try {
+    chartInstance?.setOption(finalOption);
+  } catch (error) {
+    console.log("异常数据", finalOption);
+    console.error(error);
+  }
 };
 
 // 设置定时器以定期更新图表数据
@@ -60,6 +49,18 @@ const setTimer = () => {
 
 // 监听属性变化
 watch(() => props.refreshInterval, setTimer);
+
+// 监听 query 变化并更新图表
+watch(
+  () => props.query,
+  async (newQuery, oldQuery) => {
+    console.log("Query changed", newQuery, oldQuery);
+    await getFinalOption(newQuery).then(finalOption => {
+      chartInstance?.setOption(finalOption);
+    });
+  },
+  { deep: true } // 深度监听对象内部的变化
+);
 
 // 组件挂载时初始化图表并设置定时器
 onMounted(() => {
