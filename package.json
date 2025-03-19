@@ -40,7 +40,7 @@
     "echarts": "^5.4.3",
     "echarts-liquidfill": "^3.1.0",
     "element-plus": "^2.3.4",
-    "logicflow": "^1.0.1",
+    "logicflow": "1.0.1",
     "md5": "^2.3.0",
     "mitt": "^3.0.1",
     "nprogress": "^0.2.0",

@@ -1,6 +1,5 @@
 <template>
   <el-tab-pane label="任务返回" name="result">
-    {{ nodeParam }}
     <template v-if="nodeParam.pc_type !== 'status'">
       <p>流程控制——任务返回值</p>
       <el-table :data="nodeParam.conditions" style="width: 100%" title>
