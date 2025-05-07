@@ -1,46 +1,37 @@
 <template>
-  <div class="flow_menu">
-    <div class="node-collapse">
-      <el-menu class="el-menu" mode="vertical" unique-opened>
-        <template v-for="node in nodeMenu" :key="node.title">
-          <el-sub-menu v-if="node.title" :index="node.title">
-            <template #title>
-              <el-icon>
-                <component :is="node.icon"></component>
-              </el-icon>
-              <span class="sle">{{ node.title }}</span>
-            </template>
-            <!-- common -->
-            <template v-if="!node.nodes[0].nodes">
-              <div class="node-form draggable draggable-handle" v-for="(item, index) in node.nodes" :key="index">
-                <el-menu-item :index="item.text" @mousedown="startDrag(item)" v-if="!node.nodes[0].nodes">
-                  <el-button class="title" plain>{{ item.text }}</el-button>
+  <el-menu class="el-menu" mode="vertical" unique-opened>
+    <template v-for="node in nodeMenu" :key="node.title">
+      <el-sub-menu v-if="node.title" :index="node.title">
+        <template #title>
+          <el-icon>
+            <component :is="node.icon"></component>
+          </el-icon>
+          <span>{{ node.title }}</span>
+        </template>
+        <!-- common -->
+        <template v-if="!node.nodes[0].nodes">
+          <div class="node-form draggable draggable-handle" v-for="(item, index) in node.nodes" :key="index">
+            <el-menu-item :index="item.text" @mousedown="startDrag(item)" v-if="!node.nodes[0].nodes">
+              <el-button class="title" plain>{{ item.text }}</el-button>
+            </el-menu-item>
+          </div>
+        </template>
+        <!-- category -->
+        <template v-if="node.nodes[0].nodes">
+          <template v-for="item in node.nodes" :key="item.title">
+            <el-sub-menu :index="item.title">
+              <template #title>{{ item.title }}</template>
+              <div v-for="temp in item.nodes" :key="temp.text" @mousedown="startDrag(temp)">
+                <el-menu-item :index="temp.text">
+                  <el-button class="title" plain>{{ temp.text }}</el-button>
                 </el-menu-item>
               </div>
-            </template>
-            <!-- category -->
-            <template v-if="node.nodes[0].nodes">
-              <template v-for="item in node.nodes" :key="item.title">
-                <el-sub-menu :index="item.title">
-                  <template #title>{{ item.title }}</template>
-                  <div
-                    class="node-form draggable draggable-handle"
-                    v-for="temp in item.nodes"
-                    :key="temp.text"
-                    @mousedown="startDrag(temp)"
-                  >
-                    <el-menu-item :index="temp.text">
-                      <el-button class="title" plain>{{ temp.text }}</el-button>
-                    </el-menu-item>
-                  </div>
-                </el-sub-menu>
-              </template>
-            </template>
-          </el-sub-menu>
+            </el-sub-menu>
+          </template>
         </template>
-      </el-menu>
-    </div>
-  </div>
+      </el-sub-menu>
+    </template>
+  </el-menu>
 </template>
 
 <script lang="ts" name="Palette" setup>
@@ -72,16 +63,6 @@ interface TaskType {
   "group-node": string;
   "sub-process-node": string;
 }
-interface MenuItem {
-  text: string;
-  type: string;
-  background: string;
-  method_name: string;
-  version: string;
-  class_name: string;
-  task_type: string;
-  options: string[];
-}
 
 const taskTypes: TaskType = {
   "function-node": "common",
@@ -106,7 +87,7 @@ onMounted(async () => {
 });
 
 // 按下鼠标时拖拽节点
-const startDrag = async (item: MenuItem) => {
+const startDrag = async (item: GraphData.NodeMenuType) => {
   const { lf } = props;
   // 检查开始节点不可以存在多个
   const graphData = lf.getGraphData();
@@ -140,7 +121,7 @@ const startDrag = async (item: MenuItem) => {
 };
 
 // 创建流程图信息
-const createFlowNode = async (item: MenuItem, task_id: string) => {
+const createFlowNode = async (item: GraphData.NodeMenuType, task_id: string) => {
   let graphNode: GraphNode.GraphNode = {
     process_id: process_id.value,
     task_id: task_id,
@@ -158,7 +139,7 @@ const createFlowNode = async (item: MenuItem, task_id: string) => {
 };
 
 // 创建任务节点
-const createTaskNode = async (item: MenuItem, taskId: string, taskType: string) => {
+const createTaskNode = async (item: GraphData.NodeMenuType, taskId: string, taskType: string) => {
   const node_config: GraphData.NodeConfig = {
     task_name: item.text,
     desc: item.text,
@@ -169,7 +150,6 @@ const createTaskNode = async (item: MenuItem, taskId: string, taskType: string) 
     task_type: taskType,
     options: item.options
   };
-
   let task: Task.TaskItem = {
     task_id: taskId,
     task_name: item.text,
@@ -181,6 +161,15 @@ const createTaskNode = async (item: MenuItem, taskId: string, taskType: string) 
     task_config: defaultTaskConfig.value,
     creator_name: userInfo.value.login_value
   };
+
+  console.log("创建任务节点", item);
+  if (item.type === "function-node") {
+    const method_kwargs = nodeParam.value.reduce((acc, item) => {
+      acc[item.name] = item.default;
+      return acc;
+    }, {});
+    task.method_kwargs = method_kwargs;
+  }
 
   if (item.type !== "select-node") {
     // 创建任务节点
@@ -209,36 +198,25 @@ const checkStartNode = (nodeType: string, graphData: FlowGraphData.GraphData): b
 <style scoped lang="scss">
 // menu 高度设置
 :deep(.el-sub-menu__title) {
-  height: 46px !important;
+  height: 48px !important;
 }
 .el-menu {
-  max-height: 300px !important;
-  font-size: 16;
-  font-weight: bold;
-  border-right: none;
-}
-.flow_menu {
   position: fixed;
-  top: 60px;
   width: 210px;
-  max-height: 100vh !important;
-  background-color: #ffffff;
-}
-.node-collapse {
-  width: 210px;
-  height: 100vh;
-}
-.el-menu-item {
-  width: 100%;
-  height: 60%;
-  margin: 8px auto;
-}
-.title {
-  width: 120px;
-  height: 24px;
-  font-size: 14px;
-  font-weight: bold;
-  border: 1px solid #999999;
-  border-radius: 5px;
+  height: 100vh !important;
+  font-size: 12;
+  border: 1px solid #ebe6e6;
+  border-right: none;
+  .el-menu-item {
+    width: 100%;
+    height: 60%;
+    margin: 8px auto;
+    .title {
+      width: 100px;
+      height: 24px;
+      font-size: 12px;
+      border-radius: 5px;
+    }
+  }
 }
 </style>

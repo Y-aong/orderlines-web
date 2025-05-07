@@ -11,7 +11,8 @@ export namespace GraphOperator {
     id?: number;
     process_id: string;
     process_name: string;
-    desc?: string;
+    process_type: string;
+    version_desc?: string;
     version: string;
     namespace: string;
     creator_name: string;

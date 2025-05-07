@@ -26,10 +26,17 @@ export namespace GraphData {
     nodesType: string;
     title: string;
     icon: string;
+    class_name: string;
+    method_name: string;
+    version: string;
+    type: string;
+    text: string;
+    options: string[];
   }
   // 流程图保存
   export interface ProcessSave {
     process_id: string;
+    process_type: string;
   }
 
   // 流程图查询条件
@@ -154,5 +161,50 @@ export namespace FlowGraphData {
     class_name: string;
     version: string;
     ui?: string;
+  }
+}
+
+export namespace TaskTable {
+  export interface MenuTaskType {
+    desc: string;
+    text: string;
+    type: string;
+    method_name: string;
+    version: string;
+    task_name: string;
+    id: number;
+    class_name: string;
+    options: string[];
+  }
+
+  export interface TaskType {
+    task_name: string;
+    process_id: string;
+    method_name: string;
+    module_version: string;
+    task_index_id: number;
+    task_module: string;
+    task_id: string;
+    task_type: string;
+    method_kwargs: any;
+    desc: string;
+    id: number;
+    breakpoint: boolean;
+  }
+  export interface TaskInstanceType {
+    task_name: string;
+    process_id: string;
+    method_name: string;
+    start_time: string;
+    end_time: string;
+    task_status: string;
+    module_version: string;
+    task_index_id: number;
+    task_module: string;
+    task_id: string;
+    task_type: string;
+    method_kwargs: any;
+    desc: string;
+    id: number;
   }
 }

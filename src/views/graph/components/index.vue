@@ -5,11 +5,13 @@
 
   <div class="container">
     <template v-if="!isRunning">
-      <Graph />
+      <Graph v-if="process_type == 'orderlines'" />
+      <TestTable v-if="process_type == 'test'" />
     </template>
 
     <template v-if="isRunning">
-      <GraphRunning />
+      <GraphRunning v-if="process_type == 'orderlines'" />
+      <TestTableRunning v-if="process_type == 'test'" />
     </template>
     <template v-if="isDebug || isRunning">
       <GraphBottom />
@@ -27,6 +29,13 @@
       <el-form-item label="流程版本" prop="version" required label-width="120px">
         <el-input placeholder="请输入流程版本" v-model="ProcessItem.version"> </el-input>
       </el-form-item>
+      <el-form-item label="流程类型" prop="process_type" required label-width="120px">
+        <el-select v-model="ProcessItem.process_type" placeholder="请选择流程类型">
+          <el-option label="普通流程" value="orderlines"></el-option>
+          <el-option label="测试流程" value="test"></el-option>
+          <el-option label="流水线流程" value="jenkins"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="命名空间" prop="namespace" required label-width="120px">
         <el-input placeholder="请输入命名空间" v-model="ProcessItem.namespace"> </el-input>
       </el-form-item>
@@ -43,6 +52,8 @@
 
 <script setup lang="ts" name="FlowPanel">
 import Graph from "@/components/Graph/index.vue";
+import TestTable from "@/components/TestTable/index.vue";
+import TestTableRunning from "@/components/TestTableRunning/index.vue";
 import GraphRunning from "@/components/GraphRunning/index.vue";
 import GraphTabbar from "./tabbar/index.vue";
 import GraphBottom from "./bottom/index.vue";
@@ -64,7 +75,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 let { userInfo } = storeToRefs(useUserStore());
-let { process_name } = storeToRefs(useGraphStore());
+let { process_name, process_type } = storeToRefs(useGraphStore());
 let { isRunning, isDebug } = storeToRefs(useGraphStatueStore());
 let dialogFormVisible = ref<boolean>(false);
 const { process_init_action } = useGraphStatueStore();
@@ -79,6 +90,7 @@ onMounted(async () => {
 let ProcessItem = reactive<Process.ProcessItem>({
   process_id: "",
   process_name: "",
+  process_type: "",
   version: "0.0.1",
   creator_name: userInfo.value.login_value,
   desc: "",
@@ -101,11 +113,13 @@ const confirm = async () => {
   let requestData: Process.ProcessItem = {
     process_id: processUUID,
     process_name: ProcessItem.process_name,
+    process_type: ProcessItem.process_type,
     version: ProcessItem.version,
     namespace: ProcessItem.namespace,
-    desc: ProcessItem.desc,
+    version_desc: ProcessItem.version_desc,
     process_params: ProcessItem.process_params,
-    process_config: ProcessItem.process_config
+    process_config: ProcessItem.process_config,
+    desc: ProcessItem.desc
   };
 
   let res: BaseResponse<BaseData> = await createProcessRequest(requestData);

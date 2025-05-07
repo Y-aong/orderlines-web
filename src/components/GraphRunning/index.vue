@@ -12,7 +12,7 @@ import OrderlinesNodeExtension from "./index.js";
 import { Control, Group, MiniMap, InsertNodeInPolyline, Menu } from "@logicflow/extension";
 import "@logicflow/extension/lib/style/index.css";
 import "@/components/GraphRunning/style.css";
-import useGraphStore from "@/stores/modules/graph.ts";
+import useGraphStore from "@/stores/modules/graph";
 import useRunningTaskStore from "@/stores/modules/runningTask";
 import { storeToRefs } from "pinia";
 import { getTaskInstanceItem } from "@/api/orderlines/orderlinesManager/taskInstance/index";
@@ -67,7 +67,12 @@ export default {
     });
     this.lf.on("node:click", async ({ data }) => {
       const response = await getTaskInstanceItem(process_instance_id.value, data.id);
-      if (response.code == 200) clickCheckTask.value = response.data;
+      if (response.code == 200) {
+        clickCheckTask.value = {
+          ...response.data,
+          task_result: response.data.task_result ?? null
+        };
+      }
     });
     // // 增加菜单选项
     // this.lf.extension.menu.addMenuConfig({
@@ -111,7 +116,7 @@ export default {
   methods: {
     async getGraphData() {
       const filter = { process_instance_id: process_instance_id.value };
-      const response = await getGraphInstanceRequest(filter);
+      const response: any = await getGraphInstanceRequest(filter);
       if (response.code === 200 && response.data.graph_data) {
         graph_data.value = response.data.graph_data.graphData;
         taskProgress.value = response.data.task_progress;

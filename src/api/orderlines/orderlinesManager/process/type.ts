@@ -3,11 +3,13 @@ export namespace Process {
   export interface ProcessItem {
     id?: number;
     process_id: string;
+    process_type: string;
     process_name: string;
     version: string;
     namespace: string;
     creator_name?: string;
     creator_id?: number;
+    version_desc?: string;
     desc?: string;
     insert_time?: string;
     process_config: ProcessConfig;

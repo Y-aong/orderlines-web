@@ -39,6 +39,7 @@ let { isDebug } = storeToRefs(useGraphStatueStore());
 let { taskGroup } = storeToRefs(useTaskGroupStore());
 let { processControlOptions, processControlResult, processControlStatus } = storeToRefs(useProcessControlStore());
 
+const { edit_process_action } = useGraphStatueStore();
 const { init, send } = UseSocketIo();
 const { getGraphNodeData } = useGraphStore();
 const editGrid = {
@@ -103,6 +104,7 @@ export default {
                     }
                   }
                   this.lf.deleteNode(node.id);
+                  nodeConfig.value = {};
                 });
               }
             }
@@ -234,6 +236,8 @@ export default {
     this.lf.on("history:change", async () => {
       let graphData = this.lf.getGraphData();
       console.log("画布上的元素发生变化", graphData);
+      // 将流程图模式改为编辑模式
+      await edit_process_action();
       const graph_data = {
         process_id: process_id.value,
         graphData: graphData

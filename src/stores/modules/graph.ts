@@ -18,6 +18,8 @@ export interface taskNodeType {
 const useGraphStore = defineStore("GraphStore", {
   state: (): FlowStoreType => {
     return {
+      // 流程类型
+      process_type: getStorage("PROCESS_TYPE", "str") as string,
       // 流程名称
       process_name: getStorage("PROCESS_NAME", "str") as string,
       // 流程id
@@ -59,10 +61,12 @@ const useGraphStore = defineStore("GraphStore", {
       if (!processDetail) return;
       // 根据流程id获取流程信息
       this.process_name = processDetail.process_name;
+      this.process_type = processDetail.process_type;
       this.process_version = processDetail.version;
       this.namespace = processDetail.namespace;
       this.process_instance_id = "";
       setStorage(process_id, "PROCESS_ID");
+      setStorage(processDetail.process_type, "PROCESS_TYPE");
       setStorage(processDetail.process_name, "PROCESS_NAME");
       setStorage(processDetail.version, "PROCESS_VERSION");
       setStorage(processDetail.namespace, "PROCESS_NAMESPACE");
@@ -76,10 +80,12 @@ const useGraphStore = defineStore("GraphStore", {
       this.process_id = process_id;
       this.process_instance_id = process_instance_id;
       this.process_name = processDetail.process_name;
+      this.process_type = processDetail.process_type;
       this.process_version = processDetail.version;
       this.namespace = processDetail.namespace;
       setStorage(processDetail.process_id, "PROCESS_ID");
       setStorage(processDetail.process_name, "PROCESS_NAME");
+      setStorage(processDetail.process_type, "PROCESS_TYPE");
       setStorage(processDetail.version, "PROCESS_VERSION");
       setStorage(processDetail.namespace, "PROCESS_NAMESPACE");
       setStorage(process_instance_id, "PROCESS_INSTANCE_ID");
@@ -92,7 +98,7 @@ const useGraphStore = defineStore("GraphStore", {
     },
     // 获取插件节点信息
     async getNodeMenu() {
-      const result: BaseResponse<GraphData.NodeMenuType[]> = await getNodeMenuRequest();
+      const result: BaseResponse<GraphData.NodeMenuType[]> = await getNodeMenuRequest(this.process_type);
       if (result.code == 200) {
         this.nodeMenu = result.data;
         return result.data;

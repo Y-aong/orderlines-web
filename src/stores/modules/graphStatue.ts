@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { getStorage, setStorage } from "@/utils/storage";
 
 interface GraphStatueType {
+  isUpdateParam: boolean;
   isRunning: boolean;
   isSave: boolean;
   isEdit: boolean;
@@ -17,6 +18,8 @@ interface GraphStatueType {
 const useGraphStatueStore = defineStore("graphStatue", {
   state: (): GraphStatueType => {
     return {
+      // 是否更新参数
+      isUpdateParam: false,
       // 是否运行
       isRunning: getStorage("isRunning", "bool") as boolean,
       // 是否保存

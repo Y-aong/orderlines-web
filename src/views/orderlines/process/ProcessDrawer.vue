@@ -20,6 +20,13 @@
       <el-form-item label="流程名称" prop="process_name">
         <el-input v-model="drawerProps.row!.process_name" placeholder="请填写流程名称" clearable></el-input>
       </el-form-item>
+      <el-form-item label="流程类型" prop="process_type">
+        <el-select v-model="drawerProps.row!.process_type" placeholder="请选择流程类型">
+          <el-option label="普通流程" value="orderlines"></el-option>
+          <el-option label="测试流程" value="test"></el-option>
+          <el-option label="流水线流程" value="jenkins"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="流程版本" prop="version">
         <el-input v-model="drawerProps.row!.version" placeholder="请填写流程版本" clearable></el-input>
       </el-form-item>
@@ -45,7 +52,7 @@ import { storeToRefs } from "pinia";
 import { v4 as uuid } from "uuid";
 import { Process } from "@/api/orderlines/orderlinesManager/process/type";
 import useGraphStore from "@/stores/modules/graph";
-let { process_id } = storeToRefs(useGraphStore());
+let { process_id, process_type } = storeToRefs(useGraphStore());
 import useGraphStatueStore from "@/stores/modules/graphStatue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/modules/user";
@@ -64,6 +71,7 @@ const toProcessConfig = async (row: Process.ProcessItem) => {
 
 const rules = reactive({
   process_name: [{ required: true, message: "请填写流程名称" }],
+  process_type: [{ required: false, message: "请填写流程类型" }],
   version: [{ required: false, message: "请填写流程版本" }],
   desc: [{ required: false, message: "请填写流程描述" }]
 });
@@ -104,6 +112,7 @@ const handleSubmit = () => {
       const processItem: Process.ProcessItem = {
         id: drawerProps.value.row.id,
         process_id: process_id.value,
+        process_type: process_type.value,
         process_name: drawerProps.value.row.process_name,
         version: drawerProps.value.row.version,
         namespace: drawerProps.value.row.namespace,

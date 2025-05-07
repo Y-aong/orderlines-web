@@ -1,8 +1,10 @@
 import http from "@/api";
 import { Task } from "./type";
 import { DeleteData, BaseData } from "@/api/interface";
+import { TaskTable } from "@/api/graph/graphData/type";
 
 enum API {
+  ALL_TASK_URL = "/orderlines/tasks",
   TASK_URL = "/orderlines/task",
   TASK_DETAIL_URL = "/orderlines/task/detail",
   TASK_EXPORT_URL = "/orderlines/task/export",
@@ -19,6 +21,10 @@ export const taskExport = (data: Task.TaskFilter) => http.download(API.TASK_EXPO
 export const getTaskDetailRequest = (task_id: string) => http.get(`${API.TASK_DETAIL_URL}?task_id=${task_id}`);
 // 获取任务配置列表
 export const getTaskRequest = (data: Task.TaskFilter) => http.get<Task.TaskItem>(API.TASK_URL, data);
+// 获取所有任务配置列表
+export const getTasksRequest = (process_id: string) => http.get<TaskTable.TaskType[]>(API.ALL_TASK_URL, { process_id });
+// 批量修改任务配置
+export const updateTasksRequest = (tasks: TaskTable.TaskType[]) => http.put(API.ALL_TASK_URL, { tasks });
 // 创建任务配置
 export const createTaskRequest = (data: Task.TaskItem) => http.post<BaseData>(API.TASK_URL, data);
 // 修改任务配置

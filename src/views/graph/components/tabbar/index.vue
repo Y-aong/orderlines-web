@@ -140,6 +140,13 @@
           <el-form-item label="流程版本" required>
             <el-input v-model="versionForm.version" placeholder="请输入流程版本" />
           </el-form-item>
+          <el-form-item label="流程类型">
+            <el-select v-model="versionForm.process_type" placeholder="请选择流程类型">
+              <el-option label="普通流程" value="orderlines"></el-option>
+              <el-option label="测试流程" value="test"></el-option>
+              <el-option label="流水线流程" value="jenkins"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="流程描述">
             <el-input v-model="versionForm.desc" placeholder="请输入流程描述" />
           </el-form-item>
@@ -222,7 +229,8 @@ import { v4 as uuid } from "uuid";
 
 let { userInfo } = storeToRefs(useUserStore());
 let { running_edge, taskProgress, graph_data } = storeToRefs(useRunningTaskStore());
-let { process_id, process_instance_id, process_name, process_version, namespace } = storeToRefs(useGraphStore());
+let { process_id, process_type, process_instance_id, process_name, process_version, namespace } =
+  storeToRefs(useGraphStore());
 let { isDebug, isSave, isRunning, isEdit, isPause, isStop, isComplete, isDebugContinue, isDebugStop } =
   storeToRefs(useGraphStatueStore());
 import { useRouter } from "vue-router";
@@ -252,6 +260,7 @@ let versionVisible = ref<boolean>(false);
 let versionForm = ref<Process.ProcessItem>({
   process_id: process_id.value as string,
   process_name: "",
+  process_type: "",
   version: "",
   namespace: "",
   desc: "",
@@ -268,6 +277,7 @@ let versionData = ref<GraphOperator.ProcessVersionType[]>([]);
 let processInfo = reactive<Process.ProcessItem>({
   process_id: process_id.value,
   process_name: process_name.value,
+  process_type: process_type.value,
   namespace: "default",
   version: "default",
   process_config: {
@@ -397,11 +407,15 @@ const deleteProcessVersion = async (id: number) => {
 //获取版本描述
 const getProcessVersion = async () => {
   versionVisible.value = true;
-  let response: BaseResponse<GraphOperator.ProcessVersionType[]> = await getProcessVersionByIDRequest(process_id.value);
-  if (response.code == 200 && response.data.length === 1) {
-    versionForm.value = response.data[0];
-    versionForm.value.process_name = "";
-    versionForm.value.desc = "";
+  let response: BaseResponse<GraphOperator.ProcessVersionType> = await getProcessVersionByIDRequest(process_id.value);
+  if (response.code == 200) {
+    versionForm.value.id = response.data.id;
+    versionForm.value.process_id = response.data.process_id;
+    versionForm.value.process_name = response.data.process_name;
+    versionForm.value.process_type = response.data.process_type;
+    versionForm.value.version = response.data.version;
+    versionForm.value.version_desc = response.data.version_desc;
+    versionForm.value.namespace = response.data.namespace;
   }
 };
 
@@ -465,7 +479,10 @@ const processOperator = async () => {
 //根据流程命名空间/版本获取流程
 const gotoTargetProcess = async (value: string) => {
   // 先保存流程再跳转
-  const saveResponse: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });
+  const saveResponse: BaseResponse<string> = await saveFlowRequest({
+    process_id: process_id.value,
+    process_type: process_type.value
+  });
   if (saveResponse.code == 200) {
     ElMessage.success("保存流程成功");
   } else {
@@ -538,7 +555,10 @@ const saveProcess = async () => {
     seProcessInstanceID("");
     ElMessage.success("流程开始编辑！");
   } else {
-    const response: BaseResponse<string> = await saveFlowRequest({ process_id: process_id.value });
+    const response: BaseResponse<string> = await saveFlowRequest({
+      process_id: process_id.value,
+      process_type: process_type.value
+    });
 
     if (response.code === 200) {
       save_process_action();

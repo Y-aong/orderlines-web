@@ -49,7 +49,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="deliveryForm.delivery = !deliveryForm.delivery"> 取消 </el-button>
-          <el-button type="primary" @click="updateTask"> 确认 </el-button>
+          <el-button type="primary" @click="updateTask(true)"> 确认 </el-button>
         </div>
       </template>
     </el-dialog>
@@ -71,8 +71,11 @@ import { GraphNode } from "@/api/graph/graphData/type";
 import { Option } from "@/api/option/type";
 import { BaseResponse } from "@/api/interface/index";
 import { useUserStore } from "@/stores/modules/user";
+import useGraphStatueStore from "@/stores/modules/graphStatue";
 
 let { userInfo } = storeToRefs(useUserStore());
+let { isUpdateParam } = storeToRefs(useGraphStatueStore());
+
 // 标记是否是编辑状态
 const isEditing = ref<any>({});
 // 子流程ID
@@ -83,7 +86,7 @@ const subProcessOption = ref<Option.OptionItem[]>([]);
 const deliveryForm = reactive({ delivery: false });
 const variables = ref<GraphOperator.SubprocessParmaType[]>();
 const { process_id, nodeConfig, nodeParam } = storeToRefs(useGraphStore());
-
+const { edit_process_action } = useGraphStatueStore();
 onMounted(async () => {
   await getSubProcessOption();
 });
@@ -101,7 +104,7 @@ const selectSubProcessId = async (row: any) => {
     return;
   }
   subProcessId.value = row.value;
-  await updateTask();
+  await updateTask(false);
   await updateFlowData();
 };
 
@@ -120,14 +123,13 @@ const handleEdit = async (row: any, property: string) => {
   // 获取子流程参数
   let response = await getSubProcess(row.process_id);
   variables.value = response.data;
-  await updateTask();
+  await updateTask(false);
   // 修改子流程任务参数
   ElMessage.success(`更新成功: ${property} 的新值为 ${row[property]}`);
-  deliveryForm.delivery = !deliveryForm.delivery;
 };
 
 // 修改任务参数
-const updateTask = async () => {
+const updateTask = async (close: boolean) => {
   let method_kwargs: any = {
     sub_process_id: subProcessId.value,
     sub_process_params: variables.value
@@ -139,8 +141,18 @@ const updateTask = async () => {
     updater_name: userInfo.value.login_value
   };
   let updateTaskResponse = await updateTaskRequest(taskNode);
-  if (updateTaskResponse.code != 200) ElMessage.error("更新失败");
+  if (updateTaskResponse.code != 200) {
+    ElMessage.error("更新失败");
+    return;
+  }
   await updateFlowData();
+  if (close) {
+    deliveryForm.delivery = !deliveryForm.delivery;
+  }
+  // 修改为编辑模式
+  await edit_process_action();
+  isUpdateParam.value = true;
+  ElMessage.success("参数更新成功");
 };
 
 // 获取参数类型

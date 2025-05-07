@@ -23,7 +23,7 @@ export const createProcessVersionRequest = (data: Process.ProcessItem) =>
 
 // 获取流程版本
 export const getProcessVersionByIDRequest = (process_id: string) =>
-  http.get<GraphOperator.ProcessVersionType[]>(`${API.PROCESS_VERSION}?process_id=${process_id}`);
+  http.get<GraphOperator.ProcessVersionType>(`${API.PROCESS_VERSION}?process_id=${process_id}`);
 
 // 根据流程名称获取流程版本
 export const getProcessVersionByNameRequest = (process_name: string) =>

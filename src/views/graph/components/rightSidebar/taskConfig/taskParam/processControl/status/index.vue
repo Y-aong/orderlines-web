@@ -75,11 +75,13 @@ import { useUserStore } from "@/stores/modules/user";
 let { userInfo } = storeToRefs(useUserStore());
 let { processControlOptions, processControlStatus } = storeToRefs(useProcessControlStore());
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useGraphStore());
-let { isRunning } = storeToRefs(useGraphStatueStore());
+let { isRunning, isUpdateParam } = storeToRefs(useGraphStatueStore());
 let taskIdOption = ref<OptionItemType[]>([{ label: "", value: "" }]);
 let visible = ref(false);
 let depth = ref(5);
 let theme = ref("vs-code");
+
+const { edit_process_action } = useGraphStatueStore();
 
 // 获取任务状态选项
 const getTaskIdOption = async () => {
@@ -142,6 +144,8 @@ const updateProcessControlParam = async () => {
   await updateFlowData();
   await getProcessControlParam();
   ElMessage.success("保存流程控制参数成功");
+  isUpdateParam.value = true;
+  await edit_process_action();
 };
 </script>
 

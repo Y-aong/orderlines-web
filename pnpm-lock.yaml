@@ -89,6 +89,9 @@ dependencies:
   vue-codemirror:
     specifier: ^6.1.1
     version: 6.1.1(codemirror@6.0.1)(vue@3.5.13)
+  vue-draggable-plus:
+    specifier: ^0.6.0
+    version: 0.6.0(@types/sortablejs@1.15.8)
   vue-i18n:
     specifier: ^9.4.0
     version: 9.14.2(vue@3.5.13)
@@ -2647,7 +2650,6 @@ packages:
 
   /@types/sortablejs@1.15.8:
     resolution: {integrity: sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==}
-    dev: true
 
   /@types/stack-utils@2.0.3:
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -10149,6 +10151,18 @@ packages:
         optional: true
     dependencies:
       vue: 3.5.13(typescript@5.1.6)
+    dev: false
+
+  /vue-draggable-plus@0.6.0(@types/sortablejs@1.15.8):
+    resolution: {integrity: sha512-G5TSfHrt9tX9EjdG49InoFJbt2NYk0h3kgjgKxkFWr3ulIUays0oFObr5KZ8qzD4+QnhtALiRwIqY6qul4egqw==}
+    peerDependencies:
+      '@types/sortablejs': ^1.15.0
+      '@vue/composition-api': '*'
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@types/sortablejs': 1.15.8
     dev: false
 
   /vue-eslint-parser@9.4.3(eslint@8.57.1):

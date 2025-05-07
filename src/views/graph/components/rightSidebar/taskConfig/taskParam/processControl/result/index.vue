@@ -17,7 +17,7 @@
         </el-table-column>
         <el-table-column label="任务条件" min-width="90">
           <template #default="scope">
-            <span v-html="scope.row.expression ? scope.row.expression : ''" />
+            <span v-html="scope.row.expression ? scope.row.expression : ''"></span>
           </template>
         </el-table-column>
       </el-table>
@@ -48,7 +48,7 @@
                   <el-option
                     v-for="item in prevResultOption"
                     :key="item.value"
-                    :label="item.value"
+                    :label="item.label"
                     :value="item.value"
                     @blur="createExpression(props.$index)"
                   />
@@ -153,7 +153,9 @@ import { ElMessage } from "element-plus";
 import "vue3-json-viewer/dist/index.css";
 import { BaseResponse } from "@/api/interface";
 import { useUserStore } from "@/stores/modules/user";
+import useGraphStatueStore from "@/stores/modules/graphStatue";
 
+let { isUpdateParam } = storeToRefs(useGraphStatueStore());
 let { userInfo } = storeToRefs(useUserStore());
 let { processControlOptions } = storeToRefs(useProcessControlStore());
 let { nodeParam, process_id, nodeConfig } = storeToRefs(useGraphStore());
@@ -161,7 +163,7 @@ let depth = ref(5);
 let prevResultOption = ref<any>([]);
 let visible = ref(false);
 let updateResult = ref(false);
-
+const { edit_process_action } = useGraphStatueStore();
 const expand = ref(true);
 const checkParam = () => {
   visible.value = true;
@@ -228,6 +230,9 @@ const updateProcessControlParam = async () => {
   await updateFlowData();
   await getProcessControlParam();
   ElMessage.success("保存流程控制参数成功");
+  isUpdateParam.value = true;
+
+  await edit_process_action();
   updateResult.value = false;
 };
 // 增加分支

@@ -14,7 +14,8 @@ enum API {
 }
 
 // 获取节点菜单
-export const getNodeMenuRequest = () => http.get<GraphData.NodeMenuType[]>(`${API.NODE_MENU_URL}`);
+export const getNodeMenuRequest = (process_type: string) =>
+  http.get<GraphData.NodeMenuType[]>(`${API.NODE_MENU_URL}?process_type=${process_type}`);
 
 // 获取节点参数
 export const getTaskNodeRequest = (taskNode: GraphData.TaskNodeParam) =>

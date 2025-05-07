@@ -4,6 +4,7 @@ import { DeleteData } from "@/api/interface";
 
 enum API {
   TASK_INSTANCE_URL = "/orderlines/task_instance",
+  TASK_INSTANCES_URL = "/orderlines/task_instances",
   TASK_INSTANCE_DETAIL_ID_URL = "/orderlines/task_instance/detail",
   TASK_INSTANCE_EXPORT_URL = "/orderlines/task_instance/export",
   TASK_INSTANCE_DETAIL_URL = "/orderlines/task_instance_detail"
@@ -21,3 +22,6 @@ export const getTaskInstanceItem = (process_instance_id: string, task_id: string
   http.get<TaskInstance.TaskInstanceItem>(
     `${API.TASK_INSTANCE_DETAIL_URL}?process_instance_id=${process_instance_id}&task_id=${task_id}`
   );
+// 获取所有任务实例列表
+export const getAllTaskInstanceRequest = (process_id: string, process_instance_id: string) =>
+  http.get(API.TASK_INSTANCES_URL, { process_id, process_instance_id });

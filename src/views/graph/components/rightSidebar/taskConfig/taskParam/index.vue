@@ -24,7 +24,6 @@ import TaskGroup from "./taskGroup/index.vue";
 import SubProcess from "./subProcess/index.vue";
 import Common from "./common/index.vue";
 import Parallel from "./parallel/index.vue";
-
 import { storeToRefs } from "pinia";
 import useGraphStore from "@/stores/modules/graph";
 

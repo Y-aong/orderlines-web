@@ -9,6 +9,7 @@ export namespace PInstance {
     process_id: string;
     process_instance_id: string;
     process_name: string;
+    process_type: string;
     process_params: string;
     process_status: string;
     run_type: string;

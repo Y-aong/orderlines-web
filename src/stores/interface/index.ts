@@ -67,6 +67,7 @@ export interface KeepAliveState {
 }
 
 export interface FlowStoreType {
+  process_type: string;
   process_name: string;
   process_id: string;
   process_version: string;

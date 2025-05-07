@@ -133,6 +133,7 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
+  { prop: "process_type", label: "流程类型" },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "process_instance_id", label: "实例id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },

@@ -238,8 +238,9 @@ let clearFlag = ref<boolean>(false);
 let pythonCodeVisible = ref<boolean>(false);
 let showVariable = ref<boolean>(false);
 let variableOption = ref<GraphVariable.VariableOption[]>([{ label: "", value: "" }]);
+let { isRunning, isUpdateParam } = storeToRefs(useGraphStatueStore());
+
 const apiUrl = import.meta.env.VITE_API_URL;
-const { isRunning } = storeToRefs(useGraphStatueStore());
 const { nodeParam, nodeConfig, process_id } = storeToRefs(useGraphStore());
 
 interface ParamItem {
@@ -405,6 +406,7 @@ const updateTask = async (row: ParamItem) => {
 
   await updateTaskBack(method_kwargs);
   ElMessage.success("任务参数修改成功");
+  isUpdateParam.value = true;
 };
 
 const preUpdateTask = async (row: ParamItem) => {
@@ -412,7 +414,7 @@ const preUpdateTask = async (row: ParamItem) => {
   let param_name = row.name;
   let param_value: any;
   if (row.param_type === "input") {
-    param_value = checkParamValue;
+    param_value = await checkParam(row);
   } else if (row.param_type === "datetime") {
     param_value = checkParamValue;
   } else if (row.param_type === "code") {
@@ -421,8 +423,6 @@ const preUpdateTask = async (row: ParamItem) => {
     param_value = checkParamValue;
   } else if (row.param_type === "select") {
     param_value = checkParamValue;
-  } else if (row.param_type === "input") {
-    param_value = await checkParam(row);
   } else if (row.param_type === "uia") {
     param_value = checkParamValue;
   } else if (row.param_type === "value_list") {
@@ -433,7 +433,7 @@ const preUpdateTask = async (row: ParamItem) => {
     ElMessage.error(`不支持的参数类型${row.param_type}`);
     return undefined;
   }
-  return { param_name, param_value };
+  return param_value === undefined ? undefined : { param_name, param_value };
 };
 
 const updateTaskBack = async (method_kwargs: any) => {
@@ -473,15 +473,16 @@ const checkParam = (row: any) => {
       return param_value;
     }
   } else if (param_type.search("int") !== -1 && param_type.search("class") !== -1) {
-    if (param_value === "") {
+    if (!param_value) {
       return 0;
     } else if (!isNaN(parseInt(param_value))) {
       return parseInt(param_value);
     } else {
-      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
+      ElNotification.error({ title: "参数类型异常", message: `参数【${row.name}】类型规定为【${param_type}】` });
+      return undefined;
     }
   } else if (param_type.search("dict") !== -1 && param_type.search("class") !== -1) {
-    if (param_value === "") return {};
+    if (!param_value) return {};
     try {
       if (typeof param_value === "object") {
         return param_value;
@@ -490,10 +491,11 @@ const checkParam = (row: any) => {
       }
     } catch (e) {
       console.log("检查dict参数异常", e);
-      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
+      ElNotification.error({ title: "参数类型异常", message: `参数【${row.name}】类型规定为【${param_type}】` });
+      return undefined;
     }
   } else if (param_type.search("list") !== -1 && param_type.search("class") !== -1) {
-    if (param_value === "") return [];
+    if (!param_value) return [];
     try {
       if (typeof param_value === "object") {
         return param_value;
@@ -501,14 +503,16 @@ const checkParam = (row: any) => {
         return JSON.parse(param_value);
       }
     } catch (e) {
-      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
+      ElNotification.error({ title: "参数类型异常", message: `参数【${row.name}】类型规定为【${param_type}】` });
+      return undefined;
     }
   } else if (param_type.search("float") !== -1 && param_type.search("class") !== -1) {
-    if (param_value === "") return 0;
+    if (!param_value) return 0;
     if (!isNaN(parseFloat(param_value))) {
       return parseFloat(param_value);
     } else {
-      ElNotification.error({ title: "参数类型异常", message: `参数类型规定为${param_type}` });
+      ElNotification.error({ title: "参数类型异常", message: `参数【${row.name}】类型规定为【${param_type}】` });
+      return undefined;
     }
   } else {
     return param_value;

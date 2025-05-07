@@ -4,7 +4,7 @@
       运行日志
       <el-button :icon="View" circle @click="showDialog" plain size="small" />
     </div>
-    <div class="card-context" style="height: 60%">
+    <div class="card-context" style="height: 80%">
       <el-scrollbar>
         <pre v-for="log in debugMessage" :key="log.time" class="scrollbar-demo-item" :class="log.level">
           [{{ log.level }}] {{ log.time }}——{{ log.msg }}
@@ -59,9 +59,12 @@ const showDialog = () => {
 }
 .flow-bottom {
   position: absolute;
+  top: 75%;
   left: 210px;
-  width: 85%;
-  height: 24%;
+  width: 100%;
+  height: calc(25% - 65px);
+  margin: 5px, 0;
+  border: 0.5px solid #ebe6e6;
 }
 .card-header {
   align-items: center;
@@ -71,6 +74,7 @@ const showDialog = () => {
 }
 .card-context {
   width: 100%;
+  height: calc(25% - 80px);
   font-size: 12px;
   text-align: left;
 }
