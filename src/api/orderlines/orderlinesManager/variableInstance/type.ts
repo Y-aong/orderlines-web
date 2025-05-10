@@ -4,6 +4,7 @@ export namespace VariableInstance {
     active: number;
     id: number;
     is_cache: boolean;
+    is_global: boolean;
     process_id: string;
     process_instance_id: string;
     process_name: string;
@@ -16,6 +17,7 @@ export namespace VariableInstance {
     id?: number;
     process_name?: string;
     variable_key?: string;
+    is_global?: boolean;
     creator?: string;
   }
 

@@ -23,14 +23,20 @@
       <el-form-item label="变量名称" prop="variable_key">
         <el-input v-model="drawerProps.row!.variable_key" placeholder="请填写变量名称" clearable></el-input>
       </el-form-item>
+      <el-form-item label="全局变量" prop="is_global">
+        <el-select v-model="drawerProps.row!.is_global" placeholder="请选择是否为全局变量" clearable>
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="变量类型" prop="variable_type" clearable>
+        <el-input v-model="drawerProps.row!.variable_type" placeholder="请填写变量类型" clearable></el-input>
+      </el-form-item>
       <el-form-item label="变量值" prop="variable_value">
         <el-input v-model="drawerProps.row!.variable_value" placeholder="请填写变量值" clearable></el-input>
       </el-form-item>
       <el-form-item label="变量描述" prop="variable_desc" clearable>
         <el-input v-model="drawerProps.row!.variable_desc" placeholder="请填写变量描述" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="变量类型" prop="variable_type" clearable>
-        <el-input v-model="drawerProps.row!.variable_type" placeholder="请填写变量类型" clearable></el-input>
       </el-form-item>
       <el-form-item label="是否缓存" prop="is_cache" clearable>
         <el-input v-model="drawerProps.row!.task_config" placeholder="是否缓存" clearable></el-input>
@@ -59,7 +65,8 @@ const rules = reactive({
   variable_value: [{ required: false, message: "填写变量值" }],
   variable_desc: [{ required: false, message: "填写变量描述" }],
   variable_type: [{ required: true, message: "填写变量类型" }],
-  is_cache: [{ required: false, message: "选择是否缓存" }]
+  is_cache: [{ required: false, message: "选择是否缓存" }],
+  is_global: [{ required: true, message: "选择是否为全局变量" }]
 });
 
 interface DrawerProps {

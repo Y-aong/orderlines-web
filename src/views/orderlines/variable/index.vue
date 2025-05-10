@@ -94,7 +94,7 @@ const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
   {
     prop: "variable_type",
     label: "变量类型",
-    width: 120,
+    width: 100,
     render: (scope: any) => {
       return <el-tag>{scope.row.variable_type}</el-tag>;
     }
@@ -104,6 +104,19 @@ const columns = reactive<ColumnProps<Variable.VariableItem>[]>([
     label: "是否缓存",
     render: (scope: any) => {
       return <el-tag>{scope.row.is_cache ? "是" : "否"}</el-tag>;
+    }
+  },
+  {
+    prop: "is_global",
+    search: { el: "select", props: { filterable: true } },
+    enum: [
+      { label: "是全局变量", value: 1 },
+      { label: "否全局变量", value: 0 }
+    ],
+    label: "全局变量",
+    render: (scope: any) => {
+      const isGlobal = scope.row.is_global ? "success" : "warning";
+      return <el-tag type={isGlobal}>{scope.row.is_global ? "是" : "否"}</el-tag>;
     }
   },
   { prop: "creator_name", label: "创建者", width: 120, search: { el: "input" } },

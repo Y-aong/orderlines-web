@@ -16,7 +16,8 @@ export const getVariableRequest = (process_id: string) =>
 export const getVariableInstanceRequest = (process_instance_id: string) =>
   http.get<GraphVariable.VariableItem[]>(`${API.PROCESS_INSTANCE_VARIABLE}?process_instance_id=${process_instance_id}`);
 // 获取变量详情
-export const getVariableDetailRequest = (id: number) => http.get(`${API.VARIABLE}?id=${id}`);
+export const getVariableDetailRequest = (id: number) =>
+  http.get<GraphVariable.VariableItem>(`${API.VARIABLE}?id=${id}`);
 // 新增变量
 export const createVariableRequest = (data: GraphVariable.VariableItem) => http.post(API.VARIABLE, data);
 // 更新变量

@@ -133,9 +133,24 @@ const columns = reactive<ColumnProps<PInstance.ProcessInstanceItem>[]>([
   { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
   { prop: "process_name", label: "流程名称", search: { el: "input" } },
-  { prop: "process_type", label: "流程类型" },
-  { prop: "process_id", label: "流程id", search: { el: "input" } },
-  { prop: "process_instance_id", label: "实例id", search: { el: "input" } },
+  {
+    prop: "process_type",
+    label: "流程类型",
+    width: 90,
+    search: { el: "select", props: { filterable: true } },
+    enum: [
+      { label: "普通流程", value: "orderlines" },
+      { label: "测试用例", value: "test" }
+    ],
+    width: 100,
+    render: (scope: any) => {
+      const tagType = scope.row.process_type === "orderlines" ? "success" : "primary";
+      return <el-tag type={tagType}>{scope.row.process_type === "orderlines" ? "普通流程" : "测试用例"}</el-tag>;
+    }
+  },
+  { prop: "version", label: "流程版本", search: { el: "input" }, width: 100 },
+  { prop: "process_id", label: "流程id", search: { el: "input" }, width: 100 },
+  { prop: "process_instance_id", label: "实例id", search: { el: "input" }, width: 100 },
   { prop: "desc", label: "流程描述" },
   { prop: "runner", label: "运行者", width: 100 },
   {

@@ -3,7 +3,12 @@
     <div :class="{ task_running_variable: isRunning, task_config_variable: !isRunning }">
       <h3>{{ !isRunning ? "任务变量配置" : "变量实例查看" }}</h3>
       <el-table :data="variableData" style="width: 100%">
-        <el-table-column fixed prop="variable_key" label="变量名" min-width="110" />
+        <el-table-column fixed label="变量名" min-width="110">
+          <template #default="scope">
+            <el-tag v-if="scope.row.is_global">{{ scope.row.variable_key }} </el-tag>
+            <span v-else>{{ scope.row.variable_key }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="variable_value" label="变量值" min-width="130" />
         <el-table-column prop="variable_type" label="类型" min-width="60" />
         <el-table-column fixed="right" label="action" min-width="120" align="center">
@@ -46,6 +51,16 @@
       <el-form-item label="变量类型：" prop="variable_type">
         <el-select v-model="VariableItem.variable_type" placeholder="请选择变量类型" :disabled="isRunning">
           <el-option v-for="item in variableTypeOption" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="全局变量：" prop="is_global">
+        <el-select v-model="VariableItem.is_global" placeholder="请选择是否为全局变量" :disabled="isRunning" clearable>
+          <el-option
+            v-for="item in isGlobalVariable"
+            :key="String(item.value)"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
 
@@ -95,11 +110,23 @@ let VariableItem = reactive<Variable.VariableItem>({
   variable_key: "",
   variable_value: "",
   variable_type: "",
-  variable_desc: ""
+  variable_desc: "",
+  is_global: false
 });
 
 const { isRunning } = storeToRefs(useGraphStatueStore());
 const { process_id, process_name, process_instance_id } = storeToRefs(useGraphStore());
+
+const isGlobalVariable = [
+  {
+    value: true,
+    label: "是"
+  },
+  {
+    value: false,
+    label: "否"
+  }
+];
 const variableTypeOption = [
   {
     value: "str",
@@ -136,7 +163,9 @@ const getVariable = async () => {
     let response: BaseResponse<GraphVariable.VariableItem[]> = await getVariableRequest(process_id.value);
     if (response.code == 200) variableData.value = response.data;
   } else {
-    let response: BaseResponse<Variable.VariableItem[]> = await getVariableInstanceRequest(process_instance_id.value);
+    let response: BaseResponse<GraphVariable.VariableItem[]> = await getVariableInstanceRequest(
+      process_instance_id.value
+    );
     if (response.code == 200) variableData.value = response.data;
   }
 };
@@ -210,6 +239,7 @@ const confirm = async () => {
       variable_key: VariableItem.variable_key,
       variable_value: VariableItem.variable_value,
       variable_type: VariableItem.variable_type,
+      is_global: VariableItem.is_global,
       variable_desc: VariableItem.variable_desc,
       updater_name: userInfo.value.login_value
     };
@@ -229,6 +259,7 @@ const confirm = async () => {
       variable_key: VariableItem.variable_key,
       variable_value: VariableItem.variable_value,
       variable_type: VariableItem.variable_type,
+      is_global: VariableItem.is_global,
       variable_desc: VariableItem.variable_desc,
       creator_name: userInfo.value.login_value
     };

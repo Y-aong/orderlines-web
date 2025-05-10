@@ -26,7 +26,7 @@
     <ImportExcel ref="dialogRef" />
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -112,15 +112,42 @@ const getTableList = (params: Process.ProcessFilter) => {
 const columns = reactive<ColumnProps<Process.ProcessItem>[]>([
   { type: "expand", label: "展开", width: 60 },
   { prop: "id", label: "序号", width: 70, search: { el: "input" } },
-  { prop: "process_name", label: "流程名称", search: { el: "input" } },
-  { prop: "process_type", label: "流程类型" },
-  { prop: "version", label: "流程版本", search: { el: "input" } },
-  { prop: "namespace", label: "命名空间", search: { el: "input" } },
+  {
+    prop: "process_name",
+    label: "流程名称",
+    search: { el: "input" }
+  },
+  {
+    prop: "process_type",
+    label: "流程类型",
+    width: 90,
+    search: { el: "select", props: { filterable: true } },
+    enum: [
+      { label: "普通流程", value: "orderlines" },
+      { label: "测试用例", value: "test" }
+    ],
+    width: 100,
+    render: (scope: any) => {
+      const tagType = scope.row.process_type === "orderlines" ? "success" : "primary";
+      return <el-tag type={tagType}>{scope.row.process_type === "orderlines" ? "普通流程" : "测试用例"}</el-tag>;
+    }
+  },
+  { prop: "version", label: "流程版本", search: { el: "input" }, width: 90 },
+  { prop: "namespace", label: "命名空间", search: { el: "input" }, width: 90 },
   { prop: "process_id", label: "流程id", search: { el: "input" } },
   { prop: "desc", label: "流程描述" },
   { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater_name", label: "修改者", width: 100, search: { el: "input" } },
-  { prop: "mode", label: "运行方式", width: 100, search: { el: "input" } },
+  {
+    prop: "mode",
+    label: "运行方式",
+    width: 100,
+    search: { el: "input" },
+    render: (scope: any) => {
+      const tagType = scope.row.mode === "running" ? "success" : "warning";
+      return <el-tag type={tagType}>{scope.row.mode}</el-tag>;
+    }
+  },
   {
     prop: "insert_time",
     label: "创建时间",

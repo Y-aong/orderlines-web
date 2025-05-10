@@ -2,16 +2,17 @@
 export namespace GraphVariable {
   export interface VariableItem {
     active: number;
-    creator_id?: any;
-    creator_name?: any;
+    creator_id?: number;
+    creator_name?: string;
     id: number;
-    insert_time?: any;
-    is_cache?: any;
+    insert_time?: string;
+    is_cache?: boolean;
+    is_global: boolean;
     process_id: string;
     process_name: string;
-    update_time?: any;
-    updater_id?: any;
-    updater_name?: any;
+    update_time?: string;
+    updater_id?: number;
+    updater_name?: string;
     variable_desc: string;
     variable_key: string;
     variable_type: string;

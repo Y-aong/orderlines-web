@@ -108,9 +108,22 @@ const columns = reactive<ColumnProps<VariableInstance.VariableInstanceItem>[]>([
       return <el-tag>{scope.row.variable_type}</el-tag>;
     }
   },
+  {
+    prop: "is_global",
+    search: { el: "select", props: { filterable: true } },
+    enum: [
+      { label: "是全局变量", value: 1 },
+      { label: "否全局变量", value: 0 }
+    ],
+    label: "全局变量",
+    render: (scope: any) => {
+      const isGlobal = scope.row.is_global ? "success" : "warning";
+      return <el-tag type={isGlobal}>{scope.row.is_global ? "是" : "否"}</el-tag>;
+    }
+  },
   { prop: "creator_name", label: "创建者", width: 100, search: { el: "input" } },
   { prop: "updater_name", label: "修改者", width: 100 },
-  { prop: "create_time", label: "创建时间", width: 165 },
+  { prop: "insert_time", label: "创建时间", width: 165 },
   { prop: "update_time", label: "修改时间", width: 165 },
   { prop: "operation", label: "操作", fixed: "right", width: 180 }
 ]);
